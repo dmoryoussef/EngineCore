@@ -68,4 +68,13 @@ public:
 		m_pBuffer[nX + m_nWidth * nY].m_nColor = nColor;
 	}
 
+	void set(string str, int nX, int nY, int nColor)
+	{
+		for (int nI = 0; nI < str.length(); nI++)
+		{
+			m_pBuffer[nX + nI + m_nWidth * nY].m_chChar = str[nI];
+			m_pBuffer[nX + nI + m_nWidth * nY].m_nColor = nColor;
+		}
+	}
+
 };

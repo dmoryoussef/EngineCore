@@ -3,7 +3,7 @@
 class ConsoleWindow : public OutputWindow
 {
 private:
-	HANDLE m_hOutputHandle;
+	HANDLE WindowHandle;
 	CHAR_INFO *m_pBuffer;
 
 public:	
@@ -11,8 +11,7 @@ public:
 		m_pBuffer(NULL),
 		OutputWindow(width, height, pwidth, pheight) 
 	{
-		m_hOutputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-
+		WindowHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	};
 
 
@@ -34,12 +33,6 @@ public:
 					Pixel current = pBuffer->getPixel(nX, nY);
 					m_pBuffer[nX + m_nScreenWidth * nY].Char.AsciiChar = 219;
 					m_pBuffer[nX + m_nScreenWidth * nY].Attributes = current.m_nColor;
-					if (current.m_nColor == 15)
-					{
-						m_pBuffer[nX + m_nScreenWidth * nY].Char.AsciiChar = current.m_chChar;
-						m_pBuffer[nX + m_nScreenWidth * nY].Attributes = current.m_nColor;
-					}
-
 				}
 	}
 
@@ -48,19 +41,19 @@ public:
 		//	set size of buffer position and size
 		//	https://docs.microsoft.com/en-us/windows/console/setconsolewindowinfo
 		SMALL_RECT m_rectWindow = { 0, 0, 1, 1 };
-		SetConsoleWindowInfo(m_hOutputHandle, TRUE, &m_rectWindow);
+		SetConsoleWindowInfo(WindowHandle, TRUE, &m_rectWindow);
 
 		// set screen buffer size
 		//	https://docs.microsoft.com/en-us/windows/console/setconsolescreenbuffersize
 		COORD coord = { (short)m_nScreenWidth, (short)m_nScreenHeight };
-		if (!SetConsoleScreenBufferSize(m_hOutputHandle, coord))
+		if (!SetConsoleScreenBufferSize(WindowHandle, coord))
 		{
 			OutputDebugStringA("SetConsoleScreenBufferSize \n");
 		}
 
 		// Assign screen buffer to the console
 		//	https://docs.microsoft.com/en-us/windows/console/setconsoleactivescreenbuffer
-		if (!SetConsoleActiveScreenBuffer(m_hOutputHandle))
+		if (!SetConsoleActiveScreenBuffer(WindowHandle))
 		{
 			OutputDebugStringA("SetConsoleActiveScreenBuffer \n");
 		}
@@ -86,7 +79,7 @@ public:
 		// error if exceeded, so user knows their dimensions/fontsize are too large
 		CONSOLE_SCREEN_BUFFER_INFO csbi;
 		//	https://docs.microsoft.com/en-us/windows/console/getconsolescreenbufferinfo
-		if (!GetConsoleScreenBufferInfo(m_hOutputHandle, &csbi))
+		if (!GetConsoleScreenBufferInfo(WindowHandle, &csbi))
 		{
 			OutputDebugStringA("GetConsoleScreenBufferInfo \n");
 		}
@@ -103,14 +96,14 @@ public:
 
 		// Set Physical Console Window Size
 		m_rectWindow = { 0, 0, (short)m_nScreenWidth - 1, (short)m_nScreenHeight - 1 };
-		if (!SetConsoleWindowInfo(m_hOutputHandle, TRUE, &m_rectWindow))
+		if (!SetConsoleWindowInfo(WindowHandle, TRUE, &m_rectWindow))
 		{
 			OutputDebugStringA("SetConsoleWindowInfo \n");
 		}
 
 		// Set flags to allow mouse input		
 		//	https://docs.microsoft.com/en-us/windows/console/setconsolemode
-		if (!SetConsoleMode(m_hOutputHandle, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
+		if (!SetConsoleMode(WindowHandle, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
 		{
 			OutputDebugStringA("SetConsoleMode \n");
 		}
@@ -131,7 +124,7 @@ public:
 		COORD characterPos = { 0, 0 };
 		SMALL_RECT writeArea = { 0, 0, m_nScreenWidth - 1, m_nScreenHeight - 1 };
 
-		WriteConsoleOutput(m_hOutputHandle, m_pBuffer, charBufSize, characterPos, &writeArea);
+		WriteConsoleOutput(WindowHandle, m_pBuffer, charBufSize, characterPos, &writeArea);
 	}
 
 };

@@ -16,7 +16,7 @@ using namespace std;
 #include "ConsoleBuffer.h"
 #include "OutputWindow.h"
 #include "ConsoleWindow.h"
-
+#include "Win32Window.h"
 
 
 class Engine 
@@ -28,7 +28,7 @@ protected:
 	LARGE_INTEGER PrevCounter;
 
 	OutputWindow *m_pWindow;
-	Buffer* pBuffer;
+	Buffer* m_pEngineBuffer;
 
 	float getDeltaTime()
 	{
@@ -51,7 +51,7 @@ protected:
 	void render() 
 	{	
 		//	render game data to screen buffer
-		m_pWindow->renderToBuffer(pBuffer);
+		m_pWindow->renderToBuffer(m_pEngineBuffer);
 		//	then
 		//	output buffer to window
 		m_pWindow->outputToWindow();
@@ -64,13 +64,11 @@ public:
 		LARGE_INTEGER Frequency;
 		QueryPerformanceFrequency(&Frequency);
 		nCountFreq = Frequency.QuadPart;
-		pBuffer = new Buffer(100, 100);
-		pBuffer->setPixel(10, 10, 15);
 	}
 
 	~Engine() 
 	{
-		delete pBuffer;
+		delete m_pEngineBuffer;
 	}
 
 	bool isRunning()
@@ -82,6 +80,8 @@ public:
 	{
 		m_pWindow = sb;
 		m_pWindow->init();
+		m_pEngineBuffer = new Buffer(m_pWindow->getWidth(), m_pWindow->getHeight());
+		m_pEngineBuffer->set("Hello", 10, 10, 15);
 	}
 
 	void run()

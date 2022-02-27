@@ -14,6 +14,16 @@ public:
 		m_nPixelHeight(pheight),
 		m_nPixelWidth(pwidth) {};
 
+	int getHeight()
+	{
+		return m_nScreenHeight;
+	}
+
+	int getWidth()
+	{
+		return m_nScreenWidth;
+	}
+
 	virtual void init() = 0;
 
 	virtual void outputToWindow() = 0;

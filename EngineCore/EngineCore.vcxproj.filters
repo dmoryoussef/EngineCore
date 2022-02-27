@@ -30,6 +30,9 @@
     <ClInclude Include="ConsoleBuffer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Win32Window.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
