@@ -12,8 +12,12 @@ using namespace std;
 #include <algorithm>
 #include <xinput.h>
 
-#include "ScreenBuffer.h"
-#include "ConsoleScreenBuffer.h"
+#include "Buffer.h"
+#include "ConsoleBuffer.h"
+#include "OutputWindow.h"
+#include "ConsoleWindow.h"
+
+
 
 class Engine 
 {
@@ -23,7 +27,8 @@ protected:
 	uint64_t nCountFreq;
 	LARGE_INTEGER PrevCounter;
 
-	ScreenBuffer *m_pScreenBuffer;
+	OutputWindow *m_pWindow;
+	Buffer* pBuffer;
 
 	float getDeltaTime()
 	{
@@ -44,12 +49,13 @@ protected:
 	void update(float fDeltaTime) {}
 
 	void render() 
-	{
+	{	
 		//	render game data to screen buffer
-		m_pScreenBuffer->renderToBuffer();
+		m_pWindow->renderToBuffer(pBuffer);
 		//	then
 		//	output buffer to window
-		m_pScreenBuffer->outputToWindow();
+		
+		m_pWindow->outputToWindow();
 	}
 
 public:
@@ -59,19 +65,24 @@ public:
 		LARGE_INTEGER Frequency;
 		QueryPerformanceFrequency(&Frequency);
 		nCountFreq = Frequency.QuadPart;
+		pBuffer = new Buffer(100, 100);
+		pBuffer->setPixel(10, 10, 15);
 	}
 
-	~Engine() {}
+	~Engine() 
+	{
+		delete pBuffer;
+	}
 
 	bool isRunning()
 	{
 		return m_bRunning;
 	}
 
-	void setup(ScreenBuffer *sb)
+	void setup(OutputWindow *sb)
 	{
-		m_pScreenBuffer = sb;
-		m_pScreenBuffer->init();
+		m_pWindow = sb;
+		m_pWindow->init();
 	}
 
 	void run()

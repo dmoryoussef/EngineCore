@@ -1,4 +1,4 @@
-class ScreenBuffer
+class OutputWindow
 {
 protected:
 	int m_nScreenHeight;
@@ -8,7 +8,7 @@ protected:
 	int m_nPixelWidth;
 
 public:
-	ScreenBuffer(int width, int height, int pwidth, int pheight) :
+	OutputWindow(int width, int height, int pwidth, int pheight) :
 		m_nScreenWidth(width),
 		m_nScreenHeight(height),
 		m_nPixelHeight(pheight),
@@ -18,6 +18,6 @@ public:
 
 	virtual void outputToWindow() = 0;
 
-	virtual void renderToBuffer() = 0;
+	virtual void renderToBuffer(Buffer *pBuffer) = 0;
 
 };

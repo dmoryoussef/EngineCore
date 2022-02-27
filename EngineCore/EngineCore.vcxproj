@@ -139,9 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ConsoleScreenBuffer.h" />
+    <ClInclude Include="Buffer.h" />
+    <ClInclude Include="ConsoleBuffer.h" />
+    <ClInclude Include="ConsoleWindow.h" />
     <ClInclude Include="Engine.h" />
-    <ClInclude Include="ScreenBuffer.h" />
+    <ClInclude Include="OutputWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />

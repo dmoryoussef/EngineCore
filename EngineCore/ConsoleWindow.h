@@ -1,15 +1,15 @@
 #include <Windows.h>
 
-class ConsoleScreenBuffer : public ScreenBuffer
+class ConsoleWindow : public OutputWindow
 {
 private:
 	HANDLE m_hOutputHandle;
 	CHAR_INFO* m_pBuffer;
 
 public:	
-	ConsoleScreenBuffer(int width, int height, int pwidth, int pheight) :
+	ConsoleWindow(int width, int height, int pwidth, int pheight) :
 		m_pBuffer(NULL),
-		ScreenBuffer(width, height, pwidth, pheight) 
+		OutputWindow(width, height, pwidth, pheight) 
 	{
 		m_hOutputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	};
@@ -23,19 +23,16 @@ public:
 		m_pBuffer = new CHAR_INFO[nHeight * nWidth];
 	}
 
-	void renderToBuffer()
+	void renderToBuffer(Buffer *pBuffer)
 	{
-		//for (int nY = 0; nY < pFrame->getSize().Y; ++nY)
-		//	for (int nX = 0; nX < pFrame->getSize().X; ++nX)
-		//		if ((nY < m_nHeight && nX < m_nWidth) &&			//	Protects from setting data outside the range of the frame
-		//			(nY >= 0 && nX >= 0))
-		//		{
-		//			m_pBuffer[nX + m_nWidth * nY].Char.AsciiChar = pFrame->getAPixel(nX, nY).m_chChar;
-		//			m_pBuffer[nX + m_nWidth * nY].Attributes = pFrame->getAPixel(nX, nY).m_nColor;
-		//		}
-
-		m_pBuffer[2 + m_nScreenWidth * 2].Char.AsciiChar = 'A';
-		m_pBuffer[2 + m_nScreenWidth * 2].Attributes = 15;
+		for (int nY = 0; nY < pBuffer->getHeight(); ++nY)
+			for (int nX = 0; nX < pBuffer->getWidth(); ++nX)
+				if ((nY < m_nScreenHeight && nX < m_nScreenWidth) &&			
+					(nY >= 0 && nX >= 0))
+				{
+					m_pBuffer[nX + m_nScreenWidth * nY].Char.AsciiChar = pBuffer->getPixel(nX, nY).m_chChar;
+					m_pBuffer[nX + m_nScreenWidth * nY].Attributes = pBuffer->getPixel(nX, nY).m_nColor;
+				}
 	}
 
 	void init()
