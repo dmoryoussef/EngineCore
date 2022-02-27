@@ -4,7 +4,7 @@ class ConsoleWindow : public OutputWindow
 {
 private:
 	HANDLE m_hOutputHandle;
-	CHAR_INFO* m_pBuffer;
+	CHAR_INFO *m_pBuffer;
 
 public:	
 	ConsoleWindow(int width, int height, int pwidth, int pheight) :
@@ -12,6 +12,7 @@ public:
 		OutputWindow(width, height, pwidth, pheight) 
 	{
 		m_hOutputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+
 	};
 
 
@@ -20,7 +21,7 @@ public:
 		m_nScreenHeight = nHeight;
 		m_nScreenWidth = nWidth;
 		delete m_pBuffer;
-		m_pBuffer = new CHAR_INFO[nHeight * nWidth];
+		m_pBuffer = new CHAR_INFO[m_nScreenHeight * m_nScreenWidth];
 	}
 
 	void renderToBuffer(Buffer *pBuffer)
@@ -30,8 +31,15 @@ public:
 				if ((nY < m_nScreenHeight && nX < m_nScreenWidth) &&			
 					(nY >= 0 && nX >= 0))
 				{
-					m_pBuffer[nX + m_nScreenWidth * nY].Char.AsciiChar = pBuffer->getPixel(nX, nY).m_chChar;
-					m_pBuffer[nX + m_nScreenWidth * nY].Attributes = pBuffer->getPixel(nX, nY).m_nColor;
+					Pixel current = pBuffer->getPixel(nX, nY);
+					m_pBuffer[nX + m_nScreenWidth * nY].Char.AsciiChar = 219;
+					m_pBuffer[nX + m_nScreenWidth * nY].Attributes = current.m_nColor;
+					if (current.m_nColor == 15)
+					{
+						m_pBuffer[nX + m_nScreenWidth * nY].Char.AsciiChar = current.m_chChar;
+						m_pBuffer[nX + m_nScreenWidth * nY].Attributes = current.m_nColor;
+					}
+
 				}
 	}
 

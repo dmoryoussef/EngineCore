@@ -54,7 +54,6 @@ protected:
 		m_pWindow->renderToBuffer(pBuffer);
 		//	then
 		//	output buffer to window
-		
 		m_pWindow->outputToWindow();
 	}
 

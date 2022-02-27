@@ -64,7 +64,7 @@ public:
 
 	void setPixel(int nX, int nY, int nColor)
 	{
-		m_pBuffer[nX + m_nWidth * nY].m_chChar = 'A';
+		m_pBuffer[nX + m_nWidth * nY].m_chChar = 219;
 		m_pBuffer[nX + m_nWidth * nY].m_nColor = nColor;
 	}
 
