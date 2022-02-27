@@ -8,7 +8,11 @@ private:
 
 public:	
 	ConsoleScreenBuffer(int width, int height, int pwidth, int pheight) :
-		ScreenBuffer(width, height, pwidth, pheight) {};
+		m_pBuffer(NULL),
+		ScreenBuffer(width, height, pwidth, pheight) 
+	{
+		m_hOutputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	};
 
 
 	void resizeBuffer(int nWidth, int nHeight)
@@ -17,6 +21,21 @@ public:
 		m_nScreenWidth = nWidth;
 		delete m_pBuffer;
 		m_pBuffer = new CHAR_INFO[nHeight * nWidth];
+	}
+
+	void renderToBuffer()
+	{
+		//for (int nY = 0; nY < pFrame->getSize().Y; ++nY)
+		//	for (int nX = 0; nX < pFrame->getSize().X; ++nX)
+		//		if ((nY < m_nHeight && nX < m_nWidth) &&			//	Protects from setting data outside the range of the frame
+		//			(nY >= 0 && nX >= 0))
+		//		{
+		//			m_pBuffer[nX + m_nWidth * nY].Char.AsciiChar = pFrame->getAPixel(nX, nY).m_chChar;
+		//			m_pBuffer[nX + m_nWidth * nY].Attributes = pFrame->getAPixel(nX, nY).m_nColor;
+		//		}
+
+		m_pBuffer[2 + m_nScreenWidth * 2].Char.AsciiChar = 'A';
+		m_pBuffer[2 + m_nScreenWidth * 2].Attributes = 15;
 	}
 
 	void init()
@@ -99,6 +118,15 @@ public:
 		//	https://docs.microsoft.com/en-us/windows/console/setconsolectrlhandler
 		//	SetConsoleCtrlHandler((PHANDLER_ROUTINE)CloseHandler, TRUE);
 
+	}
+
+	void outputToWindow()
+	{
+		COORD charBufSize = { m_nScreenWidth, m_nScreenHeight };
+		COORD characterPos = { 0, 0 };
+		SMALL_RECT writeArea = { 0, 0, m_nScreenWidth - 1, m_nScreenHeight - 1 };
+
+		WriteConsoleOutput(m_hOutputHandle, m_pBuffer, charBufSize, characterPos, &writeArea);
 	}
 
 };

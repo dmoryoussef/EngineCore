@@ -23,6 +23,8 @@ protected:
 	uint64_t nCountFreq;
 	LARGE_INTEGER PrevCounter;
 
+	ScreenBuffer *m_pScreenBuffer;
+
 	float getDeltaTime()
 	{
 		//	convert to a class, to be able to handle multiple timers for testing
@@ -41,7 +43,14 @@ protected:
 
 	void update(float fDeltaTime) {}
 
-	void render() {}
+	void render() 
+	{
+		//	render game data to screen buffer
+		m_pScreenBuffer->renderToBuffer();
+		//	then
+		//	output buffer to window
+		m_pScreenBuffer->outputToWindow();
+	}
 
 public:
 	Engine()
@@ -61,7 +70,8 @@ public:
 
 	void setup(ScreenBuffer *sb)
 	{
-		sb->init();
+		m_pScreenBuffer = sb;
+		m_pScreenBuffer->init();
 	}
 
 	void run()

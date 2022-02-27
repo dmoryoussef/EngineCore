@@ -16,4 +16,8 @@ public:
 
 	virtual void init() = 0;
 
+	virtual void outputToWindow() = 0;
+
+	virtual void renderToBuffer() = 0;
+
 };
