@@ -13,25 +13,37 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\EngineCore">
+      <UniqueIdentifier>{0bc96c9f-b5ac-4705-97b8-74b3416e797b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BaseObject">
+      <UniqueIdentifier>{0655b3d8-8cd4-4bc0-aeaa-9fb1507684d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ConsoleWindow.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OutputWindow.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Buffer.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\EngineCore</Filter>
     </ClInclude>
     <ClInclude Include="ConsoleBuffer.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\EngineCore</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleWindow.h">
+      <Filter>Source Files\EngineCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Source Files\EngineCore</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputWindow.h">
+      <Filter>Source Files\EngineCore</Filter>
     </ClInclude>
     <ClInclude Include="Win32Window.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\EngineCore</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeCore.h">
+      <Filter>Source Files\BaseObject</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseNode.h">
+      <Filter>Source Files\BaseObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

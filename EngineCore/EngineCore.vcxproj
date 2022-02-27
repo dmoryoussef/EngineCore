@@ -139,10 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BaseNode.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="ConsoleBuffer.h" />
     <ClInclude Include="ConsoleWindow.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="NodeCore.h" />
     <ClInclude Include="OutputWindow.h" />
     <ClInclude Include="Win32Window.h" />
   </ItemGroup>

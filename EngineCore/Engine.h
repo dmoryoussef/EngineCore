@@ -18,6 +18,8 @@ using namespace std;
 #include "ConsoleWindow.h"
 #include "Win32Window.h"
 
+#include "NodeCore.h"
+#include "BaseNode.h"
 
 class Engine 
 {

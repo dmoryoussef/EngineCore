@@ -31,7 +31,7 @@ public:
 					(nY >= 0 && nX >= 0))
 				{
 					Pixel current = pBuffer->getPixel(nX, nY);
-					m_pBuffer[nX + m_nScreenWidth * nY].Char.AsciiChar = 219;
+					m_pBuffer[nX + m_nScreenWidth * nY].Char.AsciiChar = current.m_chChar;
 					m_pBuffer[nX + m_nScreenWidth * nY].Attributes = current.m_nColor;
 				}
 	}
