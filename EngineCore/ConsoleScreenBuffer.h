@@ -19,7 +19,7 @@ public:
 		m_pBuffer = new CHAR_INFO[nHeight * nWidth];
 	}
 
-	void init(int nWindowWidth, int nWindowHeight, int nPixelWidth, int nPixelHeight)
+	void init()
 	{
 		//	set size of buffer position and size
 		//	https://docs.microsoft.com/en-us/windows/console/setconsolewindowinfo
@@ -28,7 +28,7 @@ public:
 
 		// set screen buffer size
 		//	https://docs.microsoft.com/en-us/windows/console/setconsolescreenbuffersize
-		COORD coord = { (short)nWindowWidth, (short)nWindowHeight };
+		COORD coord = { (short)m_nScreenWidth, (short)m_nScreenHeight };
 		if (!SetConsoleScreenBufferSize(m_hOutputHandle, coord))
 		{
 			OutputDebugStringA("SetConsoleScreenBufferSize \n");
@@ -46,8 +46,8 @@ public:
 		CONSOLE_FONT_INFOEX cfi;
 		cfi.cbSize = sizeof(cfi);
 		cfi.nFont = 0;
-		cfi.dwFontSize.X = nPixelWidth;
-		cfi.dwFontSize.Y = nPixelHeight;
+		cfi.dwFontSize.X = m_nPixelWidth;
+		cfi.dwFontSize.Y = m_nPixelHeight;
 		cfi.FontFamily = FF_DONTCARE;
 		cfi.FontWeight = FW_NORMAL;
 
@@ -67,18 +67,18 @@ public:
 			OutputDebugStringA("GetConsoleScreenBufferInfo \n");
 		}
 
-		if (nWindowHeight > csbi.dwMaximumWindowSize.Y)
+		if (m_nScreenHeight > csbi.dwMaximumWindowSize.Y)
 		{
 			OutputDebugStringA("Screen Height / Font Height Too Big \n");
 		}
 
-		if (nWindowWidth > csbi.dwMaximumWindowSize.X)
+		if (m_nScreenWidth > csbi.dwMaximumWindowSize.X)
 		{
 			OutputDebugStringA("Screen Width / Font Width Too Big \n");
 		}
 
 		// Set Physical Console Window Size
-		m_rectWindow = { 0, 0, (short)nWindowWidth - 1, (short)nWindowHeight - 1 };
+		m_rectWindow = { 0, 0, (short)m_nScreenWidth - 1, (short)m_nScreenHeight - 1 };
 		if (!SetConsoleWindowInfo(m_hOutputHandle, TRUE, &m_rectWindow))
 		{
 			OutputDebugStringA("SetConsoleWindowInfo \n");
@@ -93,7 +93,7 @@ public:
 
 		// Allocate memory for screen buffer
 		//	m_pBuffer = new CHAR_INFO[nWindowWidth * nWindowHeight];
-		resizeBuffer(nWindowWidth, nWindowHeight);
+		resizeBuffer(m_nScreenWidth, m_nScreenHeight);
 		//	memset(m_pBuffer, 0, sizeof(CHAR_INFO) * nWindowWidth * nWindowHeight);
 
 		//	https://docs.microsoft.com/en-us/windows/console/setconsolectrlhandler

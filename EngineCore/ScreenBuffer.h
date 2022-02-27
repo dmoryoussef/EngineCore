@@ -14,6 +14,6 @@ public:
 		m_nPixelHeight(pheight),
 		m_nPixelWidth(pwidth) {};
 
-	virtual void init(int nWindowWidth, int nWindowHeight, int nPixelWidth, int nPixelHeight) = 0;
+	virtual void init() = 0;
 
 };

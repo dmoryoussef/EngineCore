@@ -61,6 +61,7 @@ public:
 
 	void setup(ScreenBuffer *sb)
 	{
+		sb->init();
 	}
 
 	void run()

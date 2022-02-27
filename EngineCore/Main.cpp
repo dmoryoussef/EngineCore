@@ -4,5 +4,5 @@ void main()
 {
 	Engine *pEngine = new Engine();
 	pEngine->setup(new ConsoleScreenBuffer(100, 100, 8, 8));
-
+	pEngine->run();
 }
