@@ -22,6 +22,9 @@
     <Filter Include="Source Files\EventSystem">
       <UniqueIdentifier>{0009e393-ac96-44af-9daa-4e1ef26cd9b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GUI">
+      <UniqueIdentifier>{be8cdb9e-010b-4533-8fbc-256acda772b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buffer.h">
@@ -49,6 +52,18 @@
       <Filter>Source Files\BaseObject</Filter>
     </ClInclude>
     <ClInclude Include="EventListener.h">
+      <Filter>Source Files\EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="UIComponent.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="UILayout.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>Source Files\EngineCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Events.h">
       <Filter>Source Files\EventSystem</Filter>
     </ClInclude>
   </ItemGroup>

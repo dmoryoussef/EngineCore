@@ -12,16 +12,23 @@ using namespace std;
 #include <algorithm>
 #include <xinput.h>
 
+#include "Vector2.h"
 #include "Buffer.h"
 #include "ConsoleBuffer.h"
 #include "OutputWindow.h"
 #include "ConsoleWindow.h"
 #include "Win32Window.h"
 
+
+
 #include "NodeCore.h"
 #include "BaseNode.h"
 
 #include "EventListener.h"
+#include "Events.h"
+
+#include "UIComponent.h"
+#include "UILayout.h"
 
 class Engine 
 {
@@ -76,6 +83,7 @@ public:
 	~Engine() 
 	{
 		delete m_pEngineBuffer;
+		delete m_pWindow;
 	}
 
 	bool isRunning()

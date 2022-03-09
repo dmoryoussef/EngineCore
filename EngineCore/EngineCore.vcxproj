@@ -145,8 +145,12 @@
     <ClInclude Include="ConsoleWindow.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EventListener.h" />
+    <ClInclude Include="Events.h" />
     <ClInclude Include="NodeCore.h" />
     <ClInclude Include="OutputWindow.h" />
+    <ClInclude Include="UIComponent.h" />
+    <ClInclude Include="UILayout.h" />
+    <ClInclude Include="Vector2.h" />
     <ClInclude Include="Win32Window.h" />
   </ItemGroup>
   <ItemGroup>
