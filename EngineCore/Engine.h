@@ -21,6 +21,8 @@ using namespace std;
 #include "NodeCore.h"
 #include "BaseNode.h"
 
+#include "EventListener.h"
+
 class Engine 
 {
 protected:
@@ -63,6 +65,9 @@ public:
 	Engine()
 	{
 		m_bRunning = true;
+		m_pWindow = NULL;
+		m_pEngineBuffer = NULL;
+
 		LARGE_INTEGER Frequency;
 		QueryPerformanceFrequency(&Frequency);
 		nCountFreq = Frequency.QuadPart;

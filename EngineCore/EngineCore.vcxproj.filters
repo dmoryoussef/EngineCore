@@ -19,6 +19,9 @@
     <Filter Include="Source Files\BaseObject">
       <UniqueIdentifier>{0655b3d8-8cd4-4bc0-aeaa-9fb1507684d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\EventSystem">
+      <UniqueIdentifier>{0009e393-ac96-44af-9daa-4e1ef26cd9b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buffer.h">
@@ -44,6 +47,9 @@
     </ClInclude>
     <ClInclude Include="BaseNode.h">
       <Filter>Source Files\BaseObject</Filter>
+    </ClInclude>
+    <ClInclude Include="EventListener.h">
+      <Filter>Source Files\EventSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
