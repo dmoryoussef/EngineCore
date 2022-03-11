@@ -152,6 +152,7 @@
     <ClInclude Include="OutputWindow.h" />
     <ClInclude Include="UIComponent.h" />
     <ClInclude Include="UILayout.h" />
+    <ClInclude Include="UIWindow.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Win32Window.h" />
   </ItemGroup>

@@ -78,6 +78,9 @@
     <ClInclude Include="OutputWindow.h">
       <Filter>Source Files\EngineCore\Output</Filter>
     </ClInclude>
+    <ClInclude Include="UIWindow.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

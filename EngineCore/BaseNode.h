@@ -202,7 +202,10 @@ public:
 		while (isIterating())
 			getCurrent()->rootUpdate(fDeltaTime);
 	}
-	virtual string toString() { return ""; }
+	virtual string toString() 
+	{
+		return "";
+	}
 
 	//void baseRender(ConsoleRender2D* pRenderer, BaseNode* pCamera)
 	//{

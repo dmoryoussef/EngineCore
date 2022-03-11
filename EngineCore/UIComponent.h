@@ -219,7 +219,7 @@ public:
 		m_bToggle(true),
 		ConsoleOutputBuffer(0, 0)
 	{
-		setText(strText);
+		setName(strText);
 		registerListener(this, CONSOLE_MOUSE_EVENT);
 		registerListener(this, CONSOLE_KEYBOARD_EVENT);
 		registerListener(this, GUI_EVENT);
@@ -343,7 +343,7 @@ public:
 		//addEvent(new _AGUIEvent(BUTTON_EVENT, this, NULL));
 	}
 
-	void render(BaseNode* pData, ConsoleOutputBuffer* pFrame)
+	void render(BaseNode* pData, OutputBuffer* pFrame)
 	{
 		clear(m_nBGColor);
 
@@ -368,12 +368,12 @@ public:
 			getCurrent()->update(nDeltaTime);
 	}
 
-	//template <typename T> string toString(T data)
-	//{
-	//	stringstream str;
-	//	str << data;
-	//	return str.str();
-	//}
+	template <typename T> string toString(T data)
+	{
+		stringstream str;
+		str << data;
+		return str.str();
+	}
 
 	template <typename T> T* getComponent()
 	{
@@ -383,6 +383,11 @@ public:
 	string getText()
 	{
 		return m_strText;
+	}
+
+	string toString()
+	{
+		return m_strName;
 	}
 
 	Vector2 getPosition()

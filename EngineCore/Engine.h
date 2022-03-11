@@ -29,6 +29,7 @@ using namespace std;
 
 #include "UIComponent.h"
 #include "UILayout.h"
+#include "UIWindow.h"
 
 class Engine
 {
@@ -43,6 +44,8 @@ protected:
 
 	ConsoleInputBuffer *m_pInputBuffer;
 
+	BaseNode *m_pData;
+	_Component *m_pGUI;
 
 	float getDeltaTime()
 	{
@@ -65,14 +68,18 @@ protected:
 		m_pInputBuffer->dispatchEvents();
 	}
 
-	void update(float fDeltaTime) {}
+	void update(float fDeltaTime)
+	{
+
+	}
 
 	void render() 
 	{	
-		//	render game data to screen buffer
+		//	a) render game data to engine buffer
+		m_pGUI->render(m_pData, m_pEngineBuffer);
+		//	b) render engine buffer to window
 		m_pWindow->renderToBuffer(m_pEngineBuffer);
-		//	then
-		//	output buffer to window
+		//	c) output buffer to window
 		m_pWindow->outputToWindow();
 	}
 
@@ -83,7 +90,8 @@ public:
 		m_pWindow = NULL;
 		m_pEngineBuffer = NULL;
 		m_pInputBuffer = NULL;
-
+		m_pData = new BaseNode("Root");
+		m_pGUI = NULL;
 
 		LARGE_INTEGER Frequency;
 		QueryPerformanceFrequency(&Frequency);
@@ -93,7 +101,10 @@ public:
 	~Engine() 
 	{
 		delete m_pEngineBuffer;
+		delete m_pInputBuffer;
 		delete m_pWindow;
+		delete m_pData;
+		delete m_pGUI;
 	}
 
 	bool isRunning()
@@ -106,10 +117,10 @@ public:
 		m_pWindow = sb;
 		m_pWindow->init();
 		m_pEngineBuffer = new OutputBuffer(m_pWindow->getWidth(), m_pWindow->getHeight());
-		m_pEngineBuffer->set("Hello", 10, 10, 15);
-
 		m_pInputBuffer = input;
 
+		m_pGUI = new _Component(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
+		m_pGUI->add(new _Window(30, 30, 15, 15));
 	}
 
 	void run()
