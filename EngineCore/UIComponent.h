@@ -33,7 +33,7 @@ enum GUI_STATE
 class _Component :
 	public BaseNode,
 	public EventListener,
-	public ConsoleBuffer
+	public ConsoleOutputBuffer
 {
 protected:
 	Vector2 MaxSize;			//	any size greater than this - add scroll bar
@@ -185,7 +185,7 @@ public:
 		m_bToggle(true),
 		m_nBGColor(BG_BLACK),
 		m_nFGColor(FG_WHITE),
-		ConsoleBuffer(nWidth, nHeight)
+		ConsoleOutputBuffer(nWidth, nHeight)
 	{
 		setName("COMPONENT");
 		registerListener(this, CONSOLE_MOUSE_EVENT);
@@ -202,7 +202,7 @@ public:
 		m_bMouseOver(false),
 		m_bActive(false),
 		m_bToggle(true),
-		ConsoleBuffer(nWidth, nHeight)
+		ConsoleOutputBuffer(nWidth, nHeight)
 	{
 		registerListener(this, CONSOLE_MOUSE_EVENT);
 		registerListener(this, GUI_EVENT);
@@ -217,7 +217,7 @@ public:
 		m_bMouseOver(false),
 		m_bActive(false),
 		m_bToggle(true),
-		ConsoleBuffer(0, 0)
+		ConsoleOutputBuffer(0, 0)
 	{
 		setText(strText);
 		registerListener(this, CONSOLE_MOUSE_EVENT);
@@ -236,7 +236,7 @@ public:
 		m_bMouseOver(false),
 		m_bActive(false),
 		m_bToggle(true),
-		ConsoleBuffer(0, 0)
+		ConsoleOutputBuffer(0, 0)
 	{
 		setName("COMPONENT");
 		registerListener(this, CONSOLE_MOUSE_EVENT);
@@ -343,20 +343,7 @@ public:
 		//addEvent(new _AGUIEvent(BUTTON_EVENT, this, NULL));
 	}
 
-	//	REFACTOR TO BASE_COMPONENT WITH ASCII AND WIN32 AS DERIVED
-	//virtual void Win32Draw(BaseNode *pData) {}
-	//virtual void Win32ConstructBase() {}
-	//void Win32Render(BaseNode *pData)
-	//{
-	//	//	handle self
-	//	//Win32Draw(pData);
-	//	//Win32ConstructBase();
-	//	//	handle children
-	//	for (_AComponent *pChild = getStart<_AComponent>(); pChild != NULL; pChild = pChild->getNext<_AComponent>())
-	//		pChild->Win32Render(pData);
-	//}
-
-	void render(BaseNode* pData, ConsoleBuffer* pFrame)
+	void render(BaseNode* pData, ConsoleOutputBuffer* pFrame)
 	{
 		clear(m_nBGColor);
 

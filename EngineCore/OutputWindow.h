@@ -28,6 +28,6 @@ public:
 
 	virtual void outputToWindow() = 0;
 
-	virtual void renderToBuffer(Buffer *pBuffer) = 0;
+	virtual void renderToBuffer(OutputBuffer *pBuffer) = 0;
 
 };

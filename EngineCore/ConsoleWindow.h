@@ -23,7 +23,7 @@ public:
 		m_pBuffer = new CHAR_INFO[m_nScreenHeight * m_nScreenWidth];
 	}
 
-	void renderToBuffer(Buffer *pBuffer)
+	void renderToBuffer(OutputBuffer *pBuffer)
 	{
 		for (int nY = 0; nY < pBuffer->getHeight(); ++nY)
 			for (int nX = 0; nX < pBuffer->getWidth(); ++nX)

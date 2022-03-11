@@ -25,24 +25,15 @@
     <Filter Include="Source Files\GUI">
       <UniqueIdentifier>{be8cdb9e-010b-4533-8fbc-256acda772b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\EngineCore\Input">
+      <UniqueIdentifier>{5c41d305-3ec3-4a58-a45c-04d4b37ea0f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EngineCore\Output">
+      <UniqueIdentifier>{12059b13-cda8-4764-995d-4ca0bdf457fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Buffer.h">
-      <Filter>Source Files\EngineCore</Filter>
-    </ClInclude>
-    <ClInclude Include="ConsoleBuffer.h">
-      <Filter>Source Files\EngineCore</Filter>
-    </ClInclude>
-    <ClInclude Include="ConsoleWindow.h">
-      <Filter>Source Files\EngineCore</Filter>
-    </ClInclude>
     <ClInclude Include="Engine.h">
-      <Filter>Source Files\EngineCore</Filter>
-    </ClInclude>
-    <ClInclude Include="OutputWindow.h">
-      <Filter>Source Files\EngineCore</Filter>
-    </ClInclude>
-    <ClInclude Include="Win32Window.h">
       <Filter>Source Files\EngineCore</Filter>
     </ClInclude>
     <ClInclude Include="NodeCore.h">
@@ -65,6 +56,27 @@
     </ClInclude>
     <ClInclude Include="Events.h">
       <Filter>Source Files\EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Source Files\EngineCore\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Source Files\EngineCore\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Source Files\EngineCore\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleBuffer.h">
+      <Filter>Source Files\EngineCore\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleWindow.h">
+      <Filter>Source Files\EngineCore\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32Window.h">
+      <Filter>Source Files\EngineCore\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputWindow.h">
+      <Filter>Source Files\EngineCore\Output</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

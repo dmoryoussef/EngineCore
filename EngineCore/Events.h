@@ -11,6 +11,18 @@ enum EVENT_TYPE
 	BASENODE_EVENT
 };
 
+struct MouseState
+{
+	int nX;
+	int nY;
+	Vector2 Position;
+	bool bLeftButtonDown = false;
+	bool bRightButtonDown = false;
+	bool bWheeledUp = false;
+	bool bWheeledDown = false;
+	bool bWheelButtonDown = false;
+	bool bShiftDown = false;
+};
 
 class KeyboardEvent :
 	public _Event
@@ -29,19 +41,6 @@ public:
 		return m_bKeyDown;
 	}
 	char getKey() { return m_chKey; }
-};
-
-struct MouseState
-{
-	int nX;
-	int nY;
-	Vector2 Position;
-	bool bLeftButtonDown = false;
-	bool bRightButtonDown = false;
-	bool bWheeledUp = false;
-	bool bWheeledDown = false;
-	bool bWheelButtonDown = false;
-	bool bShiftDown = false;
 };
 
 class MouseEvent :

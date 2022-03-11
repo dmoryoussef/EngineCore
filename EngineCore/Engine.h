@@ -13,24 +13,24 @@ using namespace std;
 #include <xinput.h>
 
 #include "Vector2.h"
+
+#include "EventListener.h"
+#include "Events.h"
+#include "Input.h"  //	inherits eventlistener, posts console events to event system
+
 #include "Buffer.h"
 #include "ConsoleBuffer.h"
 #include "OutputWindow.h"
 #include "ConsoleWindow.h"
 #include "Win32Window.h"
 
-
-
 #include "NodeCore.h"
 #include "BaseNode.h"
-
-#include "EventListener.h"
-#include "Events.h"
 
 #include "UIComponent.h"
 #include "UILayout.h"
 
-class Engine 
+class Engine
 {
 protected:
 	bool m_bRunning;
@@ -39,7 +39,10 @@ protected:
 	LARGE_INTEGER PrevCounter;
 
 	OutputWindow *m_pWindow;
-	Buffer* m_pEngineBuffer;
+	OutputBuffer *m_pEngineBuffer;
+
+	ConsoleInputBuffer *m_pInputBuffer;
+
 
 	float getDeltaTime()
 	{
@@ -55,7 +58,12 @@ protected:
 		return fDelta;
 	}
 
-	void handleEvents() {}
+	void handleEvents() 
+	{
+		m_pInputBuffer->getConsoleInput();
+		m_pInputBuffer->convertEvents();
+		m_pInputBuffer->dispatchEvents();
+	}
 
 	void update(float fDeltaTime) {}
 
@@ -74,6 +82,8 @@ public:
 		m_bRunning = true;
 		m_pWindow = NULL;
 		m_pEngineBuffer = NULL;
+		m_pInputBuffer = NULL;
+
 
 		LARGE_INTEGER Frequency;
 		QueryPerformanceFrequency(&Frequency);
@@ -91,12 +101,15 @@ public:
 		return m_bRunning;
 	}
 
-	void setup(OutputWindow *sb)
+	void setup(OutputWindow *sb, ConsoleInputBuffer *input)
 	{
 		m_pWindow = sb;
 		m_pWindow->init();
-		m_pEngineBuffer = new Buffer(m_pWindow->getWidth(), m_pWindow->getHeight());
+		m_pEngineBuffer = new OutputBuffer(m_pWindow->getWidth(), m_pWindow->getHeight());
 		m_pEngineBuffer->set("Hello", 10, 10, 15);
+
+		m_pInputBuffer = input;
+
 	}
 
 	void run()
