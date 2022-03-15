@@ -11,6 +11,7 @@ using namespace std;
 #include <sstream>
 #include <algorithm>
 #include <xinput.h>
+#include <thread>
 
 #include "Vector2.h"
 
@@ -47,6 +48,9 @@ protected:
 	BaseNode *m_pData;
 	_Component *m_pGUI;
 
+	EventListener events;
+	thread eventThread;
+
 	float getDeltaTime()
 	{
 		//	convert to a class, to be able to handle multiple timers for testing
@@ -65,12 +69,16 @@ protected:
 	{
 		m_pInputBuffer->getConsoleInput();
 		m_pInputBuffer->convertEvents();
-		m_pInputBuffer->dispatchEvents();
+		//m_pInputBuffer->dispatchEvents();
+		//events.dispatchEvents();
 	}
 
 	void update(float fDeltaTime)
 	{
-
+		while (m_pData->isIterating())
+		{
+			m_pData->getCurrent()->update(fDeltaTime);
+		}
 	}
 
 	void render() 
@@ -84,7 +92,9 @@ protected:
 	}
 
 public:
-	Engine()
+	Engine() :
+		events(),
+		eventThread(events)
 	{
 		m_bRunning = true;
 		m_pWindow = NULL;
@@ -92,10 +102,12 @@ public:
 		m_pInputBuffer = NULL;
 		m_pData = new BaseNode("Root");
 		m_pGUI = NULL;
+		
 
 		LARGE_INTEGER Frequency;
 		QueryPerformanceFrequency(&Frequency);
 		nCountFreq = Frequency.QuadPart;
+
 	}
 
 	~Engine() 
@@ -121,6 +133,9 @@ public:
 
 		m_pGUI = new _Component(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
 		m_pGUI->add(new _Window(30, 30, 15, 15));
+		m_pGUI->add(new _Window(30, 30, 50, 50));
+
+		
 	}
 
 	void run()

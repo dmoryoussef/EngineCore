@@ -1,3 +1,5 @@
+#include <queue>
+
 class _Event
 {
 public:
@@ -21,7 +23,7 @@ class EventListener
 {
 protected:
 	static map<int, vector<EventListener*>> Listeners;
-	static vector<_Event*> Events;
+	static queue<_Event*> Events;
 
 	//static map<int, map<EventListener*, eventCallBack>> CallBackListeners;
 
@@ -36,6 +38,15 @@ public:
 	~EventListener()
 	{
 		unregisterAll(this);
+	}
+
+	void operator()()
+	{
+		while (true)
+		{
+			if (Events.size() > 0)
+				dispatchEvent();
+		}
 	}
 
 	void unregisterAll(EventListener* pListener)
@@ -84,44 +95,61 @@ public:
 
 	void addEvent(_Event* Event)
 	{
-		Events.push_back(Event);
+		Events.push(Event);
 	}
 
 	void dispatchCallbackEvents()
 	{
-		for (int nI = 0; nI < Events.size(); nI++)						// For each event in Queue(vector)
-		{
-			//map<int, map<EventListener*, eventCallBack>>::iterator CallBackListener;
-			//CallBackListener = CallBackListeners.find(Events[nI]->m_eType);
-			//map<EventListener*, eventCallBack>::iterator Listener = CallBackListener->second.begin();
-			//while (Listener != CallBackListener->second.end())
-			{
-				//	Listener->second;
-			}
+		//for (int nI = 0; nI < Events.size(); nI++)						// For each event in Queue(vector)
+		//{
+		//	//map<int, map<EventListener*, eventCallBack>>::iterator CallBackListener;
+		//	//CallBackListener = CallBackListeners.find(Events[nI]->m_eType);
+		//	//map<EventListener*, eventCallBack>::iterator Listener = CallBackListener->second.begin();
+		//	//while (Listener != CallBackListener->second.end())
+		//	{
+		//		//	Listener->second;
+		//	}
 
-			delete Events[nI];											//	Delete event pointer data (does not remove element from vector)
+		//	delete Events[nI];											//	Delete event pointer data (does not remove element from vector)
+		//}
+		//Events.clear();													//	Now clear Events
+	}
+
+	void dispatchEvent()
+	{
+		map<int, vector<EventListener*>>::iterator Listener;
+		_Event *pEvent = Events.front();
+
+		Listener = Listeners.find(pEvent->m_eType);
+		if (Listener != Listeners.end())							//  if Listeners found
+		{
+			for (int nJ = 0; nJ < Listener->second.size(); nJ++)	//	for each Listener
+			{
+				Listener->second[nJ]->onEvent(pEvent);				//	handle
+			}
 		}
-		Events.clear();													//	Now clear Events
+
+		Events.pop();
 	}
 
 	void dispatchEvents()
 	{
-		for (int nI = 0; nI < Events.size(); nI++)
-		{
-			map<int, vector<EventListener*>>::iterator Listener;
-			Listener = Listeners.find(Events[nI]->m_eType);				//	check for listeners for this event
-			if (Listener != Listeners.end())							//  if Listeners found
-			{
-				for (int nJ = 0; nJ < Listener->second.size(); nJ++)	//	for each Listener
-				{
-					Listener->second[nJ]->onEvent(Events[nI]);			//	handle
-				}
-			}
+		//for (int nI = 0; nI < Events.size(); nI++)
+		//{
+		//	map<int, vector<EventListener*>>::iterator Listener;
+		//	Listener = Listeners.find(Events[nI]->m_eType);				//	check for listeners for this event
+		//	if (Listener != Listeners.end())							//  if Listeners found
+		//	{
+		//		for (int nJ = 0; nJ < Listener->second.size(); nJ++)	//	for each Listener
+		//		{
+		//			Listener->second[nJ]->onEvent(Events[nI]);			//	handle
+		//		}
+		//	}
 
-			delete Events[nI];											//	delete event pointer data (does not remove element from vector)
-		}
+		//	delete Events[nI];											//	delete event pointer data (does not remove element from vector)
+		//}
 
-		Events.clear();													//	clear vector
+		//Events.clear();													//	clear vector
 	}
 
 	void deleteListeners()
@@ -147,4 +175,4 @@ public:
 //map<int, map<EventListener*, eventCallBack>> EventListener::CallBackListeners;
 
 map<int, vector<EventListener*>> EventListener::Listeners;
-vector<_Event*> EventListener::Events;
+queue<_Event*> EventListener::Events;
