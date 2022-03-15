@@ -14,6 +14,7 @@ using namespace std;
 #include <thread>
 
 #include "Vector2.h"
+#include "Vector3.h"
 
 #include "EventListener.h"
 #include "Events.h"
@@ -25,12 +26,17 @@ using namespace std;
 #include "ConsoleWindow.h"
 #include "Win32Window.h"
 
+#include "Renderer.h"
+
 #include "NodeCore.h"
 #include "BaseNode.h"
 
 #include "UIComponent.h"
 #include "UILayout.h"
 #include "UIWindow.h"
+
+#include "_Tile2D.h"
+#include "_TileMap.h"
 
 class Engine
 {

@@ -150,11 +150,15 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="NodeCore.h" />
     <ClInclude Include="OutputWindow.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="UIComponent.h" />
     <ClInclude Include="UILayout.h" />
     <ClInclude Include="UIWindow.h" />
     <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vector3.h" />
     <ClInclude Include="Win32Window.h" />
+    <ClInclude Include="_Tile2D.h" />
+    <ClInclude Include="_TileMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />

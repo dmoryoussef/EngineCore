@@ -31,6 +31,18 @@
     <Filter Include="Source Files\EngineCore\Output">
       <UniqueIdentifier>{12059b13-cda8-4764-995d-4ca0bdf457fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\EntityComponentSystem">
+      <UniqueIdentifier>{760a60aa-40e4-466c-8f97-fdf1e5d89fca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TileMapSystem">
+      <UniqueIdentifier>{3a040132-4e9d-48fb-821b-a5391a7ede1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TileMapSystem\Tiles">
+      <UniqueIdentifier>{245b5808-0dec-40a7-af11-710c5f450304}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TileMapSystem\Maps">
+      <UniqueIdentifier>{55b4d579-3d56-4d27-92aa-cc482fd6bc14}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -80,6 +92,18 @@
     </ClInclude>
     <ClInclude Include="UIWindow.h">
       <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="_TileMap.h">
+      <Filter>Source Files\TileMapSystem\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="_Tile2D.h">
+      <Filter>Source Files\TileMapSystem\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>Source Files\EngineCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Source Files\EngineCore</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
