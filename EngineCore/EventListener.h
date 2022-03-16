@@ -130,6 +130,7 @@ public:
 		}
 
 		Events.pop();
+		delete pEvent;
 	}
 
 	void dispatchEvents()
