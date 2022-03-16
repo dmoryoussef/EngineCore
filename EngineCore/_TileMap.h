@@ -376,57 +376,57 @@ protected:
 	{
 		switch (pEvent->m_eType)
 		{
-		case MOUSEWORLD_EVENT:
-		{
-			//Vector2 Position = pEvent->get<MouseWorldEvent>()->getWorldPosition();
-			//if (Position.Y >= 0 && Position.Y < Size.Y && Position.X >= 0 && Position.X < Size.X)
-			//{
-			//	if (TileType* pTile = getTile(Position))
-			//	{
-			//		if (m_pMouseOverTile != pTile)
-			//		{
-			//			//	 new mouseover tile
-			//			if (m_pMouseOverTile != NULL)
-			//			{
-			//				//	previous tile no longer mouse over
-			//				m_pMouseOverTile->setMouseOver(false);
-			//				//	*send previous mouse over tile update event here*
-			//				addEvent(new BaseNodeEvent(m_pMouseOverTile));
-			//			}
-			//			m_pMouseOverTile = pTile;
-			//			m_pMouseOverTile->setMouseOver(true);
-			//			//	*send new mouse over tile event here*
-			//			addEvent(new BaseNodeEvent(m_pMouseOverTile));
-			//		}
-			//	}
+			case MOUSEWORLD_EVENT:
+			{
+				Vector2 Position = pEvent->get<MouseWorldEvent>()->getWorldPosition();
+				if (Position.Y >= 0 && Position.Y < Size.Y && Position.X >= 0 && Position.X < Size.X)
+				{
+					if (TileType* pTile = getTile(Position))
+					{
+						if (m_pMouseOverTile != pTile)
+						{
+							//	 new mouseover tile
+							if (m_pMouseOverTile != NULL)
+							{
+								//	previous tile no longer mouse over
+								m_pMouseOverTile->setMouseOver(false);
+								//	*send previous mouse over tile update event here*
+								addEvent(new BaseNodeEvent(m_pMouseOverTile));
+							}
+							m_pMouseOverTile = pTile;
+							m_pMouseOverTile->setMouseOver(true);
+							//	*send new mouse over tile event here*
+							addEvent(new BaseNodeEvent(m_pMouseOverTile));
+						}
+					}
 
 
-			//	/*MouseState State = pEvent->get<MouseWorldEvent>()->getState();
-			//	if (State.bLeftButtonDown)
-			//	{
-			//		getTile(Position)->setValue(1.0);
-			//		toPolyAlgorythm();
-			//	}
-			//	if (State.bRightButtonDown)
-			//	{
-			//		getTile(Position)->setValue(0.0);
-			//		toPolyAlgorythm();
-			//	}*/
-			//}
-			//else
-			//{
-			//	if (m_pMouseOverTile != NULL)
-			//	{
-			//		//	mouse no longer over tilemap at all
-			//		m_pMouseOverTile->setMouseOver(false);
-			//		//	*send previous mouse over tile update event here*
-			//		addEvent(new BaseNodeEvent(m_pMouseOverTile));
-			//		m_pMouseOverTile = NULL;
-			//	}
-			//}
+					/*MouseState State = pEvent->get<MouseWorldEvent>()->getState();
+					if (State.bLeftButtonDown)
+					{
+						getTile(Position)->setValue(1.0);
+						toPolyAlgorythm();
+					}
+					if (State.bRightButtonDown)
+					{
+						getTile(Position)->setValue(0.0);
+						toPolyAlgorythm();
+					}*/
+				}
+				else
+				{
+					if (m_pMouseOverTile != NULL)
+					{
+						//	mouse no longer over tilemap at all
+						m_pMouseOverTile->setMouseOver(false);
+						//	*send previous mouse over tile update event here*
+						addEvent(new BaseNodeEvent(m_pMouseOverTile));
+						m_pMouseOverTile = NULL;
+					}
+				}
 
 
-		}break;
+			}break;
 
 		}
 	}
@@ -602,49 +602,49 @@ public:
 		createCheckerMap();
 	}
 
-	void render(Render2D* pRenderer, BaseNode* pCamera)
+	void render(Render2D *pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
 	{
 		/*Vector3 vCameraPosition = pCamera->getChild<Transform3D>()->getPosition();
 		Vector2 vWorldMin = pCamera->getChild<Camera>()->getWorldMin();
 		Vector2 vWorldMax = pCamera->getChild<Camera>()->getWorldMax();*/
 
-		//if (vWorldMin.Y < 0)
-		//	vWorldMin.Y = 0;
-		//if (vWorldMin.X < 0)
-		//	vWorldMin.X = 0;
-		//if (vWorldMax.Y > Size.Y)
-		//	vWorldMax.Y = Size.Y;
-		//if (vWorldMax.X > Size.X)
-		//	vWorldMax.X = Size.X;
+		if (vWorldMin.Y < 0)
+			vWorldMin.Y = 0;
+		if (vWorldMin.X < 0)
+			vWorldMin.X = 0;
+		if (vWorldMax.Y > Size.Y)
+			vWorldMax.Y = Size.Y;
+		if (vWorldMax.X > Size.X)
+			vWorldMax.X = Size.X;
 
-		//int TilesRendered = 0;
+		int TilesRendered = 0;
 
-		//for (int nY = vWorldMin.Y; nY < vWorldMax.Y; nY++)
-		//	for (int nX = vWorldMin.X; nX < vWorldMax.X; nX++)
-		//	{
-		//		Vector2 Min(vCameraPosition.X + nX * vCameraPosition.Z, vCameraPosition.Y + nY * vCameraPosition.Z);
-		//		Vector2 Max(vCameraPosition.X + nX * vCameraPosition.Z + 1 * vCameraPosition.Z, vCameraPosition.Y + nY * vCameraPosition.Z + 1 * vCameraPosition.Z);
+		for (int nY = vWorldMin.Y; nY < vWorldMax.Y; nY++)
+			for (int nX = vWorldMin.X; nX < vWorldMax.X; nX++)
+			{
+				Vector2 Min(vCameraPosition.X + nX * vCameraPosition.Z, vCameraPosition.Y + nY * vCameraPosition.Z);
+				Vector2 Max(vCameraPosition.X + nX * vCameraPosition.Z + 1 * vCameraPosition.Z, vCameraPosition.Y + nY * vCameraPosition.Z + 1 * vCameraPosition.Z);
 
-		//		{
-		//			pRenderer->DrawQuad(Min.X,
-		//				Min.Y,
-		//				Max.X,
-		//				Max.Y,
-		//				pRenderer->getGreyscaleColor(getTile(nX, nY)->getValue()));
-		//		}
+				{
+					pRenderer->DrawQuad(Min.X,
+						Min.Y,
+						Max.X,
+						Max.Y,
+						pRenderer->getGreyscaleColor(getTile(nX, nY)->getValue()));
+				}
 
-		//		TilesRendered++;
+				TilesRendered++;
 
-		//		//	move to bottom of render, to put on top
-		//		if (getTile(nX, nY) == getMouseOverTile())
-		//		{
-		//			pRenderer->DrawQuad(Min.X,
-		//				Min.Y,
-		//				Max.X,
-		//				Max.Y,
-		//				Pixel(PIXEL_SOLID, FG_LIGHTGREEN));//pRenderer->getGreyscaleColor(0));
+				//	move to bottom of render, to put on top
+				if (getTile(nX, nY) == getMouseOverTile())
+				{
+					pRenderer->DrawQuad(Min.X,
+						Min.Y,
+						Max.X,
+						Max.Y,
+						Pixel(PIXEL_SOLID, FG_LIGHTGREEN));//pRenderer->getGreyscaleColor(0));
 
-		//		}
-		//	}
+				}
+			}
 	}
 };

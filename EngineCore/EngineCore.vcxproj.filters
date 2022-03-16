@@ -78,7 +78,7 @@
     <ClInclude Include="Color.h">
       <Filter>Source Files\EngineCore\Output</Filter>
     </ClInclude>
-    <ClInclude Include="ConsoleBuffer.h">
+    <ClInclude Include="ConsoleOutputBuffer.h">
       <Filter>Source Files\EngineCore\Output</Filter>
     </ClInclude>
     <ClInclude Include="ConsoleWindow.h">
@@ -104,6 +104,12 @@
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Source Files\EngineCore</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraWindow.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleInputBuffer.h">
+      <Filter>Source Files\EngineCore\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

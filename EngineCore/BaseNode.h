@@ -207,13 +207,14 @@ public:
 		return "";
 	}
 
-	//void baseRender(ConsoleRender2D* pRenderer, BaseNode* pCamera)
-	//{
-	//	render(pRenderer, pCamera);
-	//	while (isIterating())
-	//	{
-	//		getCurrent()->baseRender(pRenderer, pCamera);
-	//	}
-	//}
-	//virtual void render(ConsoleRender2D* pRenderer, BaseNode* pCamera) {};
+	void baseRender(Render2D *pRenderer, BaseNode *pCamera)
+	{
+		render(pRenderer, pCamera);
+		while (isIterating())
+		{
+			getCurrent()->baseRender(pRenderer, pCamera);
+		}
+	}
+
+	virtual void render(Render2D *pRenderer, BaseNode *pCamera) {};
 };

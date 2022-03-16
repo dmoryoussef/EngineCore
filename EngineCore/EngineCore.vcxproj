@@ -141,8 +141,10 @@
   <ItemGroup>
     <ClInclude Include="BaseNode.h" />
     <ClInclude Include="Buffer.h" />
+    <ClInclude Include="CameraWindow.h" />
     <ClInclude Include="Color.h" />
-    <ClInclude Include="ConsoleBuffer.h" />
+    <ClInclude Include="ConsoleOutputBuffer.h" />
+    <ClInclude Include="ConsoleInputBuffer.h" />
     <ClInclude Include="ConsoleWindow.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EventListener.h" />

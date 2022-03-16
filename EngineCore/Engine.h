@@ -16,24 +16,34 @@ using namespace std;
 #include "Vector2.h"
 #include "Vector3.h"
 
+//	CORE STUFF
 #include "EventListener.h"
-#include "Events.h"
-#include "Input.h"  //	inherits eventlistener, posts console events to event system
-
 #include "Buffer.h"
-#include "ConsoleBuffer.h"
 #include "OutputWindow.h"
-#include "ConsoleWindow.h"
-#include "Win32Window.h"
-
+#include "Input.h"  //	inherits eventlistener, posts console events to event system
 #include "Renderer.h"
+//	ConsoleRenderer.h
+//	Win32Renderer.h
 
 #include "NodeCore.h"
 #include "BaseNode.h"
 
+#include "Events.h"
+
+#include "ConsoleWindow.h"
+#include "Win32Window.h"
+
+#include "ConsoleInputBuffer.h"
+//	WindowsInputBuffer.h
+#include "ConsoleOutputBuffer.h"
+
+
+//	OBJECTS AND STUFF
+//	EntityComponentSystem, TileMapSystem, etc
 #include "UIComponent.h"
 #include "UILayout.h"
 #include "UIWindow.h"
+//	#include "CameraWindow.h"
 
 #include "_Tile2D.h"
 #include "_TileMap.h"
@@ -52,7 +62,7 @@ protected:
 	ConsoleInputBuffer *m_pInputBuffer;
 
 	BaseNode *m_pData;
-	_Component *m_pGUI;
+	_Window *m_pGUI;
 
 	EventListener events;
 	thread eventThread;
@@ -113,7 +123,6 @@ public:
 		LARGE_INTEGER Frequency;
 		QueryPerformanceFrequency(&Frequency);
 		nCountFreq = Frequency.QuadPart;
-
 	}
 
 	~Engine() 
@@ -137,11 +146,11 @@ public:
 		m_pEngineBuffer = new OutputBuffer(m_pWindow->getWidth(), m_pWindow->getHeight());
 		m_pInputBuffer = input;
 
-		m_pGUI = new _Component(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
-		m_pGUI->add(new _Window(30, 30, 15, 15));
-		m_pGUI->add(new _Window(30, 30, 50, 50));
+		m_pGUI = new _Window(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
+		/*m_pGUI->add(new _Window(30, 30, 15, 15));
+		m_pGUI->add(new _Window(30, 30, 50, 50));*/
 
-		
+		m_pData->add(new DefaultTileMap());
 	}
 
 	void run()

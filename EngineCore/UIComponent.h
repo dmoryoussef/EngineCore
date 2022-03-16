@@ -30,7 +30,7 @@ enum GUI_STATE
 
 
 
-class _Component :
+class _UIComponent :
 	public BaseNode,
 	public EventListener,
 	public ConsoleOutputBuffer
@@ -50,9 +50,8 @@ protected:
 	int m_nBGColor;
 	int m_nFGColor;
 
-	virtual void removeComponent(_Component* pComponent) {}
+	virtual void removeComponent(_UIComponent* pComponent) {}
 	virtual void constructComponent(BaseNode* pData) {}
-
 
 	void onEvent(_Event* pEvent)
 	{
@@ -172,9 +171,10 @@ protected:
 			}
 	}
 
+	virtual void constructBase() {}
 
 public:
-	_Component(int nWidth, int nHeight, int nPosX, int nPosY) :
+	_UIComponent(int nWidth, int nHeight, int nPosX, int nPosY) :
 		m_nState(DEFAULT),
 		Position(nPosX, nPosY),
 		MaxSize(nWidth, nHeight),
@@ -194,7 +194,7 @@ public:
 		registerListener(this, GUI_EVENT);
 	};
 
-	_Component(int nWidth, int nHeight) :
+	_UIComponent(int nWidth, int nHeight) :
 		m_nState(DEFAULT),
 		Position(0, 0),
 		MaxSize(0, 0),
@@ -209,7 +209,7 @@ public:
 		registerListener(this, CONSOLE_KEYBOARD_EVENT);
 	};
 
-	_Component(string strText) :
+	_UIComponent(string strText) :
 		m_nState(DEFAULT),
 		Position(0, 0),
 		MaxSize(0, 0),
@@ -228,7 +228,7 @@ public:
 		//	components in list
 	};
 
-	_Component() :
+	_UIComponent() :
 		m_nState(DEFAULT),
 		Position(0, 0),
 		MaxSize(0, 0),
@@ -247,7 +247,7 @@ public:
 		//	components in list
 	};
 
-	~_Component()
+	~_UIComponent()
 	{
 		//	unregisterAll(this);
 	}
@@ -276,7 +276,7 @@ public:
 			while (m_pParent->isIterating())
 			{
 				//	if current's alignment == this alignment
-				_Component* pCurrent = m_pParent->getCurrent<_Component>();
+				_UIComponent* pCurrent = m_pParent->getCurrent<_UIComponent>();
 				if (pCurrent != this)
 					if (pCurrent->getAlignment() == nAlignment)
 					{
@@ -304,12 +304,12 @@ public:
 				{
 					int nX = 1;
 					int nY = nAlignY;
-					nY = getParent<_Component>()->m_nHeight;
+					nY = getParent<_UIComponent>()->m_nHeight;
 					Position = Vector2(nX / 2 - m_nWidth, nY);
 				} break;
 				case ALIGN_RIGHT:
 				{
-					int nX = getParent<_Component>()->m_nWidth;
+					int nX = getParent<_UIComponent>()->m_nWidth;
 					int nY = nAlignY;
 					Position = Vector2(nX - m_nWidth - 1, nY);
 				} break;
@@ -351,13 +351,14 @@ public:
 		constructComponent(pData);
 
 		//	layer base on top (title, boarder, etc)
+		//	only called here
 		constructBase();
 
 		//	set final look to main frame
 		pFrame->set(this, getMin().X, getMin().Y);
 
 		// Now do the same for each child component
-		for (_Component* pChild = getStart<_Component>(); pChild != NULL; pChild = pChild->getNext<_Component>())
+		for (_UIComponent* pChild = getStart<_UIComponent>(); pChild != NULL; pChild = pChild->getNext<_UIComponent>())
 		{
 			pChild->render(pData, pFrame);
 		}
@@ -397,7 +398,7 @@ public:
 	Vector2 getConsoleWindowPosition()
 	{
 		Vector2 RelPosition = Position;
-		for (_Component* pParent = getParent<_Component>(); pParent != NULL; pParent = pParent->getParent<_Component>())
+		for (_UIComponent* pParent = getParent<_UIComponent>(); pParent != NULL; pParent = pParent->getParent<_UIComponent>())
 		{
 			Vector2 ParentPos = pParent->getPosition();
 			RelPosition = RelPosition + ParentPos;
@@ -429,7 +430,7 @@ public:
 	virtual void updateMouseOver(Vector2 MousePosition)
 	{
 		if (getParent())									// MOVED THIS TO COMPONENT SPECIFIC 
-			if (getParent<_Component>()->isMouseOver())	//	only handle if the parent component is already mouseover
+			if (getParent<_UIComponent>()->isMouseOver())	//	only handle if the parent component is already mouseover
 			{
 				if (MousePosition.X >= getMin().X &&
 					MousePosition.Y >= getMin().Y &&
@@ -455,11 +456,10 @@ public:
 	{
 		m_bMouseOver = bMouseOver;
 	}
-	virtual void addComponent(_Component* pComponent)
+	virtual void addComponent(_UIComponent* pComponent)
 	{
 		addChild(pComponent);
 		pComponent->setAlignment(pComponent->getAlignment());
 	}
-	virtual void constructBase() {}
 };
 

@@ -11,19 +11,6 @@ enum EVENT_TYPE
 	BASENODE_EVENT
 };
 
-struct MouseState
-{
-	int nX;
-	int nY;
-	Vector2 Position;
-	bool bLeftButtonDown = false;
-	bool bRightButtonDown = false;
-	bool bWheeledUp = false;
-	bool bWheeledDown = false;
-	bool bWheelButtonDown = false;
-	bool bShiftDown = false;
-};
-
 class KeyboardEvent :
 	public _Event
 {
@@ -58,5 +45,54 @@ public:
 	MouseState getState()
 	{
 		return State;
+	}
+};
+
+class MouseWorldEvent : public _Event
+{
+private:
+	Vector2 WorldPosition;
+	MouseState State;
+
+public:
+	MouseWorldEvent(Vector2 position, MouseState state) :
+		WorldPosition(position),
+		State(state),
+		_Event(MOUSEWORLD_EVENT) {};
+
+	Vector2 getWorldPosition()
+	{
+		return WorldPosition;
+	}
+
+	MouseState getState()
+	{
+		return State;
+	}
+};
+
+class BaseNodeEvent :
+	public _Event
+{
+private:
+	BaseNode* m_pBaseNode;
+
+public:
+	BaseNodeEvent(BaseNode* pBaseNode) :
+		m_pBaseNode(pBaseNode),
+		_Event(BASENODE_EVENT) {};
+
+	BaseNode* getBaseNode()
+	{
+		return m_pBaseNode;
+	}
+
+	template <typename T> T* getBaseNode()
+	{
+		/*if (typeid(*m_pBaseNode) == typeid(T))
+			return static_cast<T*>(m_pBaseNode);
+
+		return NULL;*/
+		return dynamic_cast<T*>(m_pBaseNode);
 	}
 };

@@ -1,5 +1,5 @@
 class _Window :
-	public _Component
+	public _UIComponent
 {
 protected:
 	bool m_bDraggable;
@@ -57,7 +57,7 @@ protected:
 
 	void onEvent(_Event* pEvent)
 	{
-		_Component::onEvent(pEvent);
+		_UIComponent::onEvent(pEvent);
 
 		switch (pEvent->m_eType)
 		{
@@ -101,10 +101,10 @@ protected:
 public:
 	_Window(int nWidth, int nHeight, int nPosX, int nPosY) :
 		m_bDragActive(false),
-		m_bDisplayPosition(true),
-		m_bDisplayTitle(true),
-		m_bDraggable(true),
-		_Component(nWidth, nHeight, nPosX, nPosY)
+		m_bDisplayPosition(false),
+		m_bDisplayTitle(false),
+		m_bDraggable(false),
+		_UIComponent(nWidth, nHeight, nPosX, nPosY)
 	{
 		setName("DEFAULT_WINDOW");
 		setText("DEFAULT_WINDOW");
@@ -113,7 +113,9 @@ public:
 	_Window(string strTitle, int nWidth, int nHeight, int nPosX, int nPosY) :
 		m_bDragActive(false),
 		m_bDisplayPosition(true),
-		_Component(nWidth, nHeight, nPosX, nPosY)
+		m_bDraggable(true),
+		m_bDisplayTitle(true),
+		_UIComponent(nWidth, nHeight, nPosX, nPosY)
 	{
 		setName(strTitle);
 		setText(strTitle);
@@ -124,7 +126,7 @@ public:
 		m_bDisplayPosition(true),
 		m_bDisplayTitle(true),
 		m_bDraggable(false),
-		_Component(50, 50, 0, 0)
+		_UIComponent(50, 50, 0, 0)
 	{
 		setName("DEFAULT_WINDOW");
 		setText("DEFAULT_WINDOW");
@@ -173,14 +175,14 @@ public:
 			setMouseOver(false);
 	}
 
-	void resetMouseOver(_Component* pComponent)
+	void resetMouseOver(_UIComponent* pComponent)
 	{
 		if (pComponent->isMouseOver())
 			m_bMouseOver = false;
 
-		for (_Component* pCurrent = pComponent->getStart<_Component>();		//	if any (window component) on top is mouse over - reset this 
+		for (_UIComponent* pCurrent = pComponent->getStart<_UIComponent>();		//	if any (window component) on top is mouse over - reset this 
 			pCurrent != NULL;
-			pCurrent = pCurrent->getNext<_Component>())
+			pCurrent = pCurrent->getNext<_UIComponent>())
 
 			resetMouseOver(pCurrent);
 	}
@@ -205,9 +207,9 @@ public:
 					pCurrent = pCurrent->getPrevious<_AComponent>())
 						resetMouseOver(pCurrent);*/
 
-			for (_Component* pCurrent = getNext<_Component>();
+			for (_UIComponent* pCurrent = getNext<_UIComponent>();
 				pCurrent != NULL;
-				pCurrent = pCurrent->getNext<_Component>())
+				pCurrent = pCurrent->getNext<_UIComponent>())
 				resetMouseOver(pCurrent);
 
 

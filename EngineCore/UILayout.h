@@ -1,5 +1,5 @@
 class UILayout :
-	public _Component
+	public _UIComponent
 {
 private:
 	int* m_nLayout;
@@ -19,7 +19,7 @@ public:
 		m_nWidth(nWidth),
 		m_nCellHeightBuffer(nCellHeightBuffer),
 		m_nCellWidthBuffer(nCellWidthBuffer),
-		_Component()
+		_UIComponent()
 	{
 		clearLayout();
 	};
