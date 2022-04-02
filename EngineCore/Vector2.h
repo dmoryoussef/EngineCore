@@ -33,10 +33,10 @@ struct Vector2
 		return Vector2(nX, nY);
 	}
 
-	/*string formatted()
+	string toString()
 	{
-		return "[" + toString<float>(X) + ", " + toString<float>(Y) + "]";
-	}*/
+		return "[" + thingToString<float>(X) + ", " + thingToString<float>(Y) + "]";
+	}
 };
 
 //Vector2 Min(Vector2 A, Vector2 B)

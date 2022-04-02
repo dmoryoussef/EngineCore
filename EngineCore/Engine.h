@@ -13,6 +13,14 @@ using namespace std;
 #include <xinput.h>
 #include <thread>
 
+//	helper functions? move to new header?
+template <typename T> string thingToString(T data)
+{
+	stringstream str;
+	str << data;
+	return str.str();
+}
+
 #include "Vector2.h"
 #include "Vector3.h"
 
@@ -21,14 +29,14 @@ using namespace std;
 #include "Buffer.h"
 #include "OutputWindow.h"
 #include "Input.h"  //	inherits eventlistener, posts console events to event system
-#include "Renderer.h"
+#include "Render2D.h"
 //	ConsoleRenderer.h
 //	Win32Renderer.h
 
 #include "NodeCore.h"
 #include "BaseNode.h"
 
-#include "Events.h"
+#include "Events.h"	//	need a way to append this with user created events
 
 #include "ConsoleWindow.h"
 #include "Win32Window.h"
@@ -37,6 +45,7 @@ using namespace std;
 //	WindowsInputBuffer.h
 #include "ConsoleOutputBuffer.h"
 
+//	derive from here
 
 //	OBJECTS AND STUFF
 //	EntityComponentSystem, TileMapSystem, etc
@@ -47,6 +56,7 @@ using namespace std;
 
 #include "_Tile2D.h"
 #include "_TileMap.h"
+
 
 class Engine
 {
@@ -150,7 +160,7 @@ public:
 		/*m_pGUI->add(new _Window(30, 30, 15, 15));
 		m_pGUI->add(new _Window(30, 30, 50, 50));*/
 
-		m_pData->add(new DefaultTileMap());
+		m_pData->add(new DefaultTileMap(8, 8));
 	}
 
 	void run()

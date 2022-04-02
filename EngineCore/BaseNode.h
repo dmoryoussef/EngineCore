@@ -207,14 +207,14 @@ public:
 		return "";
 	}
 
-	void baseRender(Render2D *pRenderer, BaseNode *pCamera)
+	void baseRender(Render2D *pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
 	{
-		render(pRenderer, pCamera);
+		render(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
 		while (isIterating())
 		{
-			getCurrent()->baseRender(pRenderer, pCamera);
+			getCurrent()->baseRender(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
 		}
 	}
 
-	virtual void render(Render2D *pRenderer, BaseNode *pCamera) {};
+	virtual void render(Render2D *pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax) {};
 };

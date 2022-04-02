@@ -7,6 +7,7 @@ protected:
 	bool m_bDisplayPosition;
 	bool m_bDisplayTitle;
 	Vector2 StartMousePosition;
+	Vector2 CurrentMousePosition;
 
 	string formatTitle(string strName)
 	{
@@ -67,6 +68,7 @@ protected:
 				//	drag: area, event listener
 				//	close: area, event listener, 'x'
 				//	resize window, etc
+				CurrentMousePosition = pEvent->get<MouseEvent>()->getState().Position;
 
 				if (m_bDraggable)
 					drag(pEvent->get<MouseEvent>());
@@ -96,6 +98,17 @@ protected:
 
 		if (m_bDisplayTitle)
 			set(formatTitle(m_strText), 1, 0, nFinalColor);
+	}
+
+	void constructComponent(BaseNode* pBaseNode)
+	{
+		Render2D *pRenderer = new Render2D(this);
+		while (pBaseNode->isIterating())
+		{
+			pBaseNode->getCurrent()->render(pRenderer, Vector3(0, 0, 5), Vector2(0, 0), Vector2(getWidth(), getHeight()));
+		}
+
+		set("Mouse: " + CurrentMousePosition.toString(), getWidth() - 20, 2, FG_WHITE);
 	}
 
 public:
@@ -131,6 +144,7 @@ public:
 		setName("DEFAULT_WINDOW");
 		setText("DEFAULT_WINDOW");
 	};
+
 
 	void setDraggable(bool bDraggable)
 	{
