@@ -72,7 +72,7 @@
     <ClInclude Include="Input.h">
       <Filter>Source Files\EngineCore\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Buffer.h">
+    <ClInclude Include="OutputBuffer.h">
       <Filter>Source Files\EngineCore\Output</Filter>
     </ClInclude>
     <ClInclude Include="Color.h">
@@ -105,14 +105,20 @@
     <ClInclude Include="Render2D.h">
       <Filter>Source Files\EngineCore</Filter>
     </ClInclude>
-    <ClInclude Include="CameraWindow.h">
-      <Filter>Source Files\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="ConsoleInputBuffer.h">
       <Filter>Source Files\EngineCore\Input</Filter>
     </ClInclude>
     <ClInclude Include="WorldViewWindow.h">
       <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraViewWindow.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="_EntityComponent.h">
+      <Filter>Source Files\EntityComponentSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Source Files\EntityComponentSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

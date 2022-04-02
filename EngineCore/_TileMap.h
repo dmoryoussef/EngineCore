@@ -54,10 +54,10 @@ protected:
 		{
 			case MOUSEWORLD_EVENT:
 			{
-				Vector2 Position = pEvent->get<MouseWorldEvent>()->getWorldPosition();
-				if (Position.Y >= 0 && Position.Y < Size.Y && Position.X >= 0 && Position.X < Size.X)
+				Vector2 WorldPosition = pEvent->get<MouseWorldEvent>()->getWorldPosition();
+				if (WorldPosition.Y >= Position.Y && WorldPosition.Y < Size.Y + Position.Y && WorldPosition.X >= Position.X && WorldPosition.X < Size.X + Position.X)
 				{
-					if (TileType* pTile = getTile(Position))
+					if (TileType* pTile = getTile(WorldPosition - Position))
 					{
 						if (m_pMouseOverTile != pTile)
 						{
@@ -107,9 +107,16 @@ public:
 		registerListener(MOUSEWORLD_EVENT);
 		initialize(0.0);
 	};
+
 	~_TileMap()
 	{
 		delete m_pTileMap;
+	}
+
+	void setPosition(int x, int y)
+	{
+		Position.X = x;
+		Position.Y = y;
 	}
 
 	TileType* getTile(int nX, int nY)
@@ -267,10 +274,6 @@ public:
 
 	void render(Render2D *pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
 	{
-		/*Vector3 vCameraPosition = pCamera->getChild<Transform3D>()->getPosition();
-		Vector2 vWorldMin = pCamera->getChild<Camera>()->getWorldMin();
-		Vector2 vWorldMax = pCamera->getChild<Camera>()->getWorldMax();*/
-
 		if (vWorldMin.Y < 0)
 			vWorldMin.Y = 0;
 		if (vWorldMin.X < 0)
@@ -285,8 +288,8 @@ public:
 		for (int nY = vWorldMin.Y; nY < vWorldMax.Y; nY++)
 			for (int nX = vWorldMin.X; nX < vWorldMax.X; nX++)
 			{
-				Vector2 Min(vCameraPosition.X + nX * vCameraPosition.Z, vCameraPosition.Y + nY * vCameraPosition.Z);
-				Vector2 Max(vCameraPosition.X + nX * vCameraPosition.Z + 1 * vCameraPosition.Z, vCameraPosition.Y + nY * vCameraPosition.Z + 1 * vCameraPosition.Z);
+				Vector2 Min((Position.X + vCameraPosition.X + nX) * vCameraPosition.Z, (Position.Y + vCameraPosition.Y + nY) * vCameraPosition.Z);
+				Vector2 Max((Position.X + vCameraPosition.X + nX) * vCameraPosition.Z + 1 * vCameraPosition.Z, (Position.Y + vCameraPosition.Y + nY) * vCameraPosition.Z + 1 * vCameraPosition.Z);
 
 				{
 					pRenderer->DrawQuad(Min.X,

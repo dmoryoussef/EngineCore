@@ -26,7 +26,7 @@ template <typename T> string thingToString(T data)
 
 //	CORE STUFF
 #include "EventListener.h"
-#include "Buffer.h"
+#include "OutputBuffer.h"
 #include "OutputWindow.h"
 #include "Input.h"  //	inherits eventlistener, posts console events to event system
 #include "Render2D.h"
@@ -49,11 +49,14 @@ template <typename T> string thingToString(T data)
 
 //	OBJECTS AND STUFF
 //	EntityComponentSystem, TileMapSystem, etc
+#include "_EntityComponent.h"
+#include "Transform.h"
+
 #include "UIComponent.h"
 #include "UILayout.h"
 #include "UIWindow.h"
 #include "WorldViewWindow.h"
-//	#include "CameraWindow.h"
+#include "CameraViewWindow.h"
 
 #include "_Tile2D.h"
 #include "_TileMap.h"
@@ -157,9 +160,18 @@ public:
 		m_pEngineBuffer = new OutputBuffer(m_pWindow->getWidth(), m_pWindow->getHeight());
 		m_pInputBuffer = input;
 
-		m_pGUI = new WorldViewWindow(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
+		CameraViewWindow *pCameraWindow = new CameraViewWindow(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
+		m_pGUI = pCameraWindow;
+		m_pData->add(pCameraWindow->getCamera());
 
-		m_pData->add(new DefaultTileMap(8, 8));
+		DefaultTileMap* pMap1 = new DefaultTileMap(4, 4);
+		pMap1->setPosition(8, 8);
+		m_pData->add(pMap1);
+
+		DefaultTileMap* pMap2 = new DefaultTileMap(4, 4);
+		pMap2->setPosition(1, 1);
+		m_pData->add(pMap2);
+
 	}
 
 	void run()

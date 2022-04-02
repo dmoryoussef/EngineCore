@@ -6,7 +6,7 @@ protected:
 	bool m_bDragActive;
 	bool m_bDisplayPosition;
 	bool m_bDisplayTitle;
-	float m_fScreenScale;
+
 
 	Vector2 vCurrentMousePosition;
 	Vector2 vPreviousMousePosition;
@@ -36,7 +36,7 @@ protected:
 		return strFinal;
 	}
 
-	void drag(MouseEvent* pMouseEvent)
+	void handleWindowMove(MouseEvent* pMouseEvent)
 	{
 		if (!m_bDragActive)
 		{
@@ -76,7 +76,7 @@ protected:
 				
 
 				if (m_bDraggable)
-					drag(pEvent->get<MouseEvent>());
+					handleWindowMove(pEvent->get<MouseEvent>());
 
 				if (m_bMouseOver && pEvent->get<MouseEvent>()->getState().bLeftButtonDown)
 					moveToTop();
@@ -115,7 +115,6 @@ public:
 		m_bDisplayPosition(false),
 		m_bDisplayTitle(false),
 		m_bDraggable(true),
-		m_fScreenScale(5),
 		_UIComponent(nWidth, nHeight, nPosX, nPosY)
 	{
 		setName("DEFAULT_WINDOW");
@@ -127,7 +126,6 @@ public:
 		m_bDisplayPosition(true),
 		m_bDraggable(true),
 		m_bDisplayTitle(true),
-		m_fScreenScale(5),
 		_UIComponent(nWidth, nHeight, nPosX, nPosY)
 	{
 		setName(strTitle);
@@ -139,7 +137,6 @@ public:
 		m_bDisplayPosition(true),
 		m_bDisplayTitle(true),
 		m_bDraggable(false),
-		m_fScreenScale(5),
 		_UIComponent(50, 50, 0, 0)
 	{
 		setName("DEFAULT_WINDOW");

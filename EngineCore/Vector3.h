@@ -52,6 +52,11 @@ struct Vector3
 	{
 		return { X, Y };
 	}
+
+	string toString()
+	{
+		return "[" + thingToString<float>(X) + ", " + thingToString<float>(Y) + ", " + thingToString<float>(Z) + "]";
+	}
 };
 
 Vector3 operator/(Vector3& A, float fScaler)

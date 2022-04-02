@@ -140,8 +140,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BaseNode.h" />
-    <ClInclude Include="Buffer.h" />
-    <ClInclude Include="CameraWindow.h" />
+    <ClInclude Include="OutputBuffer.h" />
+    <ClInclude Include="CameraViewWindow.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ConsoleOutputBuffer.h" />
     <ClInclude Include="ConsoleInputBuffer.h" />
@@ -153,6 +153,7 @@
     <ClInclude Include="NodeCore.h" />
     <ClInclude Include="OutputWindow.h" />
     <ClInclude Include="Render2D.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="UIComponent.h" />
     <ClInclude Include="UILayout.h" />
     <ClInclude Include="UIWindow.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Win32Window.h" />
     <ClInclude Include="WorldViewWindow.h" />
+    <ClInclude Include="_EntityComponent.h" />
     <ClInclude Include="_Tile2D.h" />
     <ClInclude Include="_TileMap.h" />
   </ItemGroup>

@@ -1,6 +1,7 @@
 class WorldViewWindow : public _Window
 {
 protected:
+	float m_fScreenScale;
 
 	Vector2 ScreenPosition(Vector2 WorldPos, Vector2 CameraPos, Vector2 WindowPos)
 	{
@@ -17,27 +18,10 @@ protected:
 		return ScreenPos - WindowPos;
 	}
 
-
-	void drag(MouseEvent* pMouseEvent)
+	void handleWorldPosition(MouseState mouseState)
 	{
-		if (!m_bDragActive)
-		{
-			if (m_bMouseOver)	//	or window underneith will be grabbed too
-				if (pMouseEvent->getState().Position.Y == getMin().Y
-					&& pMouseEvent->getState().Position.X > getMin().X
-					&& pMouseEvent->getState().Position.X < getMax().X
-					&& pMouseEvent->getState().bLeftButtonDown)
-				{
-					vStartDrag = vCurrentMousePosition - Position;
-					m_bDragActive = true;
-				}
-		}
-		else
-		{
-			Position = vCurrentMousePosition - vStartDrag;
-			if (!pMouseEvent->getState().bLeftButtonDown)
-				m_bDragActive = false;
-		}
+		Vector2 worldPosition = WorldPosition(vCurrentMousePosition, Vector2(0, 0), Position, m_fScreenScale);
+		addEvent(new MouseWorldEvent(worldPosition, mouseState));
 	}
 
 	void onEvent(_Event* pEvent)
@@ -56,20 +40,9 @@ protected:
 				MouseState mouseState = pEvent->get<MouseEvent>()->getState();
 				vCurrentMousePosition = mouseState.Position;
 
-
-				if (m_bDraggable)
-					drag(pEvent->get<MouseEvent>());
-
-				if (m_bMouseOver && pEvent->get<MouseEvent>()->getState().bLeftButtonDown)
-					moveToTop();
-
-
-				Vector2 worldPosition = WorldPosition(vCurrentMousePosition, Vector2(0, 0), Position, m_fScreenScale);
-
 				if (m_bMouseOver)
 				{
-					addEvent(new MouseWorldEvent(worldPosition, mouseState));
-
+					handleWorldPosition(mouseState);
 				}
 
 
@@ -127,6 +100,7 @@ protected:
 
 public:
 	WorldViewWindow(int nWidth, int nHeight, int nPosX, int nPosY) :
+		m_fScreenScale(5),
 		_Window(nWidth, nHeight, nPosX, nPosY)
 	{
 		registerListener(BASENODE_EVENT);
