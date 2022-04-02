@@ -93,6 +93,12 @@ public:
 		Listeners[event].push_back(pListener);
 	}
 
+	void registerListener(int event)
+	{
+		Listeners[event].push_back(this);
+	}
+
+
 	void addEvent(_Event* Event)
 	{
 		Events.push(Event);

@@ -111,6 +111,9 @@
     <ClInclude Include="ConsoleInputBuffer.h">
       <Filter>Source Files\EngineCore\Input</Filter>
     </ClInclude>
+    <ClInclude Include="WorldViewWindow.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

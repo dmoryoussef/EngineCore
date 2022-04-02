@@ -52,6 +52,7 @@ template <typename T> string thingToString(T data)
 #include "UIComponent.h"
 #include "UILayout.h"
 #include "UIWindow.h"
+#include "WorldViewWindow.h"
 //	#include "CameraWindow.h"
 
 #include "_Tile2D.h"
@@ -156,9 +157,7 @@ public:
 		m_pEngineBuffer = new OutputBuffer(m_pWindow->getWidth(), m_pWindow->getHeight());
 		m_pInputBuffer = input;
 
-		m_pGUI = new _Window(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
-		/*m_pGUI->add(new _Window(30, 30, 15, 15));
-		m_pGUI->add(new _Window(30, 30, 50, 50));*/
+		m_pGUI = new WorldViewWindow(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
 
 		m_pData->add(new DefaultTileMap(8, 8));
 	}

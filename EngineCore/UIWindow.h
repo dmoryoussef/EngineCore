@@ -6,8 +6,12 @@ protected:
 	bool m_bDragActive;
 	bool m_bDisplayPosition;
 	bool m_bDisplayTitle;
-	Vector2 StartMousePosition;
-	Vector2 CurrentMousePosition;
+	float m_fScreenScale;
+
+	Vector2 vCurrentMousePosition;
+	Vector2 vPreviousMousePosition;
+
+	Vector2 vStartDrag;
 
 	string formatTitle(string strName)
 	{
@@ -42,15 +46,13 @@ protected:
 					&& pMouseEvent->getState().Position.X < getMax().X
 					&& pMouseEvent->getState().bLeftButtonDown)
 				{
-					StartMousePosition = pMouseEvent->getState().Position;
-					StartMousePosition = StartMousePosition - Position;
+					vStartDrag = vCurrentMousePosition - Position;
 					m_bDragActive = true;
 				}
 		}
 		else
 		{
-			Vector2 CurrentMousePosition = pMouseEvent->getState().Position;
-			Position = CurrentMousePosition - StartMousePosition;
+			Position = vCurrentMousePosition - vStartDrag;
 			if (!pMouseEvent->getState().bLeftButtonDown)
 				m_bDragActive = false;
 		}
@@ -64,11 +66,14 @@ protected:
 		{
 			case CONSOLE_MOUSE_EVENT:
 			{
+
 				// convert to component
 				//	drag: area, event listener
 				//	close: area, event listener, 'x'
 				//	resize window, etc
-				CurrentMousePosition = pEvent->get<MouseEvent>()->getState().Position;
+				MouseState mouseState = pEvent->get<MouseEvent>()->getState();
+				vCurrentMousePosition = mouseState.Position;
+				
 
 				if (m_bDraggable)
 					drag(pEvent->get<MouseEvent>());
@@ -76,8 +81,10 @@ protected:
 				if (m_bMouseOver && pEvent->get<MouseEvent>()->getState().bLeftButtonDown)
 					moveToTop();
 
+
 				break;
 			}
+
 		}
 	}
 
@@ -100,23 +107,15 @@ protected:
 			set(formatTitle(m_strText), 1, 0, nFinalColor);
 	}
 
-	void constructComponent(BaseNode* pBaseNode)
-	{
-		Render2D *pRenderer = new Render2D(this);
-		while (pBaseNode->isIterating())
-		{
-			pBaseNode->getCurrent()->render(pRenderer, Vector3(0, 0, 5), Vector2(0, 0), Vector2(getWidth(), getHeight()));
-		}
-
-		set("Mouse: " + CurrentMousePosition.toString(), getWidth() - 20, 2, FG_WHITE);
-	}
+	
 
 public:
 	_Window(int nWidth, int nHeight, int nPosX, int nPosY) :
 		m_bDragActive(false),
 		m_bDisplayPosition(false),
 		m_bDisplayTitle(false),
-		m_bDraggable(false),
+		m_bDraggable(true),
+		m_fScreenScale(5),
 		_UIComponent(nWidth, nHeight, nPosX, nPosY)
 	{
 		setName("DEFAULT_WINDOW");
@@ -128,6 +127,7 @@ public:
 		m_bDisplayPosition(true),
 		m_bDraggable(true),
 		m_bDisplayTitle(true),
+		m_fScreenScale(5),
 		_UIComponent(nWidth, nHeight, nPosX, nPosY)
 	{
 		setName(strTitle);
@@ -139,6 +139,7 @@ public:
 		m_bDisplayPosition(true),
 		m_bDisplayTitle(true),
 		m_bDraggable(false),
+		m_fScreenScale(5),
 		_UIComponent(50, 50, 0, 0)
 	{
 		setName("DEFAULT_WINDOW");
