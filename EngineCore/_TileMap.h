@@ -55,9 +55,10 @@ protected:
 			case MOUSEWORLD_EVENT:
 			{
 				Vector2 WorldPosition = pEvent->get<MouseWorldEvent>()->getWorldPosition();
-				if (WorldPosition.Y >= Position.Y && WorldPosition.Y < Size.Y + Position.Y && WorldPosition.X >= Position.X && WorldPosition.X < Size.X + Position.X)
+				if (WorldPosition.Y >= Position.Y && WorldPosition.Y < Size.Y + Position.Y && 
+					WorldPosition.X >= Position.X && WorldPosition.X < Size.X + Position.X)
 				{
-					if (TileType* pTile = getTile(WorldPosition - Position))
+					if (TileType* pTile = getTile(WorldPosition))
 					{
 						if (m_pMouseOverTile != pTile)
 						{
@@ -274,30 +275,42 @@ public:
 
 	void render(Render2D *pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
 	{
-		if (vWorldMin.Y < 0)
-			vWorldMin.Y = 0;
-		if (vWorldMin.X < 0)
-			vWorldMin.X = 0;
+		//	TODO::FIGURE OUT HOW TO RENDER A TILE MAP WITH A POSITION DIFFERENT THAN 0, 0
+		// 
+		//	prevent going outside the tile map, incase tilemap is smaller than world min/max
+		Vector2 vTileMapMin = vWorldMin;
+		Vector2 vTileMapMax = vWorldMax;
+
+		if (vWorldMin.Y < Position.Y)
+			vTileMapMin.Y = 0;
+		if (vWorldMin.X < Position.X)
+			vTileMapMin.X = 0;
 		if (vWorldMax.Y > Size.Y)
-			vWorldMax.Y = Size.Y;
+			vTileMapMax.Y = Size.Y;
 		if (vWorldMax.X > Size.X)
-			vWorldMax.X = Size.X;
+			vTileMapMax.X = Size.X;
 
 		int TilesRendered = 0;
 
-		for (int nY = vWorldMin.Y; nY < vWorldMax.Y; nY++)
-			for (int nX = vWorldMin.X; nX < vWorldMax.X; nX++)
+		for (int nY = vTileMapMin.Y; nY < vTileMapMax.Y; nY++)
+			for (int nX = vTileMapMin.X; nX < vTileMapMax.X; nX++)
 			{
-				Vector2 Min((Position.X + vCameraPosition.X + nX) * vCameraPosition.Z, (Position.Y + vCameraPosition.Y + nY) * vCameraPosition.Z);
-				Vector2 Max((Position.X + vCameraPosition.X + nX) * vCameraPosition.Z + 1 * vCameraPosition.Z, (Position.Y + vCameraPosition.Y + nY) * vCameraPosition.Z + 1 * vCameraPosition.Z);
+				float fTileSize = 1.0;
+				float fScaledTileSize = fTileSize * vCameraPosition.Z;
 
-				{
-					pRenderer->DrawQuad(Min.X,
-						Min.Y,
-						Max.X,
-						Max.Y,
-						pRenderer->getGreyscaleColor(getTile(nX, nY)->getValue()));
-				}
+				Vector2 Min(vCameraPosition.X + (nX * vCameraPosition.Z), 
+							vCameraPosition.Y + (nY * vCameraPosition.Z));
+
+				Vector2 Max(vCameraPosition.X + (nX * vCameraPosition.Z) + fScaledTileSize,
+							vCameraPosition.Y + (nY * vCameraPosition.Z) + fScaledTileSize);
+
+				
+				pRenderer->DrawQuad(Min.X,
+									Min.Y,
+									Max.X,
+									Max.Y,
+									pRenderer->getGreyscaleColor(getTile(nX, nY)->getValue()));
+				
 
 				TilesRendered++;
 
@@ -305,10 +318,10 @@ public:
 				if (getTile(nX, nY) == getMouseOverTile())
 				{
 					pRenderer->DrawQuad(Min.X,
-						Min.Y,
-						Max.X,
-						Max.Y,
-						Pixel(PIXEL_SOLID, FG_LIGHTGREEN));//pRenderer->getGreyscaleColor(0));
+									Min.Y,
+									Max.X,
+									Max.Y,
+									Pixel(PIXEL_SOLID, FG_LIGHTGREEN));//pRenderer->getGreyscaleColor(0));
 
 				}
 			}

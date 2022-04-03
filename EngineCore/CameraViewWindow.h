@@ -5,7 +5,7 @@ private:
 	bool m_bCameraZoomable;
 	float fMinZoom;
 	float fMaxZoom;
-	bool m_bCameraDragging;
+	bool m_bCameraPanning;
 
 	void handleWorldPosition(MouseState mouseState)
 	{
@@ -20,12 +20,14 @@ private:
 		// handle scaling
 		if (m_bCameraZoomable)
 		{
-			if (mouseState.bWheeledDown)
+			if (mouseState.bWheeledDown)	//	zoom out
 			{
 				if (vCurrentCameraPosition.Z > fMinZoom)
 				{
 					Vector2 vBeforeScaleWorldPosition = WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 					vCurrentCameraPosition.Z = vCurrentCameraPosition.Z * 0.85;
+					if (vCurrentCameraPosition.Z < fMinZoom)
+						vCurrentCameraPosition.Z = fMinZoom;	// clamp to min
 
 					Vector2 vAfterScaleScaleWorldPosition = WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 					Vector2 Diff = (vBeforeScaleWorldPosition - vAfterScaleScaleWorldPosition) * vCurrentCameraPosition.Z;
@@ -36,10 +38,12 @@ private:
 
 			if (mouseState.bWheeledUp)
 			{
-				if (vCurrentCameraPosition.Z < fMaxZoom)
+				if (vCurrentCameraPosition.Z < fMaxZoom)	//	zoom in
 				{
 					Vector2 BeforeScaleWorldPosition = WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
-					vCurrentCameraPosition.Z = vCurrentCameraPosition.Z * 1.15;
+					vCurrentCameraPosition.Z = vCurrentCameraPosition.Z * 1.5;
+					if (vCurrentCameraPosition.Z > fMaxZoom)
+						vCurrentCameraPosition.Z = fMaxZoom;	// clamp to max
 
 					Vector2 AfterScaleScaleWorldPosition = WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 					Vector2 Diff = (BeforeScaleWorldPosition - AfterScaleScaleWorldPosition) * vCurrentCameraPosition.Z;
@@ -50,43 +54,40 @@ private:
 		}
 
 		// handle dragging
-		if (!m_bDragActive)
+		if (!m_bDragActive)	//	prevent camera panning while window is being moved
 		{
+			bool bMouseDown = mouseState.bWheelButtonDown;
+			if (!m_bCameraPanning)
 			{
-				bool bMouseDown = mouseState.bWheelButtonDown;
-				if (!m_bCameraDragging)
+				if (bMouseDown)
 				{
-					if (bMouseDown)
+					if (m_bMouseOver)
 					{
-						if (m_bMouseOver)
-						{
-							m_bCameraDragging = true;
-							vPreviousMousePosition = vCurrentMousePosition;
-						}
+						m_bCameraPanning = true;
+						vPreviousMousePosition = vCurrentMousePosition;
 					}
-
+				}
+			}
+			else
+			{
+				if (bMouseDown)
+				{
+					Vector2 vDeltaPos = vPreviousMousePosition - vCurrentMousePosition;
+					vPreviousMousePosition = vCurrentMousePosition;
+					{
+						Vector3 vNewPosition = Vector3( vCurrentCameraPosition.X - vDeltaPos.X,
+														vCurrentCameraPosition.Y - vDeltaPos.Y,
+														vCurrentCameraPosition.Z);
+						m_pCamera->getChild<Transform>()->setPosition(vNewPosition);
+					}
 				}
 				else
-				{
-					if (bMouseDown)
-					{
-						Vector2 vDeltaPos = vPreviousMousePosition - vCurrentMousePosition;
-						vPreviousMousePosition = vCurrentMousePosition;
-						{
-							Vector3 vNewPosition = Vector3(vCurrentCameraPosition.X - vDeltaPos.X,
-								vCurrentCameraPosition.Y - vDeltaPos.Y,
-								vCurrentCameraPosition.Z);
-							m_pCamera->getChild<Transform>()->setPosition(vNewPosition);
-						}
-					}
-					else
-						m_bCameraDragging = false;
-				}
+					m_bCameraPanning = false;
 			}
 		}
 		else
 		{
-			if (m_bCameraDragging)
+			if (m_bCameraPanning)
 				m_bDragActive = false;
 		}
 	}
@@ -122,28 +123,32 @@ private:
 
 	void constructComponent(BaseNode* pBaseNode)
 	{
-		Render2D* pRenderer = new Render2D(this);
+		Render2D renderer(this);
 		Vector3 vCurrentCameraPosition = m_pCamera->getChild<Transform>()->getPosition();
 		Vector2 vWorldMin = WorldPosition({ 0, 0 }, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 		Vector2 vWorldMax = WorldPosition(Size + Position, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 
 		while (pBaseNode->isIterating())
 		{
-			pBaseNode->getCurrent()->render(pRenderer, vCurrentCameraPosition, vWorldMin, vWorldMax);
+			pBaseNode->getCurrent()->render(&renderer, vCurrentCameraPosition, vWorldMin, vWorldMax);
 		}
+
+		set("Mouse: " + vCurrentMousePosition.toString(), getWidth() - 20, 2, FG_WHITE);
+		set("World: " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 20, 3, FG_WHITE);
 
 	}
 
 public:
 	CameraViewWindow(int nWidth, int nHeight, int nPosX, int nPosY) :
-		m_bCameraZoomable(false),
-		fMinZoom(0.5),
+		m_bCameraZoomable(true),
+		fMinZoom(1.0),
 		fMaxZoom(15.0),
-	    m_bCameraDragging(false),
+	    m_bCameraPanning(false),
 		WorldViewWindow(nWidth, nHeight, nPosX, nPosY)
 	{
+		m_fScreenScale = 5;
 		m_pCamera = new BaseNode("Camera");
-		m_pCamera->add(new Transform({0, 0, 5}, { 0, 0, 0 }, { 0, 0, 0 }));
+		m_pCamera->add(new Transform({ 0, 0, m_fScreenScale }, { 0, 0, 0 }, { 0, 0, 0 }));
 	}
 
 	BaseNode *getCamera()

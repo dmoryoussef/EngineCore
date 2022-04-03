@@ -88,19 +88,20 @@ protected:
 
 	void constructComponent(BaseNode* pBaseNode)
 	{
-		Render2D* pRenderer = new Render2D(this);
+		Render2D renderer(this);
 		while (pBaseNode->isIterating())
 		{
-			pBaseNode->getCurrent()->render(pRenderer, Vector3(0, 0, 5), Vector2(0, 0), Vector2(getWidth(), getHeight()));
+			pBaseNode->getCurrent()->render(&renderer, Vector3(0, 0, 5), Vector2(0, 0), Vector2(getWidth(), getHeight()));
 		}
 
 		set("Mouse: " + vCurrentMousePosition.toString(), getWidth() - 20, 2, FG_WHITE);
 		set("World: " + WorldPosition(vCurrentMousePosition, Vector2(0, 0), Position, m_fScreenScale).toString(), getWidth() - 20, 3, FG_WHITE);
+
 	}
 
 public:
 	WorldViewWindow(int nWidth, int nHeight, int nPosX, int nPosY) :
-		m_fScreenScale(5),
+		m_fScreenScale(1),
 		_Window(nWidth, nHeight, nPosX, nPosY)
 	{
 		registerListener(BASENODE_EVENT);

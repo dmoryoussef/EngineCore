@@ -164,12 +164,8 @@ public:
 		m_pGUI = pCameraWindow;
 		m_pData->add(pCameraWindow->getCamera());
 
-		DefaultTileMap* pMap1 = new DefaultTileMap(4, 4);
-		pMap1->setPosition(8, 8);
-		m_pData->add(pMap1);
-
 		DefaultTileMap* pMap2 = new DefaultTileMap(4, 4);
-		pMap2->setPosition(1, 1);
+		//	pMap2->setPosition(2, 2);
 		m_pData->add(pMap2);
 
 	}
