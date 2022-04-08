@@ -152,6 +152,10 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="NodeCore.h" />
     <ClInclude Include="OutputWindow.h" />
+    <ClInclude Include="PathfindingMap.h" />
+    <ClInclude Include="PathfindingTile.h" />
+    <ClInclude Include="Physics.h" />
+    <ClInclude Include="Render.h" />
     <ClInclude Include="Render2D.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UIComponent.h" />

@@ -12,6 +12,7 @@ using namespace std;
 #include <algorithm>
 #include <xinput.h>
 #include <thread>
+#include <mutex>
 
 //	helper functions? move to new header?
 template <typename T> string thingToString(T data)
@@ -51,6 +52,8 @@ template <typename T> string thingToString(T data)
 //	EntityComponentSystem, TileMapSystem, etc
 #include "_EntityComponent.h"
 #include "Transform.h"
+#include "Physics.h"
+#include "Render.h"
 
 #include "UIComponent.h"
 #include "UILayout.h"
@@ -59,7 +62,10 @@ template <typename T> string thingToString(T data)
 #include "CameraViewWindow.h"
 
 #include "_Tile2D.h"
+#include "PathfindingTile.h"
+
 #include "_TileMap.h"
+#include "PathfindingMap.h"
 
 
 class Engine
@@ -133,7 +139,6 @@ public:
 		m_pData = new BaseNode("Root");
 		m_pGUI = NULL;
 		
-
 		LARGE_INTEGER Frequency;
 		QueryPerformanceFrequency(&Frequency);
 		nCountFreq = Frequency.QuadPart;
@@ -159,14 +164,21 @@ public:
 		m_pWindow->init();
 		m_pEngineBuffer = new OutputBuffer(m_pWindow->getWidth(), m_pWindow->getHeight());
 		m_pInputBuffer = input;
+		
 
 		CameraViewWindow *pCameraWindow = new CameraViewWindow(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
 		m_pGUI = pCameraWindow;
 		m_pData->add(pCameraWindow->getCamera());
 
-		DefaultTileMap* pMap2 = new DefaultTileMap(4, 4);
-		//	pMap2->setPosition(2, 2);
-		m_pData->add(pMap2);
+		//m_pGUI->add(new _Window(15, 15, 20, 20));
+
+		DefaultTileMap* mapA = new DefaultTileMap(8, 8);
+		mapA->setPosition(2, 2);
+		m_pData->add(mapA);
+
+		//DefaultTileMap* mapB = new DefaultTileMap(8, 8);
+		//mapB->setPosition(4, 6);
+		//m_pData->add(mapB);
 
 	}
 

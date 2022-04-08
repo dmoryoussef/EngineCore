@@ -1,10 +1,10 @@
 #include <queue>
+#include <mutex>
 
 class _Event
 {
 public:
 	int m_eType;
-
 
 	_Event(int eType)
 	{
@@ -24,6 +24,7 @@ class EventListener
 protected:
 	static map<int, vector<EventListener*>> Listeners;
 	static queue<_Event*> Events;
+	static mutex threadLock;
 
 	//static map<int, map<EventListener*, eventCallBack>> CallBackListeners;
 
@@ -44,8 +45,12 @@ public:
 	{
 		while (true)
 		{
+			
 			if (Events.size() > 0)
+			{				
 				dispatchEvent();
+			}
+				
 		}
 	}
 
@@ -123,6 +128,9 @@ public:
 
 	void dispatchEvent()
 	{
+
+		threadLock.lock();
+
 		map<int, vector<EventListener*>>::iterator Listener;
 		_Event *pEvent = Events.front();
 
@@ -137,6 +145,8 @@ public:
 
 		Events.pop();
 		delete pEvent;
+
+		threadLock.unlock();
 	}
 
 	void dispatchEvents()
@@ -183,3 +193,4 @@ public:
 
 map<int, vector<EventListener*>> EventListener::Listeners;
 queue<_Event*> EventListener::Events;
+mutex EventListener::threadLock;

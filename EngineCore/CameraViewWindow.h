@@ -25,7 +25,7 @@ private:
 				if (vCurrentCameraPosition.Z > fMinZoom)
 				{
 					Vector2 vBeforeScaleWorldPosition = WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
-					vCurrentCameraPosition.Z = vCurrentCameraPosition.Z * 0.85;
+					vCurrentCameraPosition.Z = vCurrentCameraPosition.Z * 0.95;
 					if (vCurrentCameraPosition.Z < fMinZoom)
 						vCurrentCameraPosition.Z = fMinZoom;	// clamp to min
 
@@ -41,7 +41,7 @@ private:
 				if (vCurrentCameraPosition.Z < fMaxZoom)	//	zoom in
 				{
 					Vector2 BeforeScaleWorldPosition = WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
-					vCurrentCameraPosition.Z = vCurrentCameraPosition.Z * 1.5;
+					vCurrentCameraPosition.Z = vCurrentCameraPosition.Z * 1.15;
 					if (vCurrentCameraPosition.Z > fMaxZoom)
 						vCurrentCameraPosition.Z = fMaxZoom;	// clamp to max
 

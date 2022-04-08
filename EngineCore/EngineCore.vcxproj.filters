@@ -120,6 +120,18 @@
     <ClInclude Include="Transform.h">
       <Filter>Source Files\EntityComponentSystem</Filter>
     </ClInclude>
+    <ClInclude Include="PathfindingMap.h">
+      <Filter>Source Files\TileMapSystem\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="PathfindingTile.h">
+      <Filter>Source Files\TileMapSystem\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Source Files\EntityComponentSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Render.h">
+      <Filter>Source Files\EntityComponentSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

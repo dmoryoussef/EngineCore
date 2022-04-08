@@ -37,6 +37,7 @@ protected:
 
 				pCurrent->initTile(Vector2(nX, nY), getTile(nX - 1, nY), getTile(nX + 1, nY), getTile(nX, nY + 1), getTile(nX, nY - 1));
 				pCurrent->setValue(fInitialValue);
+				// addEvent(new BaseNodeEvent(pCurrent));
 			}
 
 	}
@@ -58,7 +59,7 @@ protected:
 				if (WorldPosition.Y >= Position.Y && WorldPosition.Y < Size.Y + Position.Y && 
 					WorldPosition.X >= Position.X && WorldPosition.X < Size.X + Position.X)
 				{
-					if (TileType* pTile = getTile(WorldPosition))
+					if (TileType* pTile = getTile(WorldPosition - Position))
 					{
 						if (m_pMouseOverTile != pTile)
 						{
@@ -278,16 +279,17 @@ public:
 		//	TODO::FIGURE OUT HOW TO RENDER A TILE MAP WITH A POSITION DIFFERENT THAN 0, 0
 		// 
 		//	prevent going outside the tile map, incase tilemap is smaller than world min/max
-		Vector2 vTileMapMin = vWorldMin;
+		Vector2 vTileMapMin(0, 0);
 		Vector2 vTileMapMax = vWorldMax;
 
-		if (vWorldMin.Y < Position.Y)
-			vTileMapMin.Y = 0;
-		if (vWorldMin.X < Position.X)
-			vTileMapMin.X = 0;
-		if (vWorldMax.Y > Size.Y)
+		if (vWorldMin.Y > Position.X)
+			vTileMapMin.Y = vWorldMin.X - Position.X;
+		if (vWorldMin.X > Position.Y)
+			vTileMapMin.X = vWorldMin.Y - Position.Y;
+
+		if (vWorldMax.Y > Size.Y + Position.Y - 1)
 			vTileMapMax.Y = Size.Y;
-		if (vWorldMax.X > Size.X)
+		if (vWorldMax.X > Size.X + Position.X - 1)
 			vTileMapMax.X = Size.X;
 
 		int TilesRendered = 0;
@@ -298,11 +300,11 @@ public:
 				float fTileSize = 1.0;
 				float fScaledTileSize = fTileSize * vCameraPosition.Z;
 
-				Vector2 Min(vCameraPosition.X + (nX * vCameraPosition.Z), 
-							vCameraPosition.Y + (nY * vCameraPosition.Z));
+				Vector2 Min(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z),
+							vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z));
 
-				Vector2 Max(vCameraPosition.X + (nX * vCameraPosition.Z) + fScaledTileSize,
-							vCameraPosition.Y + (nY * vCameraPosition.Z) + fScaledTileSize);
+				Vector2 Max(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z) + fScaledTileSize,
+							vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z) + fScaledTileSize);
 
 				
 				pRenderer->DrawQuad(Min.X,
@@ -325,5 +327,7 @@ public:
 
 				}
 			}
+
+		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 3, FG_WHITE);
 	}
 };

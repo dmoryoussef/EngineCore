@@ -104,6 +104,6 @@ public:
 		m_fScreenScale(1),
 		_Window(nWidth, nHeight, nPosX, nPosY)
 	{
-		registerListener(BASENODE_EVENT);
+		//registerListener(BASENODE_EVENT);
 	}
 };

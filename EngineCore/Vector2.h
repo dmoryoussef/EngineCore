@@ -35,7 +35,7 @@ struct Vector2
 
 	string toString()
 	{
-		return "[" + thingToString<float>(X) + ", " + thingToString<float>(Y) + "]";
+		return "[" + thingToString<int>(X) + ", " + thingToString<int>(Y) + "]";
 	}
 };
 
