@@ -43,6 +43,9 @@
     <Filter Include="Source Files\TileMapSystem\Maps">
       <UniqueIdentifier>{55b4d579-3d56-4d27-92aa-cc482fd6bc14}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Geometry">
+      <UniqueIdentifier>{d04a22f0-f03a-434a-b681-e31214bff74d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -130,6 +133,15 @@
       <Filter>Source Files\EntityComponentSystem</Filter>
     </ClInclude>
     <ClInclude Include="Render.h">
+      <Filter>Source Files\EntityComponentSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="2DMatrix.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityRenderSystem.h">
       <Filter>Source Files\EntityComponentSystem</Filter>
     </ClInclude>
   </ItemGroup>

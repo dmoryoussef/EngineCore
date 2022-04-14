@@ -86,6 +86,26 @@ Vector3 operator-(Vector3 A, Vector3 B)
 	return Vector3(A.X - B.X, A.Y - B.Y, A.Z - B.Z);
 }
 
+bool operator>(Vector3 A, Vector3 B)
+{
+	return A.X > B.X && A.Y > B.Y && A.Z > B.Z;
+}
+
+bool operator<(Vector3 A, Vector3 B)
+{
+	return A.X < B.X && A.Y < B.Y && A.Z < B.Z;
+}
+
+bool operator<=(Vector3 A, Vector3 B)
+{
+	return A.X <= B.X&& A.Y <= B.Y&& A.Z <= B.Z;
+}
+
+bool operator>=(Vector3 A, Vector3 B)
+{
+	return A.X >= B.X && A.Y >= B.Y && A.Z >= B.Z;
+}
+
 Vector3 crossProduct(Vector3 A, Vector3 B)
 {
 	float fX = A.Y * B.Z - A.Z * B.Y;

@@ -140,6 +140,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BaseNode.h" />
+    <ClInclude Include="EntityRenderSystem.h" />
+    <ClInclude Include="2DMatrix.h" />
     <ClInclude Include="OutputBuffer.h" />
     <ClInclude Include="CameraViewWindow.h" />
     <ClInclude Include="Color.h" />
@@ -158,6 +160,7 @@
     <ClInclude Include="Render.h" />
     <ClInclude Include="Render2D.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="UIComponent.h" />
     <ClInclude Include="UILayout.h" />
     <ClInclude Include="UIWindow.h" />

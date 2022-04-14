@@ -231,7 +231,7 @@ public:
 
 	//void DrawTriangle(Triangle tri, Pixel pix)
 	//{
-	//	DrawTriangle(tri.A.toVec2(), tri.B.toVec2(), tri.C.toVec2(), pix, m_pTargetBuffer);
+	//	DrawTriangle(tri.A.toVec2(), tri.B.toVec2(), tri.C.toVec2(), pix);
 	//}
 
 	//void FillTriangle(Triangle triangle, Pixel pixel)

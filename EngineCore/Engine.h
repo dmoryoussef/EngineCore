@@ -1,3 +1,8 @@
+//	Project Properties
+//	>> Configuration Properties
+//	>> Advanced
+//	Charater Set: "Use Multi-Byte Character Set
+
 using namespace std;
 
 #include <stdio.h>
@@ -24,6 +29,9 @@ template <typename T> string thingToString(T data)
 
 #include "Vector2.h"
 #include "Vector3.h"
+
+#include "Triangle.h"
+#include "2DMatrix.h"
 
 //	CORE STUFF
 #include "EventListener.h"
@@ -54,6 +62,7 @@ template <typename T> string thingToString(T data)
 #include "Transform.h"
 #include "Physics.h"
 #include "Render.h"
+#include "EntityRenderSystem.h"
 
 #include "UIComponent.h"
 #include "UILayout.h"
@@ -82,7 +91,7 @@ protected:
 	ConsoleInputBuffer *m_pInputBuffer;
 
 	BaseNode *m_pData;
-	_Window *m_pGUI;
+	_UIComponent *m_pGUI;
 
 	EventListener events;
 	thread eventThread;
@@ -129,6 +138,7 @@ protected:
 
 public:
 	Engine() :
+		PrevCounter({0, 0}),
 		events(),
 		eventThread(events)
 	{
@@ -164,27 +174,47 @@ public:
 		m_pWindow->init();
 		m_pEngineBuffer = new OutputBuffer(m_pWindow->getWidth(), m_pWindow->getHeight());
 		m_pInputBuffer = input;
-		
+		m_pGUI = new _UIComponent(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
 
 		CameraViewWindow *pCameraWindow = new CameraViewWindow(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
 		m_pGUI = pCameraWindow;
 		m_pData->add(pCameraWindow->getCamera());
 
-		//m_pGUI->add(new _Window(15, 15, 20, 20));
 
-		DefaultTileMap* mapA = new DefaultTileMap(8, 8);
-		mapA->setPosition(2, 2);
-		m_pData->add(mapA);
+		//DefaultTileMap* mapA = new DefaultTileMap(8, 8);
+		//mapA->setPosition(2, 2);
+		//mapA->createCheckerMap();
+		//m_pData->add(mapA);
 
 		//DefaultTileMap* mapB = new DefaultTileMap(8, 8);
-		//mapB->setPosition(4, 6);
+		//mapB->setPosition(14, 16);
+		//mapB->createCheckerMap();
 		//m_pData->add(mapB);
 
+		BaseNode* pEntity = new BaseNode();
+		pEntity->add(new Render());
+		pEntity->add(new Transform({ 15, 15, 0 }, { 0, 0, 0 }, { 1, 1, 1 }));
+		m_pData->add(pEntity);
+
 	}
+
+	void addGUI(_UIComponent* pComponent)
+	{
+		m_pGUI->add(pComponent);
+	}
+
+	void addData(BaseNode *pNode)
+	{
+		m_pData->add(pNode);
+	}
+
+	virtual void start() {}
 
 	void run()
 	{
 		float fSpeed = 1.0f;
+
+		start();
 
 		while (m_bRunning)
 		{

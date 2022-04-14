@@ -62,4 +62,23 @@ public:
 	Vector3 getRotation() { return vRotation; }
 	Vector3 getScale() { return vScale; }
 
+	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
+	{
+		//if (vPosition.toVec2() >= vWorldMin && vPosition.toVec2() <= vWorldMax)
+		//{
+		//	float fScale = vCameraPosition.Z;
+		//	mat2x2 trans = trans.Translate(vPosition.toVec2());
+		//	mat2x2 rot = rot.Rotate(0);
+		//	mat2x2 scale = scale.Scale({ fScale, fScale });
+
+		//	Triangle2D tri({ 50, 25 }, {25, 60 }, { 70, 40 });
+
+		//	/*tri = tri * trans;*/
+		//	//tri = tri * scale;
+
+		//	//	rotate to forward
+		//	pRenderer->DrawTriangle(tri.A, tri.B, tri.C, Pixel(PIXEL_SOLID, FG_WHITE));
+		//}
+	}
+
 };

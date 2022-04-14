@@ -7,4 +7,6 @@ private:
 public:
 	Physics() :
 		_EntityComponent("Velocity3D") {};
+
+	Vector3 getVelocity() { return vVelocity; }
 };

@@ -37,7 +37,7 @@ protected:
 
 				pCurrent->initTile(Vector2(nX, nY), getTile(nX - 1, nY), getTile(nX + 1, nY), getTile(nX, nY + 1), getTile(nX, nY - 1));
 				pCurrent->setValue(fInitialValue);
-				// addEvent(new BaseNodeEvent(pCurrent));
+				
 			}
 
 	}
@@ -224,26 +224,6 @@ private:
 	};
 
 
-	void createCheckerMap()
-	{
-		int color = 0;
-		for (int nY = 0; nY < Size.Y; nY++)
-		{
-			if (color == 0)
-				color = 1;
-			else
-				color = 0;
-
-			for (int nX = 0; nX < Size.X; nX++)
-			{
-				getTile(nX, nY)->setValue(color);
-				if (color == 0)
-					color = 1;
-				else
-					color = 0;
-			}
-		}
-	}
 
 	void createBoarderMap()
 	{
@@ -271,31 +251,61 @@ public:
 	DefaultTileMap(int nWidth, int nHeight) :
 		_TileMap({ (float)nWidth, (float)nHeight }, "DEFAULT")
 	{
-		createCheckerMap();
+		//	createCheckerMap();
 	}
 
+	void createCheckerMap()
+	{
+		int color = 0;
+		for (int nY = 0; nY < Size.Y; nY++)
+		{
+			if (color == 0)
+				color = 1;
+			else
+				color = 0;
+
+			for (int nX = 0; nX < Size.X; nX++)
+			{
+				DefaultTile* pCurrent = getTile(nX, nY);
+				pCurrent->setValue(color);
+				if (color == 0)
+					color = 1;
+				else
+					color = 0;
+				//	addEvent(new BaseNodeEvent(pCurrent));
+			}
+		}
+	}
 	void render(Render2D *pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
 	{
-		//	TODO::FIGURE OUT HOW TO RENDER A TILE MAP WITH A POSITION DIFFERENT THAN 0, 0
-		// 
-		//	prevent going outside the tile map, incase tilemap is smaller than world min/max
-		Vector2 vTileMapMin(0, 0);
-		Vector2 vTileMapMax = vWorldMax;
+	
+		Vector2 vTileMin;
+		Vector2 vTileMax;
+		
+		if (vWorldMin.Y <= Position.Y)
+			vTileMin.Y = 0;
+		else
+			vTileMin.Y = vWorldMin.Y - Position.Y;
 
-		if (vWorldMin.Y > Position.X)
-			vTileMapMin.Y = vWorldMin.X - Position.X;
-		if (vWorldMin.X > Position.Y)
-			vTileMapMin.X = vWorldMin.Y - Position.Y;
+		if (vWorldMin.X <= Position.X)
+			vTileMin.X = 0;
+		else
+			vTileMin.X = vWorldMin.X - Position.X;
 
-		if (vWorldMax.Y > Size.Y + Position.Y - 1)
-			vTileMapMax.Y = Size.Y;
-		if (vWorldMax.X > Size.X + Position.X - 1)
-			vTileMapMax.X = Size.X;
+		if (vWorldMax.Y >= Size.Y + Position.Y)
+			vTileMax.Y = Size.Y;
+		else
+			vTileMax.Y = Size.Y - (Position.Y + Size.Y - vWorldMax.Y);
+
+		if (vWorldMax.X >= Size.X + Position.X)
+			vTileMax.X = Size.X;
+		else
+			vTileMax.X = Size.X - (Position.X + Size.X - vWorldMax.X);
 
 		int TilesRendered = 0;
 
-		for (int nY = vTileMapMin.Y; nY < vTileMapMax.Y; nY++)
-			for (int nX = vTileMapMin.X; nX < vTileMapMax.X; nX++)
+		for (int nY = vTileMin.Y; nY < vTileMax.Y; nY++)
+			for (int nX = vTileMin.X; nX < vTileMax.X; nX++)
 			{
 				float fTileSize = 1.0;
 				float fScaledTileSize = fTileSize * vCameraPosition.Z;

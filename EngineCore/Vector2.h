@@ -114,6 +114,16 @@ bool operator<(Vector2 A, Vector2 B)
 		return false;
 }
 
+bool operator<=(Vector2 A, Vector2 B)
+{
+	return A.X <= B.X && A.Y <= B.Y;
+}
+
+bool operator>=(Vector2 A, Vector2 B)
+{
+	return A.X >= B.X && A.Y >= B.Y;
+}
+
 Vector2 getMax(Vector2 A, Vector2 B)
 {
 	if (A.Y > B.Y)

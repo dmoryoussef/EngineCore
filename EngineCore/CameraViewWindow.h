@@ -128,14 +128,12 @@ private:
 		Vector2 vWorldMin = WorldPosition({ 0, 0 }, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 		Vector2 vWorldMax = WorldPosition(Size + Position, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 
-		while (pBaseNode->isIterating())
-		{
-			pBaseNode->getCurrent()->render(&renderer, vCurrentCameraPosition, vWorldMin, vWorldMax);
-		}
+		EntityRenderSystem ecsRenderer;
+		ecsRenderer.render(pBaseNode, &renderer, vCurrentCameraPosition, vWorldMin, vWorldMax);
 
 		set("Mouse: " + vCurrentMousePosition.toString(), getWidth() - 20, 2, FG_WHITE);
 		set("World: " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 20, 3, FG_WHITE);
-
+	
 	}
 
 public:
