@@ -5,6 +5,41 @@ class _InputDevice
 	//	game pad input x 4
 };
 
+struct GamePad
+{
+	int nIndex;
+	bool Up;
+	bool Down;
+	bool Left;
+	bool Right;
+	bool Start;
+	bool Back;
+	bool LeftShoulder;
+	bool RightShoulder;
+	bool AButton;
+	bool BButton;
+	bool XButton;
+	bool YButton;
+
+	float LeftStickX;
+	float LeftStickY;
+
+	float RightStickX;
+	float RightStickY;
+
+	float clearDeadzone(float val)
+	{
+		if (val > 0)
+			if (val < .2)
+				val = 0;
+		if (val < 0)
+			if (val > -0.2)
+				val = 0;
+
+		return val;
+	}
+};
+
 struct MouseState
 {
 	int nX;
@@ -25,30 +60,6 @@ class Keyboard :
 	//	up/down
 };
 
-class Gamepad :
-	public _InputDevice
-{
-	bool bUp;
-	bool bDown;
-	bool bLeft;
-	bool bRight;
-	bool bStart;
-	bool bBack;
-	bool bLeftShoulder;
-	bool bRightShoulder;
-	bool bAButton;
-	bool bBButton;
-	bool bXButton;
-	bool bYButton;
-
-	int bLeftStickX;
-	int bLeftStickY;
-
-	int bRightStickX;
-	int bRightStickY;
-
-	bool bConnected;
-};
 
 class Mouse :
 	public _InputDevice

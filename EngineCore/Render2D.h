@@ -825,6 +825,14 @@ public:
 				m_pTargetBuffer->set(ch, nX, nY, color);
 	}
 
+	void DrawString(string str, int x, int y)
+	{
+		for (int nI = 0; nI < str.length(); nI++)
+		{
+			m_pTargetBuffer->set(str, x, y, FG_WHITE);
+		}
+	}
+
 	virtual void init(OutputBuffer* pBuffer)
 	{
 		m_pTargetBuffer = pBuffer;

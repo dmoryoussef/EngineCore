@@ -14,6 +14,10 @@ struct Vector2
 		Y(y),
 		X(x) {};
 
+	Vector2(float mag) :
+		Y(sin(mag)),
+		X(cos(mag)) {};
+
 
 	float magnitude()
 	{
@@ -33,8 +37,15 @@ struct Vector2
 		return Vector2(nX, nY);
 	}
 
+	template <typename T>
 	string toString()
 	{
+		return "[" + thingToString<T>(X) + ", " + thingToString<T>(Y) + "]";
+	}
+
+	string toString()
+	{
+		//	default int, if you want float, call the above funtion and specify float
 		return "[" + thingToString<int>(X) + ", " + thingToString<int>(Y) + "]";
 	}
 };

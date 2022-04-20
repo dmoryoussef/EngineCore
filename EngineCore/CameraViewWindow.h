@@ -9,14 +9,14 @@ private:
 
 	void handleWorldPosition(MouseState mouseState)
 	{
-		Vector3 vCamera = m_pCamera->getChild<Transform>()->getPosition();
+		Vector3 vCamera = m_pCamera->getChild<Transform3D>()->getPosition();
 		Vector2 worldPosition = WorldPosition(vCurrentMousePosition, vCamera.toVec2(), Position, vCamera.Z);
 		addEvent(new MouseWorldEvent(worldPosition, mouseState));
 	}
 
 	void handleCameraMove(MouseState mouseState)
 	{
-		Vector3 vCurrentCameraPosition = m_pCamera->getChild<Transform>()->getPosition();
+		Vector3 vCurrentCameraPosition = m_pCamera->getChild<Transform3D>()->getPosition();
 		// handle scaling
 		if (m_bCameraZoomable)
 		{
@@ -32,7 +32,7 @@ private:
 					Vector2 vAfterScaleScaleWorldPosition = WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 					Vector2 Diff = (vBeforeScaleWorldPosition - vAfterScaleScaleWorldPosition) * vCurrentCameraPosition.Z;
 
-					m_pCamera->getChild<Transform>()->setPosition({ vCurrentCameraPosition.X - Diff.X, vCurrentCameraPosition.Y - Diff.Y, vCurrentCameraPosition.Z });
+					m_pCamera->getChild<Transform3D>()->setPosition({ vCurrentCameraPosition.X - Diff.X, vCurrentCameraPosition.Y - Diff.Y, vCurrentCameraPosition.Z });
 				}
 			}
 
@@ -48,7 +48,7 @@ private:
 					Vector2 AfterScaleScaleWorldPosition = WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 					Vector2 Diff = (BeforeScaleWorldPosition - AfterScaleScaleWorldPosition) * vCurrentCameraPosition.Z;
 
-					m_pCamera->getChild<Transform>()->setPosition({ vCurrentCameraPosition.X - Diff.X, vCurrentCameraPosition.Y - Diff.Y, vCurrentCameraPosition.Z });
+					m_pCamera->getChild<Transform3D>()->setPosition({ vCurrentCameraPosition.X - Diff.X, vCurrentCameraPosition.Y - Diff.Y, vCurrentCameraPosition.Z });
 				}
 			}
 		}
@@ -78,7 +78,7 @@ private:
 						Vector3 vNewPosition = Vector3( vCurrentCameraPosition.X - vDeltaPos.X,
 														vCurrentCameraPosition.Y - vDeltaPos.Y,
 														vCurrentCameraPosition.Z);
-						m_pCamera->getChild<Transform>()->setPosition(vNewPosition);
+						m_pCamera->getChild<Transform3D>()->setPosition(vNewPosition);
 					}
 				}
 				else
@@ -124,15 +124,20 @@ private:
 	void constructComponent(BaseNode* pBaseNode)
 	{
 		Render2D renderer(this);
-		Vector3 vCurrentCameraPosition = m_pCamera->getChild<Transform>()->getPosition();
+		Vector3 vCurrentCameraPosition = m_pCamera->getChild<Transform3D>()->getPosition();
 		Vector2 vWorldMin = WorldPosition({ 0, 0 }, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 		Vector2 vWorldMax = WorldPosition(Size + Position, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 
 		EntityRenderSystem ecsRenderer;
 		ecsRenderer.render(pBaseNode, &renderer, vCurrentCameraPosition, vWorldMin, vWorldMax);
+		
+		//	if a component is implementing render, call it here
+		//	good for debugging
+		pBaseNode->baseRender(&renderer, vCurrentCameraPosition, vWorldMin, vWorldMax);
+		
 
-		set("Mouse: " + vCurrentMousePosition.toString(), getWidth() - 20, 2, FG_WHITE);
-		set("World: " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 20, 3, FG_WHITE);
+		set("Screen: " + vCurrentMousePosition.toString(), getWidth() - 20, 2, FG_WHITE);
+		set("World:  " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 20, 3, FG_WHITE);
 	
 	}
 
@@ -146,7 +151,7 @@ public:
 	{
 		m_fScreenScale = 5;
 		m_pCamera = new BaseNode("Camera");
-		m_pCamera->add(new Transform({ 0, 0, m_fScreenScale }, { 0, 0, 0 }, { 0, 0, 0 }));
+		m_pCamera->add(new Transform3D({ 0, 0, m_fScreenScale }, { 0, 0, 0 }, { 0, 0, 0 }));
 	}
 
 	BaseNode *getCamera()

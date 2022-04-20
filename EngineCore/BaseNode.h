@@ -207,6 +207,15 @@ public:
 		return "";
 	}
 
+	void baseUpdate(float fDeltaTime)
+	{
+		update(fDeltaTime);
+		while (isIterating())
+		{
+			getCurrent()->baseUpdate(fDeltaTime);
+		}
+	}
+
 	void baseRender(Render2D *pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
 	{
 		render(pRenderer, vCameraPosition, vWorldMin, vWorldMax);

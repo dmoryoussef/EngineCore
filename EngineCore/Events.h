@@ -8,7 +8,24 @@ enum EVENT_TYPE
 	TRANSFORMUPDATE_EVENT,
 	MOUSEWORLD_EVENT,
 	SELECTIONSQUARE_EVENT,
-	BASENODE_EVENT
+	BASENODE_EVENT,
+	ACTION_EVENT
+	
+};
+
+class ActionEvent : public _Event
+{
+private:
+	BaseNode* m_pBaseNode;
+public:
+	ActionEvent(BaseNode* pBaseNode) :
+		m_pBaseNode(pBaseNode),
+		_Event(ACTION_EVENT) {}
+
+	BaseNode* getNode()
+	{
+		return m_pBaseNode;
+	}
 };
 
 class KeyboardEvent :
@@ -45,6 +62,25 @@ public:
 	MouseState getState()
 	{
 		return State;
+	}
+};
+
+class GamePadEvent :
+	public _Event
+{
+private:
+	int m_nIndex;
+
+	GamePad m_Controller;
+
+public:
+	GamePadEvent(GamePad controller) :
+		m_Controller(controller),
+		_Event(GAMEPAD_EVENT) {}
+
+	GamePad getState()
+	{
+		return m_Controller;
 	}
 };
 

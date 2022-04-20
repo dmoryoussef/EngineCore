@@ -7,8 +7,6 @@ private:
 	int m_nTotalEvents;
 
 public:
-
-
 	ConsoleInputBuffer() :
 		m_pInputBuffer(NULL),
 		m_nTotalEvents(0)

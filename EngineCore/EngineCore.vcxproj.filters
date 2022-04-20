@@ -120,7 +120,7 @@
     <ClInclude Include="_EntityComponent.h">
       <Filter>Source Files\EntityComponentSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Transform.h">
+    <ClInclude Include="Transform2D.h">
       <Filter>Source Files\EntityComponentSystem</Filter>
     </ClInclude>
     <ClInclude Include="PathfindingMap.h">
@@ -142,6 +142,24 @@
       <Filter>Source Files\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="EntityRenderSystem.h">
+      <Filter>Source Files\EntityComponentSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityPhysicsSystem.h">
+      <Filter>Source Files\EntityComponentSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform3D.h">
+      <Filter>Source Files\EntityComponentSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerInput.h">
+      <Filter>Source Files\EngineCore\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerWidget.h">
+      <Filter>Source Files\EntityComponentSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ShootAction.h">
+      <Filter>Source Files\EntityComponentSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityFactory.h">
       <Filter>Source Files\EntityComponentSystem</Filter>
     </ClInclude>
   </ItemGroup>

@@ -34,24 +34,27 @@ template <typename T> string thingToString(T data)
 #include "2DMatrix.h"
 
 //	CORE STUFF
+
 #include "EventListener.h"
+
 #include "OutputBuffer.h"
 #include "OutputWindow.h"
-#include "Input.h"  //	inherits eventlistener, posts console events to event system
+#include "Input.h"  
+
 #include "Render2D.h"
-//	ConsoleRenderer.h
-//	Win32Renderer.h
+
 
 #include "NodeCore.h"
 #include "BaseNode.h"
 
 #include "Events.h"	//	need a way to append this with user created events
 
+#include "ControllerInput.h"
+
 #include "ConsoleWindow.h"
 #include "Win32Window.h"
 
 #include "ConsoleInputBuffer.h"
-//	WindowsInputBuffer.h
 #include "ConsoleOutputBuffer.h"
 
 //	derive from here
@@ -59,17 +62,24 @@ template <typename T> string thingToString(T data)
 //	OBJECTS AND STUFF
 //	EntityComponentSystem, TileMapSystem, etc
 #include "_EntityComponent.h"
-#include "Transform.h"
+#include "Transform2D.h"
+#include "Transform3D.h"
 #include "Physics.h"
 #include "Render.h"
+#include "ShootAction.h"
+#include "ControllerWidget.h"
 #include "EntityRenderSystem.h"
+#include "EntityPhysicsSystem.h"
+#include "EntityFactory.h"
 
+//	UI
 #include "UIComponent.h"
 #include "UILayout.h"
 #include "UIWindow.h"
 #include "WorldViewWindow.h"
 #include "CameraViewWindow.h"
 
+//	TILE SYSTEMS
 #include "_Tile2D.h"
 #include "PathfindingTile.h"
 
@@ -95,6 +105,10 @@ protected:
 
 	EventListener events;
 	thread eventThread;
+	ControllerInput controllerInput;
+
+	EntityPhysicsSystem PhysicsSystem;
+	EntityFactory Factory;
 
 	float getDeltaTime()
 	{
@@ -112,6 +126,7 @@ protected:
 
 	void handleEvents() 
 	{
+		controllerInput.handleControllerInput();
 		m_pInputBuffer->getConsoleInput();
 		m_pInputBuffer->convertEvents();
 		//m_pInputBuffer->dispatchEvents();
@@ -122,8 +137,10 @@ protected:
 	{
 		while (m_pData->isIterating())
 		{
-			m_pData->getCurrent()->update(fDeltaTime);
+			m_pData->getCurrent()->baseUpdate(fDeltaTime);
 		}
+
+		PhysicsSystem.update(m_pData, fDeltaTime);
 	}
 
 	void render() 
@@ -138,15 +155,18 @@ protected:
 
 public:
 	Engine() :
-		PrevCounter({0, 0}),
+		PrevCounter({ 0, 0 }),
 		events(),
+		controllerInput(),
+		PhysicsSystem(),
+		m_pData(new BaseNode("Root")),
+		Factory(m_pData),
 		eventThread(events)
 	{
 		m_bRunning = true;
 		m_pWindow = NULL;
 		m_pEngineBuffer = NULL;
 		m_pInputBuffer = NULL;
-		m_pData = new BaseNode("Root");
 		m_pGUI = NULL;
 		
 		LARGE_INTEGER Frequency;
@@ -175,6 +195,8 @@ public:
 		m_pEngineBuffer = new OutputBuffer(m_pWindow->getWidth(), m_pWindow->getHeight());
 		m_pInputBuffer = input;
 		m_pGUI = new _UIComponent(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
+		controllerInput.loadXInput();
+
 
 		CameraViewWindow *pCameraWindow = new CameraViewWindow(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
 		m_pGUI = pCameraWindow;
@@ -192,9 +214,15 @@ public:
 		//m_pData->add(mapB);
 
 		BaseNode* pEntity = new BaseNode();
-		pEntity->add(new Render());
-		pEntity->add(new Transform({ 15, 15, 0 }, { 0, 0, 0 }, { 1, 1, 1 }));
+		pEntity->addChild(new Render());
+		pEntity->addChild(new Transform2D({ 50, 50 }, { 0, 0 }, { 1, 1 }));
+		// pEntity->addChild(new Physics());
+		pEntity->addChild(new ShootAction(100000, 200.0));
 		m_pData->add(pEntity);
+
+		//BaseNode *pControllerWidget = new BaseNode();
+		//pControllerWidget->add(new ControllerWidget());
+		//m_pData->add(pControllerWidget);
 
 	}
 

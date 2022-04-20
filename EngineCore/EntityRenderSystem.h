@@ -10,12 +10,12 @@ public:
 		while (pEntities->isIterating())
 		{
 
-			Transform* pTransform = pEntities->getCurrent()->getChild<Transform>();
+			Transform2D* pTransform = pEntities->getCurrent()->getChild<Transform2D>();
 			Render* pRender = pEntities->getCurrent()->getChild<Render>();
 
 			if (pTransform && pRender)
 			{
-				Vector3 vPosition = pTransform->getPosition();
+				Vector2 vPosition = pTransform->getPosition();
 				
 				//if (vPosition.X > vWorldMin.X && 
 				//	vPosition.X < vWorldMax.X && 
@@ -23,9 +23,9 @@ public:
 				//	vPosition.Y < vWorldMax.Y)
 				{
 					float fScale = vCameraPosition.Z;
-					mat3x3 trans = trans.Translate(vPosition.toVec2());
+					mat3x3 trans = trans.Translate(vPosition);
 					mat3x3 camTrans = trans.Translate({ -vCameraPosition.toVec2().X, -vCameraPosition.toVec2().Y });
-					mat3x3 rotate = rotate.Rotate(3);
+					mat3x3 rotate = rotate.Rotate(pTransform->getAngle());
 					mat3x3 scale = scale.Scale({ fScale, fScale });
 
 					Triangle2D tri({ -0.5, 0 }, {0, 1 }, { 0.5, 0 });
