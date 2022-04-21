@@ -57,35 +57,9 @@ template <typename T> string thingToString(T data)
 #include "ConsoleInputBuffer.h"
 #include "ConsoleOutputBuffer.h"
 
-//	derive from here
-
-//	OBJECTS AND STUFF
-//	EntityComponentSystem, TileMapSystem, etc
-#include "_EntityComponent.h"
-#include "Transform2D.h"
-#include "Transform3D.h"
-#include "Physics.h"
-#include "Render.h"
-#include "ShootAction.h"
-#include "ControllerWidget.h"
-#include "EntityRenderSystem.h"
-#include "EntityPhysicsSystem.h"
-#include "EntityFactory.h"
-
-//	UI
-#include "UIComponent.h"
-#include "UILayout.h"
-#include "UIWindow.h"
-#include "WorldViewWindow.h"
-#include "CameraViewWindow.h"
-
-//	TILE SYSTEMS
-#include "_Tile2D.h"
-#include "PathfindingTile.h"
-
-#include "_TileMap.h"
-#include "PathfindingMap.h"
-
+#include "EntityComponentSystem.h"
+#include "TileMapSystem.h"
+#include "GUI.h"
 
 class Engine
 {
@@ -203,6 +177,8 @@ public:
 		m_pData->add(pCameraWindow->getCamera());
 
 
+		Factory.createEntity();
+
 		//DefaultTileMap* mapA = new DefaultTileMap(8, 8);
 		//mapA->setPosition(2, 2);
 		//mapA->createCheckerMap();
@@ -213,12 +189,7 @@ public:
 		//mapB->createCheckerMap();
 		//m_pData->add(mapB);
 
-		BaseNode* pEntity = new BaseNode();
-		pEntity->addChild(new Render());
-		pEntity->addChild(new Transform2D({ 50, 50 }, { 0, 0 }, { 1, 1 }));
-		// pEntity->addChild(new Physics());
-		pEntity->addChild(new ShootAction(100000, 200.0));
-		m_pData->add(pEntity);
+
 
 		//BaseNode *pControllerWidget = new BaseNode();
 		//pControllerWidget->add(new ControllerWidget());

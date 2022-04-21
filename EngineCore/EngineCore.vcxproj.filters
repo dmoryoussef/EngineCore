@@ -46,6 +46,12 @@
     <Filter Include="Source Files\Geometry">
       <UniqueIdentifier>{d04a22f0-f03a-434a-b681-e31214bff74d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\EntityComponentSystem\Components">
+      <UniqueIdentifier>{a2a76fd4-4e7e-466a-8109-41309edc285c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EntityComponentSystem\Systems">
+      <UniqueIdentifier>{67748a35-4ec3-46ac-8411-96ad217a36dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -117,23 +123,11 @@
     <ClInclude Include="CameraViewWindow.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="_EntityComponent.h">
-      <Filter>Source Files\EntityComponentSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform2D.h">
-      <Filter>Source Files\EntityComponentSystem</Filter>
-    </ClInclude>
     <ClInclude Include="PathfindingMap.h">
       <Filter>Source Files\TileMapSystem\Maps</Filter>
     </ClInclude>
     <ClInclude Include="PathfindingTile.h">
       <Filter>Source Files\TileMapSystem\Tiles</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics.h">
-      <Filter>Source Files\EntityComponentSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Render.h">
-      <Filter>Source Files\EntityComponentSystem</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.h">
       <Filter>Source Files\Geometry</Filter>
@@ -141,26 +135,50 @@
     <ClInclude Include="2DMatrix.h">
       <Filter>Source Files\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="EntityRenderSystem.h">
-      <Filter>Source Files\EntityComponentSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="EntityPhysicsSystem.h">
-      <Filter>Source Files\EntityComponentSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform3D.h">
-      <Filter>Source Files\EntityComponentSystem</Filter>
-    </ClInclude>
     <ClInclude Include="ControllerInput.h">
       <Filter>Source Files\EngineCore\Input</Filter>
     </ClInclude>
-    <ClInclude Include="ControllerWidget.h">
+    <ClInclude Include="EntityComponentSystem.h">
       <Filter>Source Files\EntityComponentSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMapSystem.h">
+      <Filter>Source Files\TileMapSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="_EntityComponent.h">
+      <Filter>Source Files\EntityComponentSystem\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerWidget.h">
+      <Filter>Source Files\EntityComponentSystem\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Source Files\EntityComponentSystem\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Render.h">
+      <Filter>Source Files\EntityComponentSystem\Components</Filter>
     </ClInclude>
     <ClInclude Include="ShootAction.h">
-      <Filter>Source Files\EntityComponentSystem</Filter>
+      <Filter>Source Files\EntityComponentSystem\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform2D.h">
+      <Filter>Source Files\EntityComponentSystem\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform3D.h">
+      <Filter>Source Files\EntityComponentSystem\Components</Filter>
     </ClInclude>
     <ClInclude Include="EntityFactory.h">
-      <Filter>Source Files\EntityComponentSystem</Filter>
+      <Filter>Source Files\EntityComponentSystem\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityPhysicsSystem.h">
+      <Filter>Source Files\EntityComponentSystem\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityRenderSystem.h">
+      <Filter>Source Files\EntityComponentSystem\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="UserController.h">
+      <Filter>Source Files\EntityComponentSystem\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

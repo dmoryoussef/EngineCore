@@ -5,7 +5,7 @@ private:
 	Vector2 m_vPosition;
 	Vector2 m_vScale;
 	Vector2 m_vRotation;
-	float angle;
+	//float angle;
 
 	Vector2 vDeltaTranslate;
 	Vector2 vDeltaRotate;
@@ -28,8 +28,8 @@ private:
 				{
 					//	only update rotation of stick is moved
 					//	otherwise it resets to 0
-					Vector2 vRotation(-RightStickX, -RightStickY);
-					angle = atan2(vRotation.X, vRotation.Y);
+					m_vRotation = { -RightStickX, -RightStickY };
+					
 				}
 				
 				vVelocity = vVelocity * 0.1;
@@ -57,7 +57,6 @@ public:
 		pFrame->set("ROTATION " + m_vRotation.toString(), 3, 2, FG_WHITE + BG_BLACK);
 	}
 
-	float getAngle() { return angle; }
 	void translate(Vector2 translate) {	m_vPosition = m_vPosition + translate;	}
 
 	void setPosition(Vector2 position) { m_vPosition = position; }
@@ -67,13 +66,18 @@ public:
 	Vector2 getForward()
 	{
 		Vector2 forward(0, 1);
-		mat3x3 matRotate = matRotate.Rotate(angle);
+		mat3x3 matRotate = matRotate.Rotate(m_vRotation.getAngle());
 
 		forward = forward * matRotate;
 
 		return forward;
 	}
 
+
+	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
+	{
+		//pRenderer->DrawString(getForward().toString<float>(), 5, 2);
+	}
 
 	Vector2 getPosition() { return m_vPosition; }
 	Vector2 getRotation() { return m_vRotation; }

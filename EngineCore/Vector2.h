@@ -37,6 +37,11 @@ struct Vector2
 		return Vector2(nX, nY);
 	}
 
+	float getAngle()
+	{
+		return atan2(X, Y);
+	}
+
 	template <typename T>
 	string toString()
 	{

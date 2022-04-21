@@ -25,7 +25,7 @@ public:
 					float fScale = vCameraPosition.Z;
 					mat3x3 trans = trans.Translate(vPosition);
 					mat3x3 camTrans = trans.Translate({ -vCameraPosition.toVec2().X, -vCameraPosition.toVec2().Y });
-					mat3x3 rotate = rotate.Rotate(pTransform->getAngle());
+					mat3x3 rotate = rotate.Rotate(pTransform->getRotation().getAngle());
 					mat3x3 scale = scale.Scale({ fScale, fScale });
 
 					Triangle2D tri({ -0.5, 0 }, {0, 1 }, { 0.5, 0 });
@@ -45,7 +45,7 @@ public:
 			}
 
 		}
-		pRenderer->DrawNum(renderedEntities, 2, 2, FG_WHITE);
+		//pRenderer->DrawNum(renderedEntities, 2, 2, FG_WHITE);
 	}
 
 };

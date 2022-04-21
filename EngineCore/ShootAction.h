@@ -17,10 +17,10 @@ private:
 				{
 					if (shoot())
 					{
-						BaseNode* pParent = getParent();
-						addEvent(new ActionEvent(pParent));	
-					}
 						//	spawn projectile
+						addEvent(new ActionEvent(getParent()));	
+					}
+						
 						
 				}
 				break;
@@ -66,8 +66,5 @@ public:
 		return false;
 	}
 
-	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
-	{
-		pRenderer->DrawNum(bReady, 2, 3, FG_WHITE);
-	}
+
 };
