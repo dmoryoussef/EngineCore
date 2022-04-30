@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BaseNode.h" />
+    <ClInclude Include="CommandSystem.h" />
     <ClInclude Include="ControllerWidget.h" />
     <ClInclude Include="EntityComponentSystem.h" />
     <ClInclude Include="EntityFactory.h" />

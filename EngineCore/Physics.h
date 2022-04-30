@@ -16,7 +16,7 @@ public:
 		fMass(1.0),
 		_EntityComponent("Physics")
 	{
-
+		registerListener(0);
 	};
 
 	Physics(Vector2 velocity) :

@@ -27,6 +27,11 @@ template <typename T> string thingToString(T data)
 	return str.str();
 }
 
+int random(int min, int max)
+{
+	return rand() % (max + 1) - min;
+}
+
 #include "Vector2.h"
 #include "Vector3.h"
 
@@ -164,6 +169,8 @@ public:
 
 	void setup(OutputWindow *sb, ConsoleInputBuffer *input)
 	{
+		//	seed random generator
+		srand(0);
 		m_pWindow = sb;
 		m_pWindow->init();
 		m_pEngineBuffer = new OutputBuffer(m_pWindow->getWidth(), m_pWindow->getHeight());
@@ -177,7 +184,9 @@ public:
 		m_pData->add(pCameraWindow->getCamera());
 
 
-		Factory.createEntity();
+		Factory.createPlayer(1);
+
+		Factory.createPlayer(2);
 
 		//DefaultTileMap* mapA = new DefaultTileMap(8, 8);
 		//mapA->setPosition(2, 2);

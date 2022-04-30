@@ -11,3 +11,4 @@
 #include "EntityRenderSystem.h"
 #include "EntityPhysicsSystem.h"
 #include "EntityFactory.h"
+#include "CommandSystem.h"

@@ -9,8 +9,24 @@ enum EVENT_TYPE
 	MOUSEWORLD_EVENT,
 	SELECTIONSQUARE_EVENT,
 	BASENODE_EVENT,
-	ACTION_EVENT
-	
+	ACTION_EVENT,
+	COMMAND_EVENT
+};
+
+class CommandEvent : public _Event
+{
+private:
+	int m_id;
+	_Command m_Command;
+
+public:
+	CommandEvent(int id, _Command command) :
+		m_id(id),
+		m_Command(command),
+		_Event(COMMAND_EVENT) {};
+
+	int getId() { return m_id; }
+	_Command getCommand() { return m_Command; }
 };
 
 class ActionEvent : public _Event

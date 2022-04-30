@@ -1,3 +1,35 @@
+enum COMMANDS
+{
+	ACCEL,
+	ROTATE,
+	FIRE
+};
+
+class _Command
+{
+private:
+	int m_id;
+
+public:
+	_Command(int id) :
+		m_id(id) {};
+
+	int getId() { return m_id; }
+};
+
+class AccelerateCommand : public _Command
+{
+private:
+	Vector2 m_vForce;
+
+public:
+	AccelerateCommand(Vector2 f) :
+		m_vForce(f),
+		_Command(ACCEL) {};
+
+	Vector2 getForce() { return m_vForce; }
+};
+
 class UserController : public _EntityComponent
 {
 private:
@@ -12,26 +44,29 @@ private:
 				if (pEvent->get<GamePadEvent>()->getState().nIndex == m_nControllerID)
 				{
 					GamePad Controller = pEvent->get<GamePadEvent>()->getState();
-					float LeftStickX = Controller.LeftStickX;
-					float LeftStickY = Controller.LeftStickY;
+					
+					if (Controller.LeftStickX != 0.0 || Controller.LeftStickY != 0.0)
+					{
+						Vector2 vVelocity(Controller.LeftStickX, -Controller.LeftStickY);
+						vVelocity = vVelocity * 0.1;
+						addEvent(new CommandEvent(m_nControllerID, new AccelerateCommand(vVelocity));
+						
+					}
 
-					Vector2 vVelocity(LeftStickX, -LeftStickY);
-					vVelocity = vVelocity * 0.1;
-					//	COMMAND -> accelerate
-			
-					float RightStickX = Controller.RightStickX;
-					float RightStickY = Controller.RightStickY;
-					if (RightStickX != 0.0 || RightStickY != 0.0)
+					if (Controller.RightStickX != 0.0 || Controller.RightStickY != 0.0)
 					{
 						//	only update rotation of stick is moved
 						//	otherwise it resets to 0
 						//	COMMAND -> rotate
+						//addEvent(new CommandEvent(m_nControllerID, ROTATE));
 
 					}
 
-					if (pEvent->get<GamePadEvent>()->getState().XButton)
+					if (Controller.XButton)
 					{
 						//	COMMAND --> ACTION
+						//addEvent(new CommandEvent(m_nControllerID, FIRE));
+							
 					}
 				}
 				

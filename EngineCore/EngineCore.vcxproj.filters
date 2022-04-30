@@ -180,6 +180,9 @@
     <ClInclude Include="UserController.h">
       <Filter>Source Files\EntityComponentSystem\Components</Filter>
     </ClInclude>
+    <ClInclude Include="CommandSystem.h">
+      <Filter>Source Files\EntityComponentSystem\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

@@ -19,17 +19,13 @@ x_input_get_state* _XInputGetState = XInputGetStateStub;
 class ControllerInput :
 	public EventListener
 {
+private:
+	bool controllerConnected[XUSER_MAX_COUNT];
 public:
 	ControllerInput() {}
 
-	void loadXInput()
+	void update()
 	{
-		HMODULE XInputLibrary = LoadLibrary("xinput1_3.dll");
-		if (XInputLibrary)
-		{
-			XInputGetState = (x_input_get_state*)GetProcAddress(XInputLibrary, "XInputGetState");
-			XInputSetState = (x_input_set_state*)GetProcAddress(XInputLibrary, "XInputSetState");
-		}
 		DWORD dwResult;
 		for (DWORD i = 0; i < XUSER_MAX_COUNT; i++)
 		{
@@ -41,14 +37,32 @@ public:
 
 			if (dwResult == ERROR_SUCCESS)
 			{
-				OutputDebugString("Controller is connected\n");
+				if (controllerConnected[i] != true)
+				{
+					OutputDebugString("Controller is connected\n");
+					controllerConnected[i] = true;
+				}
 			}
 			else
 			{
-				OutputDebugString("Controller is not connected\n");
+				if (controllerConnected[i] == true)
+				{
+					OutputDebugString("Controller is not connected\n");
+					controllerConnected[i] = false;
+				}
+				
 			}
 		}
+	}
 
+	void loadXInput()
+	{
+		HMODULE XInputLibrary = LoadLibrary("xinput1_3.dll");
+		if (XInputLibrary)
+		{
+			XInputGetState = (x_input_get_state*)GetProcAddress(XInputLibrary, "XInputGetState");
+			XInputSetState = (x_input_set_state*)GetProcAddress(XInputLibrary, "XInputSetState");
+		}
 	}
 
 	void handleControllerInput()
@@ -58,6 +72,7 @@ public:
 		{
 			XINPUT_STATE state;
 			ZeroMemory(&state, sizeof(XINPUT_STATE));
+			update();
 
 			for (DWORD ControllerIndex = 0;
 				ControllerIndex < XUSER_MAX_COUNT;
