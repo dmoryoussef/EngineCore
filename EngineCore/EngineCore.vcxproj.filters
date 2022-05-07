@@ -183,6 +183,9 @@
     <ClInclude Include="CommandSystem.h">
       <Filter>Source Files\EntityComponentSystem\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="_Command.h">
+      <Filter>Source Files\EntityComponentSystem\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

@@ -14,30 +14,30 @@ private:
 	{
 		switch (pEvent->m_eType)
 		{
-			case GAMEPAD_EVENT:
-			{
-				GamePad Controller = pEvent->get<GamePadEvent>()->getState();
-				float LeftStickX = Controller.LeftStickX;
-				float LeftStickY = Controller.LeftStickY;
-				float RightStickX = Controller.RightStickX;
-				float RightStickY = Controller.RightStickY;
+			//case GAMEPAD_EVENT:
+			//{
+			//	GamePad Controller = pEvent->get<GamePadEvent>()->getState();
+			//	float LeftStickX = Controller.LeftStickX;
+			//	float LeftStickY = Controller.LeftStickY;
+			//	float RightStickX = Controller.RightStickX;
+			//	float RightStickY = Controller.RightStickY;
 
-				Vector2 vVelocity(LeftStickX, -LeftStickY);
+			//	Vector2 vVelocity(LeftStickX, -LeftStickY);
 
-				if (RightStickX != 0.0 || RightStickY != 0.0)
-				{
-					//	only update rotation of stick is moved
-					//	otherwise it resets to 0
-					m_vRotation = { -RightStickX, -RightStickY };
-					
-				}
-				
-				vVelocity = vVelocity * 0.1;
-				m_vPosition = m_vPosition + vVelocity;
+			//	if (RightStickX != 0.0 || RightStickY != 0.0)
+			//	{
+			//		//	only update rotation of stick is moved
+			//		//	otherwise it resets to 0
+			//		m_vRotation = { -RightStickX, -RightStickY };
+			//		
+			//	}
+			//	
+			//	vVelocity = vVelocity * 0.1;
+			//	m_vPosition = m_vPosition + vVelocity;
 
-				
-				break;
-			}
+			//	
+			//	break;
+			/*}*/
 		}
 	}
 
@@ -48,7 +48,7 @@ public:
 		m_vRotation(R),
 		_EntityComponent("Transform3D")	
 	{
-		registerListener(GAMEPAD_EVENT);
+		//	registerListener(GAMEPAD_EVENT);
 	};
 
 	void draw(OutputBuffer *pFrame)

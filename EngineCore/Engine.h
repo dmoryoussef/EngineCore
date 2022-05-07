@@ -52,6 +52,7 @@ int random(int min, int max)
 #include "NodeCore.h"
 #include "BaseNode.h"
 
+#include "_Command.h"
 #include "Events.h"	//	need a way to append this with user created events
 
 #include "ControllerInput.h"
@@ -88,6 +89,7 @@ protected:
 
 	EntityPhysicsSystem PhysicsSystem;
 	EntityFactory Factory;
+	EntityCommandSystem Command;
 
 	float getDeltaTime()
 	{
@@ -108,8 +110,7 @@ protected:
 		controllerInput.handleControllerInput();
 		m_pInputBuffer->getConsoleInput();
 		m_pInputBuffer->convertEvents();
-		//m_pInputBuffer->dispatchEvents();
-		//events.dispatchEvents();
+		events.dispatchEvents();
 	}
 
 	void update(float fDeltaTime)
@@ -140,7 +141,8 @@ public:
 		PhysicsSystem(),
 		m_pData(new BaseNode("Root")),
 		Factory(m_pData),
-		eventThread(events)
+		Command(m_pData)
+		//eventThread(events)
 	{
 		m_bRunning = true;
 		m_pWindow = NULL;
@@ -184,9 +186,9 @@ public:
 		m_pData->add(pCameraWindow->getCamera());
 
 
-		Factory.createPlayer(1);
+		Factory.createPlayer(0);
 
-		Factory.createPlayer(2);
+		Factory.createPlayer(1);
 
 		//DefaultTileMap* mapA = new DefaultTileMap(8, 8);
 		//mapA->setPosition(2, 2);

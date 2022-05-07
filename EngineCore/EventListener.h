@@ -14,6 +14,7 @@ public:
 
 	template <typename T> T* get()
 	{
+		//	safety check is done elsewhere
 		return static_cast<T*> (this);
 	}
 
@@ -129,7 +130,6 @@ public:
 	void dispatchEvent()
 	{
 
-		threadLock.lock();
 
 		map<int, vector<EventListener*>>::iterator Listener;
 		_Event *pEvent = Events.front();
@@ -146,11 +146,18 @@ public:
 		Events.pop();
 		delete pEvent;
 
-		threadLock.unlock();
 	}
 
 	void dispatchEvents()
 	{
+		while (Events.size() > 0)
+		{
+			dispatchEvent();
+		}
+	}
+
+	//void dispatchEvents()
+	
 		//for (int nI = 0; nI < Events.size(); nI++)
 		//{
 		//	map<int, vector<EventListener*>>::iterator Listener;
@@ -167,7 +174,7 @@ public:
 		//}
 
 		//Events.clear();													//	clear vector
-	}
+	
 
 	void deleteListeners()
 	{
@@ -193,4 +200,3 @@ public:
 
 map<int, vector<EventListener*>> EventListener::Listeners;
 queue<_Event*> EventListener::Events;
-mutex EventListener::threadLock;

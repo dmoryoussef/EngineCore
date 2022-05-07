@@ -17,16 +17,16 @@ class CommandEvent : public _Event
 {
 private:
 	int m_id;
-	_Command m_Command;
+	_Command *m_pCommand;
 
 public:
-	CommandEvent(int id, _Command command) :
+	CommandEvent(int id, _Command *pCommand) :
 		m_id(id),
-		m_Command(command),
+		m_pCommand(pCommand),
 		_Event(COMMAND_EVENT) {};
 
 	int getId() { return m_id; }
-	_Command getCommand() { return m_Command; }
+	_Command *getCommand() { return m_pCommand; }
 };
 
 class ActionEvent : public _Event
@@ -85,7 +85,6 @@ class GamePadEvent :
 	public _Event
 {
 private:
-	int m_nIndex;
 
 	GamePad m_Controller;
 

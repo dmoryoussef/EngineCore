@@ -84,7 +84,6 @@ public:
 					XINPUT_GAMEPAD* pGamePad = &ControllerState.Gamepad;
 
 				
-
 					GamePad Controller;
 					Controller.nIndex = ControllerIndex;
 					Controller.Up = (pGamePad->wButtons & XINPUT_GAMEPAD_DPAD_UP);
