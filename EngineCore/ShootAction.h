@@ -6,27 +6,6 @@ private:
 	float fCurrent;
 	int nAmmo;
 	bool bReady;
-	
-	void onEvent(_Event* pEvent)
-	{
-		switch (pEvent->m_eType)
-		{
-			case GAMEPAD_EVENT:
-			{
-				if (pEvent->get<GamePadEvent>()->getState().XButton)
-				{
-					if (shoot())
-					{
-						//	spawn projectile
-						addEvent(new ActionEvent(getParent()));	
-					}
-						
-						
-				}
-				break;
-			}
-		}
-	}
 
 public:
 	ShootAction(int ammo, float cooldown) :
@@ -54,7 +33,7 @@ public:
 
 	}
 
-	bool shoot()
+	bool canShoot()
 	{
 		if (bReady && nAmmo > 0)
 		{

@@ -16,16 +16,16 @@ enum EVENT_TYPE
 class CommandEvent : public _Event
 {
 private:
-	int m_id;
+	BaseNode* m_pParent;
 	_Command *m_pCommand;
 
 public:
-	CommandEvent(int id, _Command *pCommand) :
-		m_id(id),
+	CommandEvent(BaseNode *pParent, _Command *pCommand) :
+		m_pParent(pParent),
 		m_pCommand(pCommand),
 		_Event(COMMAND_EVENT) {};
 
-	int getId() { return m_id; }
+	BaseNode* getParent() { return m_pParent; }
 	_Command *getCommand() { return m_pCommand; }
 };
 

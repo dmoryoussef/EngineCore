@@ -30,10 +30,10 @@ struct GamePad
 	float clearDeadzone(float val)
 	{
 		if (val > 0)
-			if (val < .2)
+			if (val < .4)
 				val = 0;
 		if (val < 0)
-			if (val > -0.2)
+			if (val > -0.4)
 				val = 0;
 
 		return val;

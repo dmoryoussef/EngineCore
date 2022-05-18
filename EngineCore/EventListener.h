@@ -20,6 +20,17 @@ public:
 
 };
 
+class CallBack
+{
+public:
+	CallBack(void (*callback)())
+	{
+		handleEvent = callback;
+	};
+
+	void (*handleEvent)() = 0;
+};
+
 class EventListener
 {
 protected:
@@ -27,13 +38,10 @@ protected:
 	static queue<_Event*> Events;
 	static mutex threadLock;
 
-	//static map<int, map<EventListener*, eventCallBack>> CallBackListeners;
+	typedef void (*eventCallBack)();
+	static map<int, map<EventListener*, CallBack*>> CallBackListeners;
 
 	virtual void onEvent(_Event* pEvent) {}
-	void execute()
-	{
-		//m_fCallback();
-	}
 
 public:
 	EventListener() {};
@@ -42,18 +50,18 @@ public:
 		unregisterAll(this);
 	}
 
-	void operator()()
-	{
-		while (true)
-		{
-			
-			if (Events.size() > 0)
-			{				
-				dispatchEvent();
-			}
-				
-		}
-	}
+	//void operator()()
+	//{
+	//	while (true)
+	//	{
+	//		
+	//		if (Events.size() > 0)
+	//		{				
+	//			dispatchEvent();
+	//		}
+	//			
+	//	}
+	//}
 
 	void unregisterAll(EventListener* pListener)
 	{
@@ -72,9 +80,9 @@ public:
 		}
 	}
 
-	void addCallbackListener(EventListener* pListener, int event, void (*callback)())
+	void registerCallbackListener(int event, CallBack *callBack)
 	{
-		//CallBackListeners[event].insert(make_pair(pListener, callback));
+		CallBackListeners[event].insert(make_pair(this, callBack));
 	}
 
 	void unregisterListener(EventListener* pListener, int Event)
@@ -88,7 +96,6 @@ public:
 				if (Listener->second[nI] == pListener)						//	compare
 				{
 					Listener->second.erase(Listener->second.begin() + nI);	//	remove
-					OutputDebugStringA("unregistered listener. \n");
 				}
 			}
 		}
@@ -110,30 +117,28 @@ public:
 		Events.push(Event);
 	}
 
-	void dispatchCallbackEvents()
+	void dispatchCallbackEvent(_Event *pEvent)
 	{
-		//for (int nI = 0; nI < Events.size(); nI++)						// For each event in Queue(vector)
-		//{
-		//	//map<int, map<EventListener*, eventCallBack>>::iterator CallBackListener;
-		//	//CallBackListener = CallBackListeners.find(Events[nI]->m_eType);
-		//	//map<EventListener*, eventCallBack>::iterator Listener = CallBackListener->second.begin();
-		//	//while (Listener != CallBackListener->second.end())
-		//	{
-		//		//	Listener->second;
-		//	}
+		// find list of listeners for given event type
+		map<int, map<EventListener*, CallBack*>>::iterator CallBackListenerType;
+		CallBackListenerType = CallBackListeners.find(pEvent->m_eType);	
 
-		//	delete Events[nI];											//	Delete event pointer data (does not remove element from vector)
-		//}
-		//Events.clear();													//	Now clear Events
+		if (CallBackListenerType != CallBackListeners.end())	// listener found
+		{
+			map<EventListener*, CallBack*>::iterator Listener = CallBackListenerType->second.begin();
+
+			while (Listener != CallBackListenerType->second.end())
+			{
+				Listener->second->handleEvent();
+			}
+		}
 	}
 
-	void dispatchEvent()
+	
+
+	void dispatchEvent(_Event *pEvent)
 	{
-
-
 		map<int, vector<EventListener*>>::iterator Listener;
-		_Event *pEvent = Events.front();
-
 		Listener = Listeners.find(pEvent->m_eType);
 		if (Listener != Listeners.end())							//  if Listeners found
 		{
@@ -143,8 +148,7 @@ public:
 			}
 		}
 
-		Events.pop();
-		delete pEvent;
+		
 
 	}
 
@@ -152,8 +156,13 @@ public:
 	{
 		while (Events.size() > 0)
 		{
-			dispatchEvent();
+			_Event* pEvent = Events.front();
+			dispatchEvent(pEvent);
+			Events.pop();
+			delete pEvent;
 		}
+		//	while callbackEvents > 0
+			//dispatchCallbackEvent(pEvent);
 	}
 
 	//void dispatchEvents()
@@ -195,8 +204,8 @@ public:
 	}
 };
 
-//typedef void (*eventCallBack)();
-//map<int, map<EventListener*, eventCallBack>> EventListener::CallBackListeners;
+map<int, map<EventListener*, CallBack*>> EventListener::CallBackListeners;
+
 
 map<int, vector<EventListener*>> EventListener::Listeners;
 queue<_Event*> EventListener::Events;

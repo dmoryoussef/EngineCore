@@ -31,6 +31,19 @@ public:
 	Vector2 getVector() { return m_vRotate; }
 };
 
+class ActionCommand : public _Command
+{
+private:
+public:
+	ActionCommand() :
+		_Command(FIRE) {};
+};
+
+void test()
+{
+	cout << "from global function \n";
+}
+
 class UserController : public _EntityComponent
 {
 private:
@@ -58,7 +71,7 @@ private:
 					{
 						Vector2 vVelocity(Controller.LeftStickX, -Controller.LeftStickY);
 						vVelocity = vVelocity * 0.1;
-						addEvent(new CommandEvent(m_nControllerID, new AccelerateCommand(vVelocity)));
+						addEvent(new CommandEvent(getParent(), new AccelerateCommand(vVelocity)));
 						
 					}
 
@@ -68,14 +81,14 @@ private:
 						//	otherwise it resets to 0
 						//	COMMAND -> rotate
 						Vector2 vRotate(-Controller.RightStickX, -Controller.RightStickY);
-						addEvent(new CommandEvent(m_nControllerID, new RotateCommand(vRotate)));
+						addEvent(new CommandEvent(getParent(), new RotateCommand(vRotate)));
 
 					}
 
 					if (Controller.XButton)
 					{
 						//	COMMAND --> ACTION
-						//addEvent(new CommandEvent(m_nControllerID, FIRE));
+						addEvent(new CommandEvent(getParent(), new ActionCommand()));
 					}
 				}
 				
@@ -90,7 +103,9 @@ public:
 		_EntityComponent("USER_CONTROLLER")
 	{
 		registerListener(GAMEPAD_EVENT);
+		//	registerCallbackListener(GAMEPAD_EVENT, new CallBack(test));
 	}
+
 
 	int getControllerId()
 	{

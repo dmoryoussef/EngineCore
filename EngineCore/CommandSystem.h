@@ -26,49 +26,64 @@ private:
 		{
 			case COMMAND_EVENT:
 			{
-				_Command *pCommand = pEvent->get<CommandEvent>()->getCommand();
-				if (BaseNode *pEntity = getEntity(pEvent->get<CommandEvent>()->getId()))
+				_Command* pCommand = pEvent->get<CommandEvent>()->getCommand();
+				BaseNode* pParent = pEvent->get<CommandEvent>()->getParent();
 				{
-					//	entity has userController with matching id
-					//	SO
-					//	do command
-					switch (pCommand->getType())
+					if (pCommand->getType() == ACCELERATE)
 					{
-						case ACCELERATE:
+						if (Transform2D* pTransform = pParent->getChild<Transform2D>())
 						{
-							if (Transform2D* pTransform = pEntity->getChild<Transform2D>())
-							{
-								Vector2 vPosition = pTransform->getPosition();
-								Vector2 vVelocity = pCommand->get<AccelerateCommand>()->getForce();
-								pTransform->setPosition(vPosition + vVelocity);
-							}
-							
-							break;
-						}
-
-						case ROTATE:
-						{
-							if (Transform2D* pTransform = pEntity->getChild<Transform2D>())
-							{
-								Vector2 vRotate = pCommand->get<RotateCommand>()->getVector();
-								pTransform->setRotation(vRotate);
-
-							}
-							break;
+							Vector2 vPosition = pTransform->getPosition();
+							Vector2 vVelocity = pCommand->get<AccelerateCommand>()->getForce();
+							pTransform->setPosition(vPosition + vVelocity);
 						}
 					}
-				}
-				delete pCommand;
 
-				break;
+					if (pCommand->getType() == ROTATE)
+					{
+						if (Transform2D* pTransform = pParent->getChild<Transform2D>())
+						{
+							Vector2 vRotate = pCommand->get<RotateCommand>()->getVector();
+							pTransform->setRotation(vRotate);
+						}
+					}
+
+					if (pCommand->getType() == FIRE)
+					{
+						if (Transform2D* transform = pParent->getChild<Transform2D>())
+						{
+							if (ShootAction* pShoot = pParent->getChild<ShootAction>())
+							{
+								if (pShoot->canShoot())
+								{
+
+									Vector2 rotation = transform->getRotation();
+									Vector2 forward = transform->getForward();
+									Vector2 position = transform->getPosition();
+
+									BaseNode* pEntity = new BaseNode();
+									// pEntity->add(new Render());
+									pEntity->addChild(new Transform2D(position, rotation, { 1, 1 }));
+									pEntity->addChild(new Render());
+									pEntity->add(new Physics(forward * 1.5));
+									m_pEntityList->add(pEntity);
+								}
+							}
+						}
+					}
+
+					delete pCommand;
+
+					break;
+				}
 			}
+			//	case command event
+			//		shootAction:
+			//			get action->execute()
+			//	case accelerate command
+			//		get transform, physics
+			//			add accelerate force
 		}
-		//	case command event
-		//		shootAction:
-		//			get action->execute()
-		//	case accelerate command
-		//		get transform, physics
-		//			add accelerate force
 	}
 
 public:

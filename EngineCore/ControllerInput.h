@@ -21,6 +21,7 @@ class ControllerInput :
 {
 private:
 	bool controllerConnected[XUSER_MAX_COUNT];
+
 public:
 	ControllerInput() {}
 
@@ -50,7 +51,6 @@ public:
 					OutputDebugString("Controller is not connected\n");
 					controllerConnected[i] = false;
 				}
-				
 			}
 		}
 	}
