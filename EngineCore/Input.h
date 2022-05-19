@@ -21,6 +21,9 @@ struct GamePad
 	bool XButton;
 	bool YButton;
 
+	float LeftTrigger;
+	float RightTrigger;
+
 	float LeftStickX;
 	float LeftStickY;
 

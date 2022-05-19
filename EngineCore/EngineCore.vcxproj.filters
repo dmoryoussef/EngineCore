@@ -186,6 +186,9 @@
     <ClInclude Include="_Command.h">
       <Filter>Source Files\EntityComponentSystem\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="Polygon.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

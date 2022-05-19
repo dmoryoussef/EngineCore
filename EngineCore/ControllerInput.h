@@ -98,7 +98,9 @@ public:
 					Controller.BButton = (pGamePad->wButtons & XINPUT_GAMEPAD_B);
 					Controller.XButton = (pGamePad->wButtons & XINPUT_GAMEPAD_X);
 					Controller.YButton = (pGamePad->wButtons & XINPUT_GAMEPAD_Y);
-					//	Controller.LeftTrigger = (pGamePad->bLeftTrigger & XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
+
+					Controller.LeftTrigger = (pGamePad->bLeftTrigger & XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
+					Controller.RightTrigger = (pGamePad->bRightTrigger & XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
 
 					//	stick range is between -32768 and 32767
 					//	normalize first
@@ -119,7 +121,9 @@ public:
 						Controller.LeftStickY != 0.0 ||
 						Controller.RightStickX != 0.0 ||
 						Controller.RightStickY != 0.0 ||
-						Controller.XButton);
+						Controller.LeftTrigger != 0.0 ||
+						Controller.RightTrigger != 0.0 ||
+						Controller.XButton)
 
 						addEvent(new GamePadEvent(Controller));
 				}

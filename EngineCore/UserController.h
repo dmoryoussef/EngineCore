@@ -85,7 +85,7 @@ private:
 
 					}
 
-					if (Controller.XButton)
+					if (Controller.RightTrigger > 0.0)
 					{
 						//	COMMAND --> ACTION
 						addEvent(new CommandEvent(getParent(), new ActionCommand()));

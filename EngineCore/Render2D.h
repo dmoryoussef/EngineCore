@@ -228,6 +228,15 @@ public:
 		DrawLine(b, c, pixel);
 		DrawLine(c, a, pixel);
 	}
+	void DrawPoly(vector<Vector2> verticies, Pixel pixel)
+	{
+		for (int i = 0; i < verticies.size() - 1; i++)
+		{
+			DrawLine(verticies[i], verticies[i + 1], pixel);
+		}
+
+		DrawLine(verticies[verticies.size()], verticies[0], pixel);
+	}
 
 	//void DrawTriangle(Triangle tri, Pixel pix)
 	//{

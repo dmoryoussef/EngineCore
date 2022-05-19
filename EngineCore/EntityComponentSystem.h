@@ -6,6 +6,7 @@
 #include "ShootAction.h"
 #include "ControllerWidget.h"
 #include "UserController.h"
+#include "Polygon.h"
 
 
 #include "EntityRenderSystem.h"
