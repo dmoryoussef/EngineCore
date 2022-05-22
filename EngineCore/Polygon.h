@@ -1,4 +1,6 @@
-class Polygon : _EntityComponent
+#define PI 3.14159f
+
+class Polygon2D
 {
 private:
 	vector<Vector2> Verticies;	// for outlined poly
@@ -9,18 +11,22 @@ private:
 		//	algorithm to create triangles from the base poly
 	}
 
-	void createPoly(int verts)
-	{
-		Verticies.push_back({ 0.0, 0.0 });
-		for (int nI = 0; nI < verts; nI++)
-		{
-			Verticies.push_back({ cosf(nI / (float)(verts - 1) * 2.0f * 3.14159f) , sinf(nI / (float)(verts - 1) * 2.0f * 3.14159f) });
-		}	
-	}
+	
 
 public:
-	Polygon() :
-	_EntityComponent("POLYGON") {};
+	Polygon2D() {};
+
+	void createPoly(int sides)
+	{
+		Verticies.clear();
+
+		for (int nI = 0; nI < sides; nI++)
+		{
+			Verticies.push_back({ cosf((nI / (float)(sides)) * 2 * PI) , sinf((nI / (float)(sides)) * 2 * PI) });
+		}	
+
+		rotate(PI / 2);
+	}
 
 	void scale(Vector2 scale)
 	{
@@ -49,5 +55,9 @@ public:
 		}
 	}
 
+	vector<Vector2> getVerticies()
+	{
+		return Verticies;
+	}
 
 };

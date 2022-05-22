@@ -6,46 +6,37 @@ public:
 
 	void render(BaseNode *pEntities, Render2D *pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
 	{
-		int renderedEntities = 0;
 		while (pEntities->isIterating())
 		{
-
 			Transform2D* pTransform = pEntities->getCurrent()->getChild<Transform2D>();
 			Render* pRender = pEntities->getCurrent()->getChild<Render>();
 
 			if (pTransform && pRender)
 			{
 				Vector2 vPosition = pTransform->getPosition();
+				Vector2 vScale = pTransform->getScale();
+				Vector2 vRotation = pTransform->getRotation();
 				
-				//if (vPosition.X > vWorldMin.X && 
-				//	vPosition.X < vWorldMax.X && 
-				//	vPosition.Y > vWorldMin.Y && 
-				//	vPosition.Y < vWorldMax.Y)
+				if (vPosition.X > vWorldMin.X && 
+					vPosition.X < vWorldMax.X && 
+					vPosition.Y > vWorldMin.Y && 
+					vPosition.Y < vWorldMax.Y)
 				{
-					float fScale = vCameraPosition.Z;
-					mat3x3 trans = trans.Translate(vPosition);
-					mat3x3 camTrans = trans.Translate({ -vCameraPosition.toVec2().X, -vCameraPosition.toVec2().Y });
-					mat3x3 rotate = rotate.Rotate(pTransform->getRotation().getAngle());
-					mat3x3 scale = scale.Scale({ fScale, fScale });
+					float fCameraScale = vCameraPosition.Z;
 
-					Triangle2D tri({ -0.5, 0 }, {0, 1 }, { 0.5, 0 });
+					Polygon2D polygon = pRender->getPolygon();
+					polygon.scale(vScale);
+					polygon.rotate(vRotation.getAngle());
+					polygon.translate(vPosition);
 					
-					tri = tri * rotate;
-					tri = tri * scale;
-					tri = tri * trans;
-					
-					//tri = tri * camTrans;
-					//	rotate
+					polygon.scale({ fCameraScale, fCameraScale });
+					polygon.translate(vCameraPosition.toVec2());
 
-					pRenderer->DrawTriangle(tri.A, tri.B, tri.C, Pixel(PIXEL_SOLID, FG_WHITE));
-					renderedEntities++;
+					pRenderer->DrawPoly(polygon.getVerticies(), Pixel(PIXEL_SOLID, FG_WHITE));
 				}
-					
-				
 			}
 
 		}
-		//pRenderer->DrawNum(renderedEntities, 2, 2, FG_WHITE);
 	}
 
 };

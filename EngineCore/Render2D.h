@@ -235,7 +235,7 @@ public:
 			DrawLine(verticies[i], verticies[i + 1], pixel);
 		}
 
-		DrawLine(verticies[verticies.size()], verticies[0], pixel);
+		DrawLine(verticies[verticies.size() - 1], verticies[0], pixel);
 	}
 
 	//void DrawTriangle(Triangle tri, Pixel pix)

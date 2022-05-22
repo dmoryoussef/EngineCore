@@ -36,10 +36,12 @@ int random(int min, int max)
 #include "Vector3.h"
 
 #include "Triangle.h"
+
 #include "2DMatrix.h"
+#include "Polygon.h"
+
 
 //	CORE STUFF
-
 #include "EventListener.h"
 
 #include "OutputBuffer.h"
@@ -47,7 +49,6 @@ int random(int min, int max)
 #include "Input.h"  
 
 #include "Render2D.h"
-
 
 #include "NodeCore.h"
 #include "BaseNode.h"

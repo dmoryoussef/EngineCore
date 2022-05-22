@@ -34,7 +34,9 @@ private:
 						if (Transform2D* pTransform = pParent->getChild<Transform2D>())
 						{
 							Vector2 vPosition = pTransform->getPosition();
-							Vector2 vVelocity = pCommand->get<AccelerateCommand>()->getForce();
+							Vector2 vVelocity = pCommand->get<AccelerateCommand>()->getForce() * 0.1;
+							
+							//	let physics engine handle this part
 							pTransform->setPosition(vPosition + vVelocity);
 						}
 					}
@@ -56,16 +58,16 @@ private:
 							{
 								if (pShoot->canShoot())
 								{
-
 									Vector2 rotation = transform->getRotation();
 									Vector2 forward = transform->getForward();
 									Vector2 position = transform->getPosition();
-
+									
+									// move to entity factory??
+									//	spawn entity event
 									BaseNode* pEntity = new BaseNode();
-									// pEntity->add(new Render());
-									pEntity->addChild(new Transform2D(position, rotation, { 1, 1 }));
-									pEntity->addChild(new Render());
-									pEntity->add(new Physics(forward * 1.5));
+									pEntity->addChild(new Render(4));
+									pEntity->addChild(new Transform2D(position, rotation, { 0.1, 0.1 }));
+									pEntity->addChild(new Physics(forward * 0.5));
 									m_pEntityList->add(pEntity);
 								}
 							}
@@ -77,12 +79,6 @@ private:
 					break;
 				}
 			}
-			//	case command event
-			//		shootAction:
-			//			get action->execute()
-			//	case accelerate command
-			//		get transform, physics
-			//			add accelerate force
 		}
 	}
 
