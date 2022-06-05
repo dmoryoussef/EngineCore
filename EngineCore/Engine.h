@@ -187,26 +187,24 @@ public:
 		m_pData->add(pCameraWindow->getCamera());
 
 
-		Factory.createPlayer(0);
+	
 
-		Factory.createPlayer(1);
-
-		//DefaultTileMap* mapA = new DefaultTileMap(8, 8);
-		//mapA->setPosition(2, 2);
-		//mapA->createCheckerMap();
-		//m_pData->add(mapA);
+		DefaultTileMap* mapA = new DefaultTileMap(8, 8);
+		mapA->setPosition(2, 2);
+		mapA->createCheckerMap();
+		m_pData->add(mapA);
 
 		//DefaultTileMap* mapB = new DefaultTileMap(8, 8);
 		//mapB->setPosition(14, 16);
 		//mapB->createCheckerMap();
 		//m_pData->add(mapB);
 
-
-
 		//BaseNode *pControllerWidget = new BaseNode();
 		//pControllerWidget->add(new ControllerWidget());
 		//m_pData->add(pControllerWidget);
 
+		Factory.createPlayer(0);
+		Factory.createPlayer(1);
 	}
 
 	void addGUI(_UIComponent* pComponent)

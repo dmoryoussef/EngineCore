@@ -25,6 +25,7 @@ public:
 			Verticies.push_back({ cosf((nI / (float)(sides)) * 2 * PI) , sinf((nI / (float)(sides)) * 2 * PI) });
 		}	
 
+		// HACK to rotate points to match object forward vec
 		rotate(PI / 2);
 	}
 

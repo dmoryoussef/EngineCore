@@ -127,14 +127,15 @@ private:
 		Vector3 vCurrentCameraPosition = m_pCamera->getChild<Transform3D>()->getPosition();
 		Vector2 vWorldMin = WorldPosition({ 0, 0 }, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 		Vector2 vWorldMax = WorldPosition(Size + Position, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
-
-		EntityRenderSystem ecsRenderer;
-		ecsRenderer.render(pBaseNode, &renderer, vCurrentCameraPosition, vWorldMin, vWorldMax);
 		
 		//	if a component is implementing render, call it here
 		//	good for debugging
+		//	tile map rendering happens here
 		pBaseNode->baseRender(&renderer, vCurrentCameraPosition, vWorldMin, vWorldMax);
-		
+
+		//	render ecs on top
+		EntityRenderSystem ecsRenderer;
+		ecsRenderer.render(pBaseNode, &renderer, vCurrentCameraPosition, vWorldMin, vWorldMax);
 
 		set("Screen: " + vCurrentMousePosition.toString(), getWidth() - 20, 2, FG_WHITE);
 		set("World:  " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 20, 3, FG_WHITE);

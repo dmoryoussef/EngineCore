@@ -44,43 +44,43 @@ public:
 			{
 				switch (m_pInputBuffer[nI].EventType)
 				{
-				case KEY_EVENT:
-				{
-					char chKey = m_pInputBuffer[nI].Event.KeyEvent.uChar.AsciiChar;
-					addEvent(new KeyboardEvent(chKey, m_pInputBuffer[nI].Event.KeyEvent.bKeyDown));
-				}
-				break;
-
-				case MOUSE_EVENT:
-				{
-					MouseState State;
-
-					int value = 0;
-					if (m_pInputBuffer[nI].Event.MouseEvent.dwEventFlags == MOUSE_WHEELED)
+					case KEY_EVENT:
 					{
-						value = m_pInputBuffer[nI].Event.MouseEvent.dwButtonState;
-						if (value > 0)
-							State.bWheeledUp = true;
-						else
-							State.bWheeledDown = true;
+						char chKey = m_pInputBuffer[nI].Event.KeyEvent.uChar.AsciiChar;
+						addEvent(new KeyboardEvent(chKey, m_pInputBuffer[nI].Event.KeyEvent.bKeyDown));
 					}
+					break;
 
-					if (m_pInputBuffer[nI].Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-						State.bLeftButtonDown = true;
-					if (m_pInputBuffer[nI].Event.MouseEvent.dwButtonState == RIGHTMOST_BUTTON_PRESSED)
-						State.bRightButtonDown = true;
-					if (m_pInputBuffer[nI].Event.MouseEvent.dwControlKeyState == SHIFT_PRESSED)
-						State.bShiftDown = true;
-					if (m_pInputBuffer[nI].Event.MouseEvent.dwButtonState == FROM_LEFT_2ND_BUTTON_PRESSED)
-						State.bWheelButtonDown = true;
+					case MOUSE_EVENT:
+					{
+						MouseState State;
+
+						int value = 0;
+						if (m_pInputBuffer[nI].Event.MouseEvent.dwEventFlags == MOUSE_WHEELED)
+						{
+							value = m_pInputBuffer[nI].Event.MouseEvent.dwButtonState;
+							if (value > 0)
+								State.bWheeledUp = true;
+							else
+								State.bWheeledDown = true;
+						}
+
+						if (m_pInputBuffer[nI].Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+							State.bLeftButtonDown = true;
+						if (m_pInputBuffer[nI].Event.MouseEvent.dwButtonState == RIGHTMOST_BUTTON_PRESSED)
+							State.bRightButtonDown = true;
+						if (m_pInputBuffer[nI].Event.MouseEvent.dwControlKeyState == SHIFT_PRESSED)
+							State.bShiftDown = true;
+						if (m_pInputBuffer[nI].Event.MouseEvent.dwButtonState == FROM_LEFT_2ND_BUTTON_PRESSED)
+							State.bWheelButtonDown = true;
 
 
-					State.Position.Y = m_pInputBuffer[nI].Event.MouseEvent.dwMousePosition.Y;
-					State.Position.X = m_pInputBuffer[nI].Event.MouseEvent.dwMousePosition.X;
+						State.Position.Y = m_pInputBuffer[nI].Event.MouseEvent.dwMousePosition.Y;
+						State.Position.X = m_pInputBuffer[nI].Event.MouseEvent.dwMousePosition.X;
 
-					addEvent(new MouseEvent(State));
-				}
-				break;
+						addEvent(new MouseEvent(State));
+					}
+					break;
 				}
 			}
 	}

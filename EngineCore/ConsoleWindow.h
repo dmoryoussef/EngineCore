@@ -95,7 +95,7 @@ public:
 		}
 
 		// Set Physical Console Window Size
-		m_rectWindow = { 0, 0, (short)m_nScreenWidth - 1, (short)m_nScreenHeight - 1 };
+		m_rectWindow = { 0, 0, (short)(m_nScreenWidth - 1), (short)(m_nScreenHeight - 1) };
 		if (!SetConsoleWindowInfo(WindowHandle, TRUE, &m_rectWindow))
 		{
 			OutputDebugStringA("SetConsoleWindowInfo \n");
@@ -103,7 +103,8 @@ public:
 
 		// Set flags to allow mouse input		
 		//	https://docs.microsoft.com/en-us/windows/console/setconsolemode
-		if (!SetConsoleMode(WindowHandle, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
+		HANDLE m_hInputHandle = GetStdHandle(STD_INPUT_HANDLE);
+		if (!SetConsoleMode(m_hInputHandle, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
 		{
 			OutputDebugStringA("SetConsoleMode \n");
 		}

@@ -6,6 +6,8 @@
 #include "ShootAction.h"
 #include "ControllerWidget.h"
 #include "UserController.h"
+#include "MouseInteraction.h"
+#include "Actor.h"
 
 
 

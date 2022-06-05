@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Actor.h" />
     <ClInclude Include="BaseNode.h" />
     <ClInclude Include="CommandSystem.h" />
     <ClInclude Include="ControllerWidget.h" />
@@ -149,6 +150,7 @@
     <ClInclude Include="2DMatrix.h" />
     <ClInclude Include="ControllerInput.h" />
     <ClInclude Include="GUI.h" />
+    <ClInclude Include="MouseInteraction.h" />
     <ClInclude Include="OutputBuffer.h" />
     <ClInclude Include="CameraViewWindow.h" />
     <ClInclude Include="Color.h" />
