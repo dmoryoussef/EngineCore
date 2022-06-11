@@ -25,14 +25,23 @@ public:
 					float fCameraScale = vCameraPosition.Z;
 
 					Polygon2D polygon = pRender->getPolygon();
-					polygon.scale(vScale);
-					polygon.rotate(vRotation.getAngle());
-					polygon.translate(vPosition);
-					
-					polygon.scale({ fCameraScale, fCameraScale });
-					polygon.translate(vCameraPosition.toVec2());
 
-					pRenderer->DrawPoly(polygon.getVerticies(), Pixel(PIXEL_SOLID, FG_WHITE));
+					polygon.transform(vScale, vRotation.getAngle(), vPosition);
+
+					polygon.transform({ fCameraScale, fCameraScale }, 0, vCameraPosition.toVec2());
+
+					Pixel color = { PIXEL_SOLID, FG_WHITE };
+					if (Collider* pCollider = pEntities->getCurrent()->getChild<Collider>())
+						if (pCollider->isColliding())
+							color = { PIXEL_SOLID, FG_DARKRED };
+
+					// draw poly
+					pRenderer->DrawPoly(polygon.getVerticies(), color);
+
+					// draw forward direction
+					Vector2 vTransformedPos = vPosition * fCameraScale;
+					vTransformedPos = vTransformedPos + vCameraPosition.toVec2();
+					pRenderer->DrawLine(vTransformedPos, polygon.getVerticies()[0], color);
 				}
 			}
 

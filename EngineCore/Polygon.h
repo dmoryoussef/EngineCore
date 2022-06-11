@@ -29,6 +29,13 @@ public:
 		rotate(PI / 2);
 	}
 
+	void transform(Vector2 vScale, float fRad, Vector2 vTranslate)
+	{
+		scale(vScale);
+		rotate(fRad);
+		translate(vTranslate);
+	}
+
 	void scale(Vector2 scale)
 	{
 		mat3x3 matScale = matScale.Scale(scale);

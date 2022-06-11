@@ -68,6 +68,7 @@ private:
 									pEntity->addChild(new Render(4));
 									pEntity->addChild(new Transform2D(position, rotation, { 0.1, 0.1 }));
 									pEntity->addChild(new Physics(forward * 0.5));
+									pEntity->addChild(new Collider());
 									m_pEntityList->add(pEntity);
 								}
 							}

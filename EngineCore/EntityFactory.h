@@ -21,6 +21,7 @@ public:
 		pEntity->addChild(new Physics());
 		pEntity->addChild(new UserController(playerId));
 		pEntity->addChild(new ShootAction(100000, 200.0));
+		pEntity->addChild(new Collider());
 		m_pEntityList->add(pEntity);
 	}
 };

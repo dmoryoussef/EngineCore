@@ -1,17 +1,19 @@
 class EntityPhysicsSystem : public BaseNode
 {
 private:
+	BaseNode* m_pEntityList;
 
 public:
-	EntityPhysicsSystem() :
-		BaseNode() {}
+	EntityPhysicsSystem(BaseNode* pEntityList) :
+		m_pEntityList(pEntityList),
+		BaseNode("PhysicsSystem") {}
 
-	void update(BaseNode *pEntities, float fDeltaTime)
+	void update(float fDeltaTime)
 	{
-		while (pEntities->isIterating())
+		while (m_pEntityList->isIterating())
 		{
-			Transform2D* pTransform = pEntities->getCurrent()->getChild<Transform2D>();
-			Physics* pPhysics = pEntities->getCurrent()->getChild<Physics>();
+			Transform2D* pTransform = m_pEntityList->getCurrent()->getChild<Transform2D>();
+			Physics* pPhysics = m_pEntityList->getCurrent()->getChild<Physics>();
 			if (pTransform && pPhysics)
 			{
 				Vector2 vVelocity = pPhysics->getVelocity();

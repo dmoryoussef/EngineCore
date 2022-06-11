@@ -8,6 +8,7 @@
 #include "UserController.h"
 #include "MouseInteraction.h"
 #include "Actor.h"
+#include "Collider.h"
 
 
 
@@ -15,3 +16,4 @@
 #include "EntityPhysicsSystem.h"
 #include "EntityFactory.h"
 #include "CommandSystem.h"
+#include "CollisionDetectionSystem.h"

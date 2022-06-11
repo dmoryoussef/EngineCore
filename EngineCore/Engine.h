@@ -83,14 +83,13 @@ protected:
 
 	BaseNode *m_pData;
 	_UIComponent *m_pGUI;
+	BaseNode* m_pSystems;
+
 
 	EventListener events;
 	thread eventThread;
 	ControllerInput controllerInput;
 
-	EntityPhysicsSystem PhysicsSystem;
-	EntityFactory Factory;
-	EntityCommandSystem Command;
 
 	float getDeltaTime()
 	{
@@ -121,7 +120,8 @@ protected:
 			m_pData->getCurrent()->baseUpdate(fDeltaTime);
 		}
 
-		PhysicsSystem.update(m_pData, fDeltaTime);
+		m_pSystems->baseUpdate(fDeltaTime);
+
 	}
 
 	void render() 
@@ -139,10 +139,9 @@ public:
 		PrevCounter({ 0, 0 }),
 		events(),
 		controllerInput(),
-		PhysicsSystem(),
+
 		m_pData(new BaseNode("Root")),
-		Factory(m_pData),
-		Command(m_pData)
+		m_pSystems(new BaseNode("Systems"))
 		//eventThread(events)
 	{
 		m_bRunning = true;
@@ -158,10 +157,12 @@ public:
 
 	~Engine() 
 	{
+		//	add to single container to delete at a group?
 		delete m_pEngineBuffer;
 		delete m_pInputBuffer;
 		delete m_pWindow;
 		delete m_pData;
+		delete m_pSystems;
 		delete m_pGUI;
 	}
 
@@ -181,18 +182,19 @@ public:
 		m_pGUI = new _UIComponent(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
 		controllerInput.loadXInput();
 
+		m_pSystems->addChild(new CollisionDetectionSystem(m_pData));
+		m_pSystems->addChild(new EntityPhysicsSystem(m_pData));
+		m_pSystems->addChild(new EntityFactory(m_pData));
+		m_pSystems->addChild(new EntityCommandSystem(m_pData));
 
 		CameraViewWindow *pCameraWindow = new CameraViewWindow(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
 		m_pGUI = pCameraWindow;
 		m_pData->add(pCameraWindow->getCamera());
 
-
-	
-
-		DefaultTileMap* mapA = new DefaultTileMap(8, 8);
-		mapA->setPosition(2, 2);
-		mapA->createCheckerMap();
-		m_pData->add(mapA);
+		//DefaultTileMap* mapA = new DefaultTileMap(8, 8);
+		//mapA->setPosition(2, 2);
+		//mapA->createCheckerMap();
+		//m_pData->add(mapA);
 
 		//DefaultTileMap* mapB = new DefaultTileMap(8, 8);
 		//mapB->setPosition(14, 16);
@@ -203,8 +205,9 @@ public:
 		//pControllerWidget->add(new ControllerWidget());
 		//m_pData->add(pControllerWidget);
 
-		Factory.createPlayer(0);
-		Factory.createPlayer(1);
+		//	change to detect controller first?
+		m_pSystems->getChild<EntityFactory>()->createPlayer(0);
+		m_pSystems->getChild<EntityFactory>()->createPlayer(1);
 	}
 
 	void addGUI(_UIComponent* pComponent)

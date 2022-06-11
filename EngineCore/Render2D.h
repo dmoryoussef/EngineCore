@@ -235,6 +235,7 @@ public:
 			DrawLine(verticies[i], verticies[i + 1], pixel);
 		}
 
+		// close shape
 		DrawLine(verticies[verticies.size() - 1], verticies[0], pixel);
 	}
 
