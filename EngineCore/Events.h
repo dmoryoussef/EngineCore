@@ -5,12 +5,45 @@ enum EVENT_TYPE
 	GAMEPAD_EVENT,
 	GUI_EVENT,
 	NEW_BASENODE_EVENT,
+	DELETE_BASENODE_EVENT,
 	TRANSFORMUPDATE_EVENT,
 	MOUSEWORLD_EVENT,
 	SELECTIONSQUARE_EVENT,
 	BASENODE_EVENT,
 	ACTION_EVENT,
 	COMMAND_EVENT
+};
+
+
+class GuiEvent : public _Event
+{
+private:
+	BaseNode* m_pComponent;
+
+public:
+	GuiEvent(BaseNode* pComponent) :
+		m_pComponent(pComponent),
+		_Event(GUI_EVENT) {};
+
+	template <typename T>
+	T *getComponent()
+	{
+		return dynamic_cast<T*>(m_pComponent);
+	}
+
+};
+
+class NewBaseNodeEvent : public _Event
+{
+private:
+	BaseNode* m_pBaseNode;
+
+public:
+	NewBaseNodeEvent(BaseNode* pNode) :
+		m_pBaseNode(pNode),
+		_Event(NEW_BASENODE_EVENT) {};
+
+	BaseNode *getNode() { return m_pBaseNode; }
 };
 
 class CommandEvent : public _Event

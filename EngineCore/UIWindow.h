@@ -1,4 +1,4 @@
-class _Window :
+class UIWindow :
 	public _UIComponent
 {
 protected:
@@ -110,7 +110,7 @@ protected:
 	
 
 public:
-	_Window(int nWidth, int nHeight, int nPosX, int nPosY) :
+	UIWindow(int nWidth, int nHeight, int nPosX, int nPosY) :
 		m_bDragActive(false),
 		m_bDisplayPosition(false),
 		m_bDisplayTitle(false),
@@ -121,7 +121,7 @@ public:
 		setText("DEFAULT_WINDOW");
 	};
 
-	_Window(string strTitle, int nWidth, int nHeight, int nPosX, int nPosY) :
+	UIWindow(string strTitle, int nWidth, int nHeight, int nPosX, int nPosY) :
 		m_bDragActive(false),
 		m_bDisplayPosition(true),
 		m_bDraggable(true),
@@ -132,7 +132,7 @@ public:
 		setText(strTitle);
 	};
 
-	_Window() :
+	UIWindow() :
 		m_bDragActive(false),
 		m_bDisplayPosition(true),
 		m_bDisplayTitle(true),

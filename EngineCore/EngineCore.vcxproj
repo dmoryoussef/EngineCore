@@ -152,6 +152,7 @@
     <ClInclude Include="2DMatrix.h" />
     <ClInclude Include="ControllerInput.h" />
     <ClInclude Include="GUI.h" />
+    <ClInclude Include="ListExplorerWindow.h" />
     <ClInclude Include="MouseInteraction.h" />
     <ClInclude Include="OutputBuffer.h" />
     <ClInclude Include="CameraViewWindow.h" />
@@ -178,12 +179,14 @@
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="UIComponent.h" />
     <ClInclude Include="UILayout.h" />
+    <ClInclude Include="UIState.h" />
     <ClInclude Include="UIWindow.h" />
     <ClInclude Include="UserController.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Win32Window.h" />
     <ClInclude Include="WorldViewWindow.h" />
+    <ClInclude Include="UIButton.h" />
     <ClInclude Include="_Command.h" />
     <ClInclude Include="_EntityComponent.h" />
     <ClInclude Include="_Tile2D.h" />

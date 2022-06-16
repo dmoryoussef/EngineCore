@@ -190,6 +190,8 @@ public:
 		CameraViewWindow *pCameraWindow = new CameraViewWindow(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
 		m_pGUI = pCameraWindow;
 		m_pData->add(pCameraWindow->getCamera());
+		m_pGUI->add(new ListExplorerWindow(m_pData));
+		
 
 		//DefaultTileMap* mapA = new DefaultTileMap(8, 8);
 		//mapA->setPosition(2, 2);
@@ -208,6 +210,8 @@ public:
 		//	change to detect controller first?
 		m_pSystems->getChild<EntityFactory>()->createPlayer(0);
 		m_pSystems->getChild<EntityFactory>()->createPlayer(1);
+		
+		
 	}
 
 	void addGUI(_UIComponent* pComponent)

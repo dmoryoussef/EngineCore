@@ -1,4 +1,4 @@
-class WorldViewWindow : public _Window
+class WorldViewWindow : public UIWindow
 {
 protected:
 	float m_fScreenScale;
@@ -101,7 +101,7 @@ protected:
 public:
 	WorldViewWindow(int nWidth, int nHeight, int nPosX, int nPosY) :
 		m_fScreenScale(1),
-		_Window(nWidth, nHeight, nPosX, nPosY)
+		UIWindow(nWidth, nHeight, nPosX, nPosY)
 	{
 		//registerListener(BASENODE_EVENT);
 	}

@@ -31,8 +31,8 @@ enum GUI_STATE
 
 
 class _UIComponent :
-	public BaseNode,
 	public EventListener,
+	public BaseNode,
 	public ConsoleOutputBuffer
 {
 protected:
@@ -52,6 +52,7 @@ protected:
 
 	virtual void removeComponent(_UIComponent* pComponent) {}
 	virtual void constructComponent(BaseNode* pData) {}
+	virtual void onStateChange() {};
 
 	void onEvent(_Event* pEvent)
 	{
@@ -196,6 +197,7 @@ public:
 
 	_UIComponent(int nWidth, int nHeight) :
 		m_nState(DEFAULT),
+		m_nAlignment(ALIGN_LEFT),
 		Position(0, 0),
 		MaxSize(0, 0),
 		Border(0, 0),
@@ -211,6 +213,7 @@ public:
 
 	_UIComponent(string strText) :
 		m_nState(DEFAULT),
+		m_nAlignment(ALIGN_LEFT),
 		Position(0, 0),
 		MaxSize(0, 0),
 		Border(0, 0),
@@ -230,6 +233,7 @@ public:
 
 	_UIComponent() :
 		m_nState(DEFAULT),
+		m_nAlignment(ALIGN_NONE),
 		Position(0, 0),
 		MaxSize(0, 0),
 		Border(0, 0),
@@ -249,7 +253,7 @@ public:
 
 	~_UIComponent()
 	{
-		//	unregisterAll(this);
+		unregisterAll();
 	}
 
 	int DefaultColor()
@@ -270,7 +274,7 @@ public:
 	{
 		m_nAlignment = nAlignment;
 		int nAlignY = 1; //	adjust for border
-		int nAlignX = 0;
+		int nAlignX = 1;
 		if (m_pParent)
 		{
 			while (m_pParent->isIterating())
@@ -340,7 +344,9 @@ public:
 		m_nState = nState;
 		if (m_nState == DEFAULT)
 			m_bActive = false;
-		//addEvent(new _AGUIEvent(BUTTON_EVENT, this, NULL));
+
+		// specialized event if state changed to something important
+		onStateChange();
 	}
 
 	void render(BaseNode* pData, OutputBuffer* pFrame)

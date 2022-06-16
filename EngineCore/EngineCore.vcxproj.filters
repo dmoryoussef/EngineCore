@@ -204,6 +204,15 @@
     <ClInclude Include="Collider.h">
       <Filter>Source Files\EntityComponentSystem\Components</Filter>
     </ClInclude>
+    <ClInclude Include="ListExplorerWindow.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIButton.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIState.h">
+      <Filter>Source Files\EntityComponentSystem\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

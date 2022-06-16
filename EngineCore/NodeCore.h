@@ -61,7 +61,8 @@ public:
 };
 
 
-template <typename T> class _LinkedList
+template <typename T> 
+class _LinkedList
 {
 protected:
 	int	m_nTotal;
@@ -275,6 +276,8 @@ public:
 			T* pDelete = m_pCurrent;
 			m_pCurrent = m_pCurrent->getPrevious();
 			delete pDelete;
+			pDelete = NULL;
+
 			m_nTotal--;
 		}
 	}

@@ -47,7 +47,7 @@ public:
 	EventListener() {};
 	~EventListener()
 	{
-		unregisterAll(this);
+		unregisterAll();
 	}
 
 	//void operator()()
@@ -63,7 +63,7 @@ public:
 	//	}
 	//}
 
-	void unregisterAll(EventListener* pListener)
+	void unregisterAll()
 	{
 		map<int, vector<EventListener*>>::iterator itEventType;
 		itEventType = Listeners.begin();
@@ -71,7 +71,7 @@ public:
 		{
 			for (int nI = 0; nI < itEventType->second.size(); nI++)				//	for each Listener
 			{
-				if (itEventType->second[nI] == pListener)
+				if (itEventType->second[nI] == this)
 				{
 					itEventType->second.erase(itEventType->second.begin() + nI);	//	remove
 				}
@@ -80,15 +80,15 @@ public:
 		}
 	}
 
-	void registerCallbackListener(int event, CallBack *callBack)
+	void registerCallbackListener(int nEvent, CallBack *callBack)
 	{
-		CallBackListeners[event].insert(make_pair(this, callBack));
+		CallBackListeners[nEvent].insert(make_pair(this, callBack));
 	}
 
-	void unregisterListener(EventListener* pListener, int Event)
+	void unregisterListener(EventListener* pListener, int nEvent)
 	{
 		map<int, vector<EventListener*>>::iterator Listener;
-		Listener = Listeners.find(Event);
+		Listener = Listeners.find(nEvent);
 		if (Listener != Listeners.end())									//  if Listeners found
 		{
 			for (int nI = 0; nI < Listener->second.size(); nI++)			//	for each Listener
@@ -101,14 +101,14 @@ public:
 		}
 	}
 
-	void registerListener(EventListener* pListener, int event)
+	void registerListener(EventListener* pListener, int nEvent)
 	{
-		Listeners[event].push_back(pListener);
+		Listeners[nEvent].push_back(pListener);
 	}
 
-	void registerListener(int event)
+	void registerListener(int nEvent)
 	{
-		Listeners[event].push_back(this);
+		Listeners[nEvent].push_back(this);
 	}
 
 
@@ -147,9 +147,6 @@ public:
 				Listener->second[nJ]->onEvent(pEvent);				//	handle
 			}
 		}
-
-		
-
 	}
 
 	void dispatchEvents()
