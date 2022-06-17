@@ -9,15 +9,8 @@ class ListExplorerWindow : public UIWindow
 			void onStateChange()
 			{
 				addEvent(new GuiEvent(this));
-				switch (m_nState)
-				{
-					case LEFT_RELEASED:
-					{
-						//	BaseNode Event - selected entity
-						//	addEvent(new BaseNodeEvent(m_pBaseNode, m_nState));
-						break;
-					}
-				}
+				if (UIState* pUIState = m_pBaseNode->getChild<UIState>())
+					pUIState->setState(m_nState);
 			}
 
 		public:
@@ -40,6 +33,7 @@ class ListExplorerWindow : public UIWindow
 	{
 		// only one can be selected at a time
 	};
+
 
 	void onEvent(_Event* pEvent)
 	{

@@ -24,6 +24,7 @@ public:
 		pEntity->addChild(new UserController(playerId));
 		pEntity->addChild(new ShootAction(100000, 200.0));
 		pEntity->addChild(new Collider());
+		pEntity->addChild(new UIState());
 		m_pEntityList->add(pEntity);
 
 		addEvent(new NewBaseNodeEvent(pEntity));

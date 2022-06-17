@@ -10,6 +10,7 @@ public:
 		{
 			Transform2D* pTransform = pEntities->getCurrent()->getChild<Transform2D>();
 			Render* pRender = pEntities->getCurrent()->getChild<Render>();
+			
 
 			if (pTransform && pRender)
 			{
@@ -31,6 +32,12 @@ public:
 					polygon.transform({ fCameraScale, fCameraScale }, 0, vCameraPosition.toVec2());
 
 					Pixel color = { PIXEL_SOLID, FG_WHITE };
+					if (UIState* pUIState = pEntities->getCurrent()->getChild<UIState>())
+						if (pUIState->getState() == MOUSE_OVER)
+							color = { PIXEL_SOLID, FG_LIGHTGREEN };
+						
+					
+
 					if (Collider* pCollider = pEntities->getCurrent()->getChild<Collider>())
 						if (pCollider->isColliding())
 							color = { PIXEL_SOLID, FG_DARKRED };

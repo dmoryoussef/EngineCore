@@ -64,6 +64,16 @@ int random(int min, int max)
 #include "ConsoleInputBuffer.h"
 #include "ConsoleOutputBuffer.h"
 
+enum GUI_STATE
+{
+	DEFAULT,
+	MOUSE_OVER,
+	LEFT_PRESSED,
+	LEFT_RELEASED,
+	RIGHT_PRESSED,
+	RIGHT_RELEASED,
+	LEFT_ACTIVE
+};
 #include "EntityComponentSystem.h"
 #include "TileMapSystem.h"
 #include "GUI.h"

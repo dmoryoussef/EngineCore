@@ -17,19 +17,6 @@ enum GUI_ALIGNMENT
 	ALIGN_OUTSIDE_RIGHT
 };
 
-enum GUI_STATE
-{
-	DEFAULT,
-	MOUSE_OVER,
-	LEFT_PRESSED,
-	LEFT_RELEASED,
-	RIGHT_PRESSED,
-	RIGHT_RELEASED,
-	LEFT_ACTIVE
-};
-
-
-
 class _UIComponent :
 	public EventListener,
 	public BaseNode,
@@ -189,10 +176,9 @@ public:
 		ConsoleOutputBuffer(nWidth, nHeight)
 	{
 		setName("COMPONENT");
-		registerListener(this, CONSOLE_MOUSE_EVENT);
-		registerListener(this, CONSOLE_KEYBOARD_EVENT);
-
-		registerListener(this, GUI_EVENT);
+		registerListener(CONSOLE_MOUSE_EVENT);
+		registerListener(CONSOLE_KEYBOARD_EVENT);
+		registerListener(GUI_EVENT);
 	};
 
 	_UIComponent(int nWidth, int nHeight) :
@@ -206,9 +192,9 @@ public:
 		m_bToggle(true),
 		ConsoleOutputBuffer(nWidth, nHeight)
 	{
-		registerListener(this, CONSOLE_MOUSE_EVENT);
-		registerListener(this, GUI_EVENT);
-		registerListener(this, CONSOLE_KEYBOARD_EVENT);
+		registerListener(CONSOLE_MOUSE_EVENT);
+		registerListener(CONSOLE_KEYBOARD_EVENT);
+		registerListener(GUI_EVENT);
 	};
 
 	_UIComponent(string strText) :
@@ -223,9 +209,9 @@ public:
 		ConsoleOutputBuffer(0, 0)
 	{
 		setName(strText);
-		registerListener(this, CONSOLE_MOUSE_EVENT);
-		registerListener(this, CONSOLE_KEYBOARD_EVENT);
-		registerListener(this, GUI_EVENT);
+		registerListener(CONSOLE_MOUSE_EVENT);
+		registerListener(CONSOLE_KEYBOARD_EVENT);
+		registerListener(GUI_EVENT);
 
 		//	set position based on other
 		//	components in list
@@ -243,9 +229,9 @@ public:
 		ConsoleOutputBuffer(0, 0)
 	{
 		setName("COMPONENT");
-		registerListener(this, CONSOLE_MOUSE_EVENT);
-		registerListener(this, CONSOLE_KEYBOARD_EVENT);
-		registerListener(this, GUI_EVENT);
+		registerListener(CONSOLE_MOUSE_EVENT);
+		registerListener(CONSOLE_KEYBOARD_EVENT);
+		registerListener(GUI_EVENT);
 
 		//	set position based on other
 		//	components in list
