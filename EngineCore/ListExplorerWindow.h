@@ -3,35 +3,74 @@ class ListExplorerWindow : public UIWindow
 	class BaseNodeButton : public UIButton
 	{
 		private:
-			BaseNode* m_pParentWindow;
 			BaseNode* m_pBaseNode;
+			UIState* m_pUIState;
 
 			void onStateChange()
 			{
+				//	open child window
 				addEvent(new GuiEvent(this));
-				if (UIState* pUIState = m_pBaseNode->getChild<UIState>())
-					pUIState->setState(m_nState);
+				//	update state of entity
+				if (m_pUIState)
+					m_pUIState->setState(m_nState);
 			}
 
 		public:
 			BaseNodeButton(BaseNode* pBaseNode) :
 				m_pBaseNode(pBaseNode),
-				m_pParentWindow(NULL),
-				UIButton(pBaseNode->getName()) {};
-
-			BaseNode* getParentWindow()
+				m_pUIState(NULL),
+				UIButton(pBaseNode->getName()) 
 			{
-				return m_pParentWindow;
-			}
+				if (UIState* pUIState = m_pBaseNode->getChild<UIState>())
+					m_pUIState = pUIState;
+			};
+
 			BaseNode* getBaseNode()
 			{
 				return m_pBaseNode;
 			}
 	};
 
-	class BaseNodeComboButton
+	class SingleSelectButtonComponent : public _UIComponent
 	{
-		// only one can be selected at a time
+		private:
+			UIButton *m_pCurrent;
+
+			void onEvent(_Event* pEvent)
+			{
+				_UIComponent::onEvent(pEvent);
+
+				switch (pEvent->m_eType)
+				{
+					case GUI_EVENT:
+					{	
+						if (GuiEvent *pGuiEvent = pEvent->get<GuiEvent>())
+						{
+							if (UIButton* pButton = pGuiEvent->getComponent<UIButton>())
+							{
+								if (pButton->getParent() == this)
+								{
+									//	if current button is different from active button, update everything
+									if (pButton->getState() == LEFT_RELEASED)
+									if (pButton != m_pCurrent)
+									{
+
+									}
+								}
+							}
+						}
+						break;
+					}
+					
+				}
+			}
+				
+			
+
+		public:
+			SingleSelectButtonComponent() :
+				_UIComponent() {};
+
 	};
 
 
@@ -52,9 +91,9 @@ class ListExplorerWindow : public UIWindow
 				if (BaseNodeButton* pButton = pEvent->get<GuiEvent>()->getComponent<BaseNodeButton>())
 					if (pButton->getParent() == this)
 					{
-					//		get state
 						switch (pButton->getState())
 						{
+							//	open new window
 							case LEFT_RELEASED :
 							{
 								ListExplorerWindow* pWindow = new ListExplorerWindow(pButton->getBaseNode());
@@ -62,6 +101,7 @@ class ListExplorerWindow : public UIWindow
 								addComponent(pWindow);
 								break;
 							}
+							//	close child windows
 							case DEFAULT:
 							{
 								while (isIterating())
@@ -107,7 +147,7 @@ class ListExplorerWindow : public UIWindow
 public:
 	ListExplorerWindow(BaseNode *pNode) :
 		m_pBaseNode(pNode),
-		UIWindow(20, 15, 75, 10)
+		UIWindow(20, 15, 80, 0)
 	{
 		registerListener(NEW_BASENODE_EVENT);
 		registerListener(GUI_EVENT);

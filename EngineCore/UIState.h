@@ -2,7 +2,6 @@ class UIState : public _EntityComponent
 {
 private:
 	int m_nState;
-
 	
 public:
 	UIState() :

@@ -29,8 +29,18 @@ private:
 				_Command* pCommand = pEvent->get<CommandEvent>()->getCommand();
 				BaseNode* pParent = pEvent->get<CommandEvent>()->getParent();
 				{
+					//	STEP 1: get relavent component to validate the command can be done
+					//	STEP 2: if command is valid - issue execute
+					//			seperate systems will process the execute
+					// 
+					//	for now, everything is done here:
+
 					if (pCommand->getType() == ACCELERATE)
 					{
+						//	ex:  if entity has an accelerate component:
+						//		 execute accelerate force
+						//	     physics engine handles
+
 						if (Transform2D* pTransform = pParent->getChild<Transform2D>())
 						{
 							Vector2 vPosition = pTransform->getPosition();
@@ -45,6 +55,7 @@ private:
 					{
 						if (Transform2D* pTransform = pParent->getChild<Transform2D>())
 						{
+							//	move to physics
 							Vector2 vRotate = pCommand->get<RotateCommand>()->getVector();
 							pTransform->setRotation(vRotate);
 						}
@@ -70,6 +81,8 @@ private:
 									pEntity->addChild(new Physics(forward * 0.5));
 									pEntity->addChild(new Collider());
 									m_pEntityList->add(pEntity);
+
+									addEvent(new NewBaseNodeEvent(pEntity));
 								}
 							}
 						}

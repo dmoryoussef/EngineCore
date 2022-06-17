@@ -39,6 +39,9 @@ public:
 		{
 			nAmmo--;
 			fCurrent = fCooldown;
+			//	protect against multi shoot events triggering 
+			//	before next update
+			bReady = false;
 			return true;
 		}
 

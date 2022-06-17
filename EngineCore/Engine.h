@@ -197,10 +197,11 @@ public:
 		m_pSystems->addChild(new EntityFactory(m_pData));
 		m_pSystems->addChild(new EntityCommandSystem(m_pData));
 
-		CameraViewWindow *pCameraWindow = new CameraViewWindow(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
-		m_pGUI = pCameraWindow;
-		m_pData->add(pCameraWindow->getCamera());
+		CameraViewWindow *pCameraWindow = new CameraViewWindow(m_pEngineBuffer->getWidth() - 20, m_pEngineBuffer->getHeight(), 0, 0);
 		m_pGUI->add(new ListExplorerWindow(m_pData));
+		m_pData->add(pCameraWindow->getCamera());
+		m_pGUI->add(pCameraWindow);
+		
 		
 
 		//DefaultTileMap* mapA = new DefaultTileMap(8, 8);
