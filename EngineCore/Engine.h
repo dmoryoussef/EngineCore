@@ -64,16 +64,6 @@ int random(int min, int max)
 #include "ConsoleInputBuffer.h"
 #include "ConsoleOutputBuffer.h"
 
-enum GUI_STATE
-{
-	DEFAULT,
-	MOUSE_OVER,
-	LEFT_PRESSED,
-	LEFT_RELEASED,
-	RIGHT_PRESSED,
-	RIGHT_RELEASED,
-	LEFT_ACTIVE
-};
 #include "EntityComponentSystem.h"
 #include "TileMapSystem.h"
 #include "GUI.h"
@@ -185,6 +175,7 @@ public:
 	{
 		//	seed random generator
 		srand(0);
+
 		m_pWindow = sb;
 		m_pWindow->init();
 		m_pEngineBuffer = new OutputBuffer(m_pWindow->getWidth(), m_pWindow->getHeight());

@@ -6,12 +6,18 @@ private:
 	INPUT_RECORD* m_pInputBuffer;
 	int m_nTotalEvents;
 
+	bool bKeyPressed[256];
+
 public:
 	ConsoleInputBuffer() :
 		m_pInputBuffer(NULL),
 		m_nTotalEvents(0)
 	{
 		m_hInputHandle = GetStdHandle(STD_INPUT_HANDLE);
+		for (int i = 0; i < 256; i++)
+		{
+			bKeyPressed[i] = false;
+		}
 	};
 
 	INPUT_RECORD* getInput()
@@ -47,6 +53,9 @@ public:
 					case KEY_EVENT:
 					{
 						char chKey = m_pInputBuffer[nI].Event.KeyEvent.uChar.AsciiChar;
+						
+						bKeyPressed[chKey] = m_pInputBuffer[nI].Event.KeyEvent.bKeyDown;
+
 						addEvent(new KeyboardEvent(chKey, m_pInputBuffer[nI].Event.KeyEvent.bKeyDown));
 					}
 					break;

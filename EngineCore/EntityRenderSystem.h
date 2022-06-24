@@ -32,12 +32,23 @@ public:
 					polygon.transform({ fCameraScale, fCameraScale }, 0, vCameraPosition.toVec2());
 
 					Pixel color = { PIXEL_SOLID, FG_WHITE };
-					if (UIState* pUIState = pEntities->getCurrent()->getChild<UIState>())
-						if (pUIState->getState() == MOUSE_OVER)
-							color = { PIXEL_SOLID, FG_LIGHTGREEN };
-						
-					
 
+					if (UIState* pUIState = pEntities->getCurrent()->getChild<UIState>())
+					{
+						switch (pUIState->getState())
+						{
+							case MOUSE_OVER: color = { PIXEL_SOLID, FG_LIGHTBLUE };
+								break;
+							
+							case LEFT_PRESSED: color = { PIXEL_SOLID, FG_DARKBLUE };
+								break;
+
+							case LEFT_RELEASED: color = { PIXEL_SOLID, FG_LIGHTBLUE };
+								break;
+						}
+					}
+
+					//	override with entity collision color
 					if (Collider* pCollider = pEntities->getCurrent()->getChild<Collider>())
 						if (pCollider->isColliding())
 							color = { PIXEL_SOLID, FG_DARKRED };
@@ -49,6 +60,10 @@ public:
 					Vector2 vTransformedPos = vPosition * fCameraScale;
 					vTransformedPos = vTransformedPos + vCameraPosition.toVec2();
 					pRenderer->DrawLine(vTransformedPos, polygon.getVerticies()[0], color);
+					if (Health* pHealth = pEntities->getCurrent()->getChild<Health>())
+					{
+						pRenderer->DrawString(thingToString(pHealth->getHealth()), vTransformedPos.X, vTransformedPos.Y + 5);
+					}
 				}
 			}
 

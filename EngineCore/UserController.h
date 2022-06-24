@@ -49,10 +49,44 @@ class UserController : public _EntityComponent
 private:
 	int m_nControllerID;
 
+	bool bUp;
+	bool bDown;
+	bool bLeft;
+	bool bRight;
+
 	void onEvent(_Event* pEvent)
 	{
 		switch (pEvent->m_eType)
 		{
+			case CONSOLE_KEYBOARD_EVENT:
+			{
+				KeyboardEvent* pKeyBoardEvent = pEvent->get<KeyboardEvent>();
+
+				if (pKeyBoardEvent->getKey() == 'W' || pKeyBoardEvent->getKey() == 'w')
+				{
+					bUp = pKeyBoardEvent->isKeyDown();
+				}
+
+				if (pKeyBoardEvent->getKey() == 'A' || pKeyBoardEvent->getKey() == 'a') 
+				{
+					bLeft = pKeyBoardEvent->isKeyDown();
+				}
+
+				if (pKeyBoardEvent->getKey() == 'S' || pKeyBoardEvent->getKey() == 's')
+				{
+					bDown = pKeyBoardEvent->isKeyDown();
+				}
+
+				if (pKeyBoardEvent->getKey() == 'D' || pKeyBoardEvent->getKey() == 'd')
+				{
+					bRight = pKeyBoardEvent->isKeyDown();
+				}
+
+
+				
+
+				break;
+			}
 			case GAMEPAD_EVENT:
 			{
 				GamePadEvent* pGPE = pEvent->get<GamePadEvent>();
@@ -97,13 +131,24 @@ private:
 		}
 	}
 
+	void update(float fDeltaTime)
+	{
+		Vector2 vVelocity(0, 0);
+		if (bUp) vVelocity = vVelocity + Vector2(0, -1);
+		if (bLeft) vVelocity = vVelocity + Vector2(-1, 0);
+		if (bDown) vVelocity = vVelocity + Vector2(0, 1);
+		if (bRight) vVelocity = vVelocity + Vector2(1, 0);
+		if (vVelocity.magnitude() != 0)
+			addEvent(new CommandEvent(getParent(), new AccelerateCommand(vVelocity)));
+	}
+
 public:
 	UserController(int id) :
 		m_nControllerID(id),
 		_EntityComponent("USER_CONTROLLER")
 	{
 		registerListener(GAMEPAD_EVENT);
-		//	registerCallbackListener(GAMEPAD_EVENT, new CallBack(test));
+		registerListener(CONSOLE_KEYBOARD_EVENT);
 	}
 
 

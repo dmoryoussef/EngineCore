@@ -10,46 +10,14 @@ private:
 	Vector2 vDeltaTranslate;
 	Vector2 vDeltaRotate;
 
-	void onEvent(_Event* pEvent)
-	{
-		switch (pEvent->m_eType)
-		{
-			//case GAMEPAD_EVENT:
-			//{
-			//	GamePad Controller = pEvent->get<GamePadEvent>()->getState();
-			//	float LeftStickX = Controller.LeftStickX;
-			//	float LeftStickY = Controller.LeftStickY;
-			//	float RightStickX = Controller.RightStickX;
-			//	float RightStickY = Controller.RightStickY;
-
-			//	Vector2 vVelocity(LeftStickX, -LeftStickY);
-
-			//	if (RightStickX != 0.0 || RightStickY != 0.0)
-			//	{
-			//		//	only update rotation of stick is moved
-			//		//	otherwise it resets to 0
-			//		m_vRotation = { -RightStickX, -RightStickY };
-			//		
-			//	}
-			//	
-			//	vVelocity = vVelocity * 0.1;
-			//	m_vPosition = m_vPosition + vVelocity;
-
-			//	
-			//	break;
-			/*}*/
-		}
-	}
-
+	
 public:
 	Transform2D(Vector2 P, Vector2 R, Vector2 S) :
 		m_vPosition(P),
 		m_vScale(S),
 		m_vRotation(R),
 		_EntityComponent("Transform3D")	
-	{
-		//	registerListener(GAMEPAD_EVENT);
-	};
+	{	};
 
 	void draw(OutputBuffer *pFrame)
 	{

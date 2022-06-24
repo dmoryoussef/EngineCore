@@ -178,6 +178,11 @@ Vector2 getMin(Vector2 A, Vector2 B)
 
 }
 
+Vector2 getNormal(Vector2 &A, Vector2& B)
+{
+	return Vector2(- (B.Y - A.Y), B.X - A.X );
+}
+
 float dotProduct(Vector2 A, Vector2 B)
 {
 	return (A.Y * B.Y) + (A.X * B.X);

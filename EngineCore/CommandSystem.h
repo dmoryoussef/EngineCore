@@ -41,13 +41,16 @@ private:
 						//		 execute accelerate force
 						//	     physics engine handles
 
-						if (Transform2D* pTransform = pParent->getChild<Transform2D>())
+						if (Physics* pPhysics = pParent->getChild<Physics>())
 						{
-							Vector2 vPosition = pTransform->getPosition();
-							Vector2 vVelocity = pCommand->get<AccelerateCommand>()->getForce() * 0.1;
-							
-							//	let physics engine handle this part
-							pTransform->setPosition(vPosition + vVelocity);
+							Vector2 vVelocity = pPhysics->getVelocity();
+
+							//	get thruster force
+							//	acceleration = entity thruster force * controller magnitude * constant
+							Vector2 vAcceleration = pCommand->get<AccelerateCommand>()->getForce() * 0.01;
+
+							Vector2 vNewVelocity = vVelocity + vAcceleration;
+							pPhysics->setVelocity(vNewVelocity);
 						}
 					}
 
@@ -55,7 +58,7 @@ private:
 					{
 						if (Transform2D* pTransform = pParent->getChild<Transform2D>())
 						{
-							//	move to physics
+							//	move to physics?
 							Vector2 vRotate = pCommand->get<RotateCommand>()->getVector();
 							pTransform->setRotation(vRotate);
 						}
@@ -71,15 +74,17 @@ private:
 								{
 									Vector2 rotation = transform->getRotation();
 									Vector2 forward = transform->getForward();
-									Vector2 position = transform->getPosition();
+									Vector2 position = transform->getPosition() + (forward * 1.1);
 									
 									// move to entity factory??
 									//	spawn entity event
-									BaseNode* pEntity = new BaseNode();
-									pEntity->addChild(new Render(4));
+									BaseNode* pEntity = new BaseNode("Projectile");
+									pEntity->addChild(new Render(3));
 									pEntity->addChild(new Transform2D(position, rotation, { 0.1, 0.1 }));
-									pEntity->addChild(new Physics(forward * 0.5));
+									pEntity->addChild(new Physics(forward * 0.05));
 									pEntity->addChild(new Collider());
+									pEntity->addChild(new OutOfBoundsCollision());
+									pEntity->addChild(new Damage(25));
 									m_pEntityList->add(pEntity);
 
 									addEvent(new NewBaseNodeEvent(pEntity));

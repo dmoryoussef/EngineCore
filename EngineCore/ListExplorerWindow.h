@@ -1,5 +1,7 @@
 class ListExplorerWindow : public UIWindow
 {
+	BaseNode* m_pBaseNode;
+	
 	class BaseNodeButton : public UIButton
 	{
 		private:
@@ -8,11 +10,41 @@ class ListExplorerWindow : public UIWindow
 
 			void onStateChange()
 			{
-				//	open child window
+				//	open/close child window if activated
 				addEvent(new GuiEvent(this));
+
 				//	update state of entity
 				if (m_pUIState)
 					m_pUIState->setState(m_nState);
+			}
+
+			void onEvent(_Event* pEvent)
+			{
+				UIButton::onEvent(pEvent);
+
+				switch (pEvent->m_eType)
+				{
+					
+					case GUI_EVENT:
+					{
+						if (m_pUIState)
+						{
+							if (GuiEvent* pGuiEvent = pEvent->get<GuiEvent>())
+							{
+								if (pGuiEvent->getComponent<UIState>() == m_pUIState)
+								{
+									int nNewState = m_pUIState->getState();
+									if (m_nState != nNewState)
+									{
+										//	setState(nNewState);
+									}
+								}
+							}
+						}
+						
+						break;
+					}
+				}
 			}
 
 		public:
@@ -24,6 +56,8 @@ class ListExplorerWindow : public UIWindow
 				if (UIState* pUIState = m_pBaseNode->getChild<UIState>())
 					m_pUIState = pUIState;
 			};
+
+
 
 			BaseNode* getBaseNode()
 			{
@@ -58,6 +92,7 @@ class ListExplorerWindow : public UIWindow
 									}
 								}
 							}
+
 						}
 						break;
 					}
@@ -73,7 +108,6 @@ class ListExplorerWindow : public UIWindow
 
 	};
 
-
 	void onEvent(_Event* pEvent)
 	{
 		UIWindow::onEvent(pEvent);
@@ -86,63 +120,99 @@ class ListExplorerWindow : public UIWindow
 				break;
 			}
 
+			case DELETE_BASENODE_EVENT:
+			{
+				/*BaseNode* pBaseNode = pEvent->get<DeleteBaseNodeEvent>()->getNode();
+				while (isIterating())
+				{
+					if (getCurrent<BaseNodeButton>()->getBaseNode() == pBaseNode)
+					{
+						removeCurrent();
+					}
+				}*/
+				updateButtons();
+				break;
+			}
+
 			case GUI_EVENT:
 			{
-				if (BaseNodeButton* pButton = pEvent->get<GuiEvent>()->getComponent<BaseNodeButton>())
-					if (pButton->getParent() == this)
+				if (GuiEvent* pGuiEvent = pEvent->get<GuiEvent>())
+				{
+					if (BaseNodeButton* pButton = pGuiEvent->getComponent<BaseNodeButton>())
 					{
-						switch (pButton->getState())
+						if (pButton->getParent() == this)
 						{
-							//	open new window
-							case LEFT_RELEASED :
+							switch (pButton->getState())
 							{
-								ListExplorerWindow* pWindow = new ListExplorerWindow(pButton->getBaseNode());
-								pWindow->setAlignment(ALIGN_OUTSIDE_LEFT);
-								addComponent(pWindow);
-								break;
-							}
-							//	close child windows
-							case DEFAULT:
-							{
-								while (isIterating())
+								//	open new window
+								case LEFT_RELEASED :
 								{
-									if (ListExplorerWindow* pWindow = getCurrent <ListExplorerWindow>())
+									ListExplorerWindow* pWindow = new ListExplorerWindow(pButton->getBaseNode());
+									pWindow->setAlignment(ALIGN_OUTSIDE_LEFT);
+									addComponent(pWindow);
+									break;
+								}
+
+								//	close child windows
+								case DEFAULT:
+								{
+									while (isIterating())
 									{
-										if (pWindow->getBaseNode() == pButton->getBaseNode())
+										if (ListExplorerWindow* pWindow = getCurrent <ListExplorerWindow>())
 										{
-											//	delete window(which will also delete any child windows)
-											removeCurrent();
+											if (pWindow->getBaseNode() == pButton->getBaseNode())
+											{
+												//	delete window(which will also delete any child windows)
+												//	use event system?
+												removeCurrent();
+											}
 										}
 									}
+									break;
 								}
-								break;
-							}
 
+							}
 						}
 					}
+				}
+				
 
 				break;
 			}
 		}
 	}
 
+	void constructComponent()
+	{
+		if (m_pBaseNode)
+		{
+			if (m_pBaseNode->getTotal() == 0)
+				set(m_pBaseNode->toString(), 2, 2, FG_WHITE);
+		}
+	}
+
 	void updateButtons()
 	{
 		int nMinHeight = 15;
-		if (m_pBaseNode->getTotal() > nMinHeight)
-			nMinHeight = m_pBaseNode->getTotal();
-
 		m_nHeight = nMinHeight;
 
+		if (m_pBaseNode->getTotal() > nMinHeight - 3)
+			nMinHeight = m_pBaseNode->getTotal() + 3;
+
+		resize(m_nWidth, nMinHeight);
+
 		clearList();
+
 		if (m_pBaseNode)
+		{
 			while (m_pBaseNode->isIterating())
 			{
 				addComponent(new BaseNodeButton(m_pBaseNode->getCurrent()));
 			}
+		}
+
 	}
 
-	BaseNode* m_pBaseNode;
 
 public:
 	ListExplorerWindow(BaseNode *pNode) :
@@ -150,7 +220,9 @@ public:
 		UIWindow(20, 15, 80, 0)
 	{
 		registerListener(NEW_BASENODE_EVENT);
+		registerListener(DELETE_BASENODE_EVENT);
 		registerListener(GUI_EVENT);
+
 		updateButtons();
 	};
 

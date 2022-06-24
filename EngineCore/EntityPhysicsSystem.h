@@ -17,8 +17,15 @@ public:
 			if (pTransform && pPhysics)
 			{
 				Vector2 vVelocity = pPhysics->getVelocity();
+				vVelocity = vVelocity * 0.95;
+				if (vVelocity.magnitude() < 0.0001)
+					vVelocity = { 0, 0 };
+
 				Vector2 vPosition = pTransform->getPosition();
-				pTransform->setPosition(vPosition + vVelocity);
+
+
+				pTransform->setPosition(vPosition + (vVelocity * fDeltaTime));
+				pPhysics->setVelocity(vVelocity);
 			}
 		}
 	}

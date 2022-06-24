@@ -67,6 +67,9 @@ public:
 		setAlignment(ALIGN_LEFT);
 	};
 
-
+	~UIButton()
+	{
+		unregisterAll();
+	}
 
 };

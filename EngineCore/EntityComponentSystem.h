@@ -9,7 +9,11 @@
 #include "MouseInteraction.h"
 #include "Actor.h"
 #include "Collider.h"
+#include "CollisionResponse.h"
 #include "UIState.h"
+
+#include "Damage.h"
+#include "Health.h"
 
 
 

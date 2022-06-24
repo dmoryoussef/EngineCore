@@ -49,6 +49,14 @@ public:
 		delete m_pBuffer;
 	}
 
+	void resize(int nWidth, int nHeight)
+	{
+		m_nWidth = nWidth;
+		m_nHeight = nHeight;
+		delete m_pBuffer;
+		m_pBuffer = new Pixel[m_nWidth * m_nHeight];
+	}
+
 	Vector2 getSize()
 	{
 		return Size;

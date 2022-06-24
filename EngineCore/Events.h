@@ -33,6 +33,19 @@ public:
 
 };
 
+class DeleteBaseNodeEvent : public _Event
+{
+private:
+	BaseNode* m_pBaseNode;
+
+public:
+	DeleteBaseNodeEvent(BaseNode* pNode) :
+		m_pBaseNode(pNode),
+		_Event(DELETE_BASENODE_EVENT) {};
+
+	BaseNode* getNode() { return m_pBaseNode; }
+};
+
 class NewBaseNodeEvent : public _Event
 {
 private:

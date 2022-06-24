@@ -41,6 +41,8 @@ protected:
 	virtual void constructComponent(BaseNode* pData) {}
 	virtual void onStateChange() {};
 
+	
+
 	void onEvent(_Event* pEvent)
 	{
 		switch (pEvent->m_eType)
@@ -63,11 +65,12 @@ protected:
 							setState(DEFAULT);
 						break;
 
-					case LEFT_PRESSED:		//	handle toggle between active/inactive
+					case LEFT_PRESSED:		
 						if (!pEvent->get<MouseEvent>()->getState().bLeftButtonDown)
 						{
 							if (m_bMouseOver)
-							{
+							{	//	handle toggle between active/inactive
+								
 								if (m_bActive == false)
 								{
 									setState(LEFT_RELEASED);
@@ -98,6 +101,7 @@ protected:
 								setState(MOUSE_OVER);
 							else
 								setState(DEFAULT);
+
 						if (m_bMouseOver)
 							if (pEvent->get<MouseEvent>()->getState().bLeftButtonDown)
 								setState(LEFT_PRESSED);
@@ -327,12 +331,16 @@ public:
 	}
 	void setState(int nState)
 	{
-		m_nState = nState;
-		if (m_nState == DEFAULT)
-			m_bActive = false;
+		if (m_nState != nState)
+		{
+			m_nState = nState;
+			if (m_nState == DEFAULT)
+				m_bActive = false;
 
-		// specialized event if state changed to something important
-		onStateChange();
+			// specialized event if state changed to something important
+			onStateChange();
+		}
+		
 	}
 
 	void render(BaseNode* pData, OutputBuffer* pFrame)

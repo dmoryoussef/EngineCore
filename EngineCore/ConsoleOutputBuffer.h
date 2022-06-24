@@ -2,12 +2,10 @@
 
 class ConsoleOutputBuffer : public OutputBuffer
 {
-private:
+protected:
 
 public:
 	ConsoleOutputBuffer(int width, int height) :
-		OutputBuffer(width, height) 
-	{	
-		m_pBuffer = new Pixel[m_nWidth * m_nHeight];
-	}
+		OutputBuffer(width, height)
+	{};
 };
