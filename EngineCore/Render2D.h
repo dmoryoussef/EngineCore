@@ -853,4 +853,85 @@ public:
 	//virtual void draw(BaseNode* pGameData, BaseNode* pCamera) {}
 
 
+	void DrawCircle(int x, int y, int radius, Pixel p, short mask = 0xFF)
+	{ // Thanks to IanM-Matrix1 #PR121
+		if (radius < 0 || x < -radius || y < -radius || x - nWidth > radius || y - nHeight > radius)
+			return;
+
+		if (radius > 0)
+		{
+			int x0 = 0;
+			int y0 = radius;
+			int d = 3 - 2 * radius;
+
+			while (y0 >= x0) // only formulate 1/8 of circle
+			{
+				// Draw even octants
+				if (mask & 0x01) DrawPoint(x + x0, y - y0, p);// Q6 - upper right right
+				if (mask & 0x04) DrawPoint(x + y0, y + x0, p);// Q4 - lower lower right
+				if (mask & 0x10) DrawPoint(x - x0, y + y0, p);// Q2 - lower left left
+				if (mask & 0x40) DrawPoint(x - y0, y - x0, p);// Q0 - upper upper left
+				if (x0 != 0 && x0 != y0)
+				{
+					if (mask & 0x02) DrawPoint(x + y0, y - x0, p);// Q7 - upper upper right
+					if (mask & 0x08) DrawPoint(x + x0, y + y0, p);// Q5 - lower right right
+					if (mask & 0x20) DrawPoint(x - y0, y + x0, p);// Q3 - lower lower left
+					if (mask & 0x80) DrawPoint(x - x0, y - y0, p);// Q1 - upper left left
+				}
+
+				if (d < 0)
+					d += 4 * x0++ + 6;
+				else
+					d += 4 * (x0++ - y0--) + 10;
+			}
+		}
+		else
+			DrawPoint(x, y, p);
+	}
+
+	//void FillCircle(Vector2& pos, int radius, Pixel p)
+	//{
+	//	FillCircle((int)pos.X, (int)pos.Y, radius, p);
+	//}
+
+	//void FillCircle(int x, int y, int radius, Pixel p)
+	//{ // Thanks to IanM-Matrix1 #PR121
+	//	if (radius < 0 || x < -radius || y < -radius || x - GetDrawTargetWidth() > radius || y - GetDrawTargetHeight() > radius)
+	//		return;
+
+	//	if (radius > 0)
+	//	{
+	//		int x0 = 0;
+	//		int y0 = radius;
+	//		int d = 3 - 2 * radius;
+
+	//		auto drawline = [&](int sx, int ex, int y)
+	//		{
+	//			for (int x = sx; x <= ex; x++)
+	//				Draw(x, y, p);
+	//		};
+
+	//		while (y0 >= x0)
+	//		{
+	//			drawline(x - y0, x + y0, y - x0);
+	//			if (x0 > 0)	drawline(x - y0, x + y0, y + x0);
+
+	//			if (d < 0)
+	//				d += 4 * x0++ + 6;
+	//			else
+	//			{
+	//				if (x0 != y0)
+	//				{
+	//					drawline(x - x0, x + x0, y - y0);
+	//					drawline(x - x0, x + x0, y + y0);
+	//				}
+	//				d += 4 * (x0++ - y0--) + 10;
+	//			}
+	//		}
+	//	}
+	//	else
+	//		Draw(x, y, p);
+	//}
+
+
 };

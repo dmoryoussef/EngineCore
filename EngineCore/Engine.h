@@ -68,6 +68,10 @@ int random(int min, int max)
 #include "TileMapSystem.h"
 #include "GUI.h"
 
+
+#include "GameState.h"
+#include "CustomWindow.h"
+
 class Engine
 {
 protected:
@@ -85,11 +89,11 @@ protected:
 	_UIComponent *m_pGUI;
 	BaseNode* m_pSystems;
 
-
 	EventListener events;
 	thread eventThread;
 	ControllerInput controllerInput;
 
+	GameState* m_pCurrentState;
 
 	float getDeltaTime()
 	{
@@ -115,19 +119,17 @@ protected:
 
 	void update(float fDeltaTime)
 	{
-		while (m_pData->isIterating())
-		{
-			m_pData->getCurrent()->baseUpdate(fDeltaTime);
-		}
-
+		m_pCurrentState->update(fDeltaTime);
+		m_pGUI->baseUpdate(fDeltaTime);
+		m_pData->baseUpdate(fDeltaTime);
 		m_pSystems->baseUpdate(fDeltaTime);
-
 	}
 
 	void render() 
 	{	
-		//	a) render game data to engine buffer
+		//	a) render the current state to engine buffer
 		m_pGUI->render(m_pData, m_pEngineBuffer);
+		//m_pCurrentState->render(m_pEngineBuffer); 
 		//	b) render engine buffer to window
 		m_pWindow->renderToBuffer(m_pEngineBuffer);
 		//	c) output buffer to window
@@ -139,7 +141,7 @@ public:
 		PrevCounter({ 0, 0 }),
 		events(),
 		controllerInput(),
-
+		m_pCurrentState(NULL),
 		m_pData(new BaseNode("Root")),
 		m_pSystems(new BaseNode("Systems"))
 		//eventThread(events)
@@ -183,17 +185,24 @@ public:
 		m_pGUI = new _UIComponent(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
 		controllerInput.loadXInput();
 
+		m_pCurrentState = new GameState();
+		m_pCurrentState->start();
+
 		m_pSystems->addChild(new CollisionDetectionSystem(m_pData));
 		m_pSystems->addChild(new EntityPhysicsSystem(m_pData));
 		m_pSystems->addChild(new EntityFactory(m_pData));
 		m_pSystems->addChild(new EntityCommandSystem(m_pData));
 
-		CameraViewWindow *pCameraWindow = new CameraViewWindow(m_pEngineBuffer->getWidth() - 20, m_pEngineBuffer->getHeight(), 0, 0);
-		m_pGUI->add(new ListExplorerWindow(m_pData));
-		m_pData->add(pCameraWindow->getCamera());
-		m_pGUI->add(pCameraWindow);
-		
-		
+		CustomWindow* pCustom = new CustomWindow(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
+		addGUI(pCustom);
+
+		//CameraViewWindow* pCameraWindow = new CameraViewWindow(m_pEngineBuffer->getWidth() - 20, m_pEngineBuffer->getHeight(), 0, 0);
+		//m_pGUI->add(new ListExplorerWindow(m_pData));
+		//m_pData->add(pCameraWindow->getCamera());
+		//m_pGUI->add(pCameraWindow);
+
+		//m_pSystems->getChild<EntityFactory>()->createPlayer(0);
+		//m_pSystems->getChild<EntityFactory>()->createPlayer(1);
 
 		//DefaultTileMap* mapA = new DefaultTileMap(8, 8);
 		//mapA->setPosition(2, 2);
@@ -210,15 +219,18 @@ public:
 		//m_pData->add(pControllerWidget);
 
 		//	change to detect controller first?
-		m_pSystems->getChild<EntityFactory>()->createPlayer(0);
-		m_pSystems->getChild<EntityFactory>()->createPlayer(1);
+			
 		
+		///m_pData->add(new GameState(m_pEngineBuffer));
+
+
 		
 	}
 
 	void addGUI(_UIComponent* pComponent)
 	{
 		m_pGUI->add(pComponent);
+		pComponent->start();
 	}
 
 	void addData(BaseNode *pNode)
@@ -226,13 +238,9 @@ public:
 		m_pData->add(pNode);
 	}
 
-	virtual void start() {}
-
 	void run()
 	{
 		float fSpeed = 1.0f;
-
-		start();
 
 		while (m_bRunning)
 		{

@@ -194,4 +194,15 @@ float hypotenuse(Vector2& A, Vector2& B)
 	return hypo;
 }
 
+
+float lerp(float a, float b, float t)
+{
+	return a + (b - a) * t;
+}
+
+Vector2 lerp(Vector2 a, Vector2 b, float t)
+{
+	return Vector2(lerp(a.X, b.X, t), lerp(a.Y, b.Y, t));
+}
+
 #endif

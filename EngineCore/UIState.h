@@ -3,12 +3,21 @@ class UIState : public _EntityComponent
 private:
 	int m_nCurrentState;
 	bool m_bActive;
+	BaseNode* m_pButton;
 
 public:
 	UIState() :
 		m_nCurrentState(0),
 		m_bActive(false),
-		_EntityComponent("UI_STATE") {};
+		_EntityComponent("UI_STATE") 
+	{
+
+	};
+
+	void setButton(BaseNode* pButton)
+	{
+		m_pButton = pButton;
+	}
 
 	int getState() { return m_nCurrentState; }
 

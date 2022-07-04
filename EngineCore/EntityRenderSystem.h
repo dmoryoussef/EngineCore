@@ -56,14 +56,23 @@ public:
 					// draw poly
 					pRenderer->DrawPoly(polygon.getVerticies(), color);
 
+
+
 					// draw forward direction
 					Vector2 vTransformedPos = vPosition * fCameraScale;
 					vTransformedPos = vTransformedPos + vCameraPosition.toVec2();
 					pRenderer->DrawLine(vTransformedPos, polygon.getVerticies()[0], color);
+
 					if (Health* pHealth = pEntities->getCurrent()->getChild<Health>())
 					{
-						pRenderer->DrawString(thingToString(pHealth->getHealth()), vTransformedPos.X, vTransformedPos.Y + 5);
+						Vector2 vHealthPosition = vPosition + Vector2(0, 1.3);
+						vHealthPosition = vHealthPosition * fCameraScale;
+						vHealthPosition = vHealthPosition + vCameraPosition.toVec2();
+						pRenderer->DrawString(thingToString(pHealth->getHealth()), vHealthPosition.X, vHealthPosition.Y);
 					}
+					//// draw circle
+					//vPosition = vPosition + vCameraPosition.toVec2();
+					//pRenderer->DrawCircle(vPosition.X, vPosition.Y, 5 * fCameraScale, color);
 				}
 			}
 

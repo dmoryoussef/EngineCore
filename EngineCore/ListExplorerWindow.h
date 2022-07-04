@@ -24,26 +24,25 @@ class ListExplorerWindow : public UIWindow
 
 				switch (pEvent->m_eType)
 				{
-					
-					case GUI_EVENT:
+					/*case BASENODE_EVENT:
 					{
 						if (m_pUIState)
 						{
-							if (GuiEvent* pGuiEvent = pEvent->get<GuiEvent>())
+							if (BaseNodeEvent* pBaseNodeEvent = pEvent->get<BaseNodeEvent>())
 							{
-								if (pGuiEvent->getComponent<UIState>() == m_pUIState)
+								if (pBaseNodeEvent->getBaseNode() == m_pUIState)
 								{
 									int nNewState = m_pUIState->getState();
 									if (m_nState != nNewState)
 									{
-										//	setState(nNewState);
+										setState(nNewState);
 									}
 								}
 							}
 						}
 						
 						break;
-					}
+					}*/
 				}
 			}
 
@@ -54,10 +53,11 @@ class ListExplorerWindow : public UIWindow
 				UIButton(pBaseNode->getName()) 
 			{
 				if (UIState* pUIState = m_pBaseNode->getChild<UIState>())
+				{
 					m_pUIState = pUIState;
+					m_pUIState->setButton(this);
+				}
 			};
-
-
 
 			BaseNode* getBaseNode()
 			{
@@ -116,20 +116,28 @@ class ListExplorerWindow : public UIWindow
 		{
 			case NEW_BASENODE_EVENT:
 			{
-				updateButtons();
+				if (BaseNode* pBaseNode = pEvent->get<NewBaseNodeEvent>()->getNode())
+				{
+					if (m_pBaseNode->getChild(pBaseNode))
+					{
+						addComponent(new BaseNodeButton(pBaseNode));
+					}
+				}
+				//updateButtons();
 				break;
 			}
 
 			case DELETE_BASENODE_EVENT:
 			{
-				/*BaseNode* pBaseNode = pEvent->get<DeleteBaseNodeEvent>()->getNode();
-				while (isIterating())
-				{
-					if (getCurrent<BaseNodeButton>()->getBaseNode() == pBaseNode)
-					{
-						removeCurrent();
-					}
-				}*/
+				//BaseNode* pBaseNode = pEvent->get<DeleteBaseNodeEvent>()->getNode();
+				//while (isIterating())
+				//{
+				//	if (getCurrent<BaseNodeButton>()->getBaseNode() == pBaseNode)
+				//	{
+				//		removeCurrent();
+				//		//updateComponentAlignments();
+				//	}
+				//}
 				updateButtons();
 				break;
 			}
@@ -182,7 +190,7 @@ class ListExplorerWindow : public UIWindow
 		}
 	}
 
-	void constructComponent()
+	void constructComponent(BaseNode *pBaseNode)
 	{
 		if (m_pBaseNode)
 		{

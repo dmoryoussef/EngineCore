@@ -146,6 +146,8 @@
     <ClInclude Include="CollisionResponse.h" />
     <ClInclude Include="CommandSystem.h" />
     <ClInclude Include="ControllerWidget.h" />
+    <ClInclude Include="CustomWindow.h" />
+    <ClInclude Include="GameState.h" />
     <ClInclude Include="Damage.h" />
     <ClInclude Include="EntityComponentSystem.h" />
     <ClInclude Include="EntityFactory.h" />

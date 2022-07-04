@@ -260,6 +260,15 @@ public:
 		return m_nState;
 	}
 
+	void updateComponentAlignments()
+	{
+		while (isIterating())
+		{
+			_UIComponent* pCurrent = getCurrent<_UIComponent>();
+			pCurrent->setAlignment(pCurrent->getAlignment());
+		}
+	}
+
 	void setAlignment(int nAlignment)
 	{
 		m_nAlignment = nAlignment;

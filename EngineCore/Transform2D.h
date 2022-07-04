@@ -16,7 +16,7 @@ public:
 		m_vPosition(P),
 		m_vScale(S),
 		m_vRotation(R),
-		_EntityComponent("Transform3D")	
+		_EntityComponent("Transform2D")	
 	{	};
 
 	void draw(OutputBuffer *pFrame)
@@ -41,6 +41,10 @@ public:
 		return forward;
 	}
 
+	string toString()
+	{
+		return m_vPosition.toString();
+	}
 
 	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
 	{

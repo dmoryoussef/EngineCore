@@ -83,6 +83,11 @@ public:
 		return false;
 	}
 
+	void deleteSelf()
+	{
+		m_pParent->remove(this);
+	}
+
 	void pop()
 	{
 		//	link around self
@@ -193,6 +198,8 @@ public:
 			addAtEnd(pChild);
 		}
 	}
+
+	virtual void start() {}
 
 	virtual void update(float fDeltaTime) {}
 
