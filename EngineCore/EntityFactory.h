@@ -44,7 +44,7 @@ public:
 		registerListener(DELETE_BASENODE_EVENT);
 	}
 
-	void createPlayer(int playerId)
+	BaseNode *createPlayer(int playerId)
 	{
 		string s = "PLAYER ";
 		s = s.append(thingToString<int>(playerId + 1));
@@ -57,8 +57,9 @@ public:
 		pEntity->addChild(new Collider());
 		pEntity->addChild(new UIState()); 
 		pEntity->addChild(new Health(100));
-		m_pEntityList->add(pEntity);
-
+		
 		addEvent(new NewBaseNodeEvent(pEntity));
+
+		return pEntity;
 	}
 };

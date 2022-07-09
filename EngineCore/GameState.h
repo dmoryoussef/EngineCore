@@ -1,31 +1,48 @@
-class GameState : EventListener
+class GameState : public EventListener
 {
 public:
 	GameState() {};
 
-	Vector2 current;
-	Vector2 begin; 
-	float t;
+	virtual void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI) {}
 
-	void start()
+	virtual void render(OutputBuffer *pEngineBuffer) {}
+
+	virtual void update(BaseNode *pData, float fDeltaTime) {}
+};
+
+#include "TestState.h"
+
+class StateManager : public EventListener
+{
+private:
+	GameState* m_pCurrentState;
+
+	vector<GameState> StateStack;
+
+	void onEvent(_Event* pEvent)
 	{
-		begin = { 10, 10 };
-		current = begin;
-		t = 0;
+		//	change states
 	}
 
-	void render(OutputBuffer *pEngineBuffer)
-	{
-		Render2D render2d(pEngineBuffer);
-		render2d.DrawCircle(current.X, current.Y, 8, { PIXEL_SOLID, FG_WHITE });
+public:
+	StateManager() :
+		m_pCurrentState(new TestState()) {};
 
+	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI)
+	{
+		if (m_pCurrentState)
+			m_pCurrentState->start(pData, pSystems, pGUI);
 	}
 
-	void update(float fDeltaTime)
+	void render(OutputBuffer* pEngineBuffer)
 	{
-		if (t < 1)
-			t = (t + .0001);
+		if (m_pCurrentState)
+			m_pCurrentState->render(pEngineBuffer);
+	}
 
-		current = lerp(begin, { 50, 50 }, t);
+	void update(BaseNode *pData, float fDeltaTime)
+	{
+		if (m_pCurrentState)
+			m_pCurrentState->update(pData, fDeltaTime);
 	}
 };

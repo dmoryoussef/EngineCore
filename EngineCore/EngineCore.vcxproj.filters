@@ -231,6 +231,9 @@
     <ClInclude Include="CustomWindow.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="TestState.h">
+      <Filter>Source Files\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

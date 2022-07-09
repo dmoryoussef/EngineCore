@@ -70,7 +70,7 @@ public:
 
 		//	https://docs.microsoft.com/en-us/windows/console/setcurrentconsolefontex
 		wcscpy_s(cfi.FaceName, L"Consolas");
-		//if (!SetCurrentConsoleFontEx(m_hOutputHandle, false, &cfi))
+		//if (!SetCurrentConsoleFontEx(WindowHandle, false, &cfi))
 		{
 			OutputDebugStringA("SetCurrentConsoleFontEx \n");
 		}
