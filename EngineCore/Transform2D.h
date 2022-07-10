@@ -12,7 +12,7 @@ private:
 
 	
 public:
-	Transform2D(Vector2 P, Vector2 R, Vector2 S) :
+	Transform2D(Vector2 P, Vector2 R = { 0, 0 }, Vector2 S = {1, 1}) :
 		m_vPosition(P),
 		m_vScale(S),
 		m_vRotation(R),

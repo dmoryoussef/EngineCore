@@ -14,10 +14,16 @@ struct Vector2
 		Y(y),
 		X(x) {};
 
-	Vector2(float mag) :
-		Y(sin(mag)),
-		X(cos(mag)) {};
+	Vector2(float rad) :
+		Y(sin(rad)),
+		X(cos(rad)) {};
 
+	//void degreesToVec(float degrees)
+	//{
+	//	float radians = degrees * (PI / 180);
+	//	X = cos(degrees);
+	//	Y = sin(degrees);
+	//}
 
 	float magnitude()
 	{

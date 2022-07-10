@@ -19,6 +19,7 @@ using namespace std;
 #include <thread>
 #include <mutex>
 
+#define PI = 3.14159;
 //	helper functions? move to new header?
 template <typename T> string thingToString(T data)
 {
@@ -29,7 +30,7 @@ template <typename T> string thingToString(T data)
 
 int random(int min, int max)
 {
-	return rand() % (max + 1) - min;
+	return rand() % ((max + 1) - min);
 }
 
 #include "Vector2.h"
