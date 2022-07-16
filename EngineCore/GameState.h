@@ -22,6 +22,7 @@ private:
 	void onEvent(_Event* pEvent)
 	{
 		//	change states
+		//	other stuff
 	}
 
 public:

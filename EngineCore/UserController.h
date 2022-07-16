@@ -60,31 +60,31 @@ private:
 		{
 			case CONSOLE_KEYBOARD_EVENT:
 			{
-				KeyboardEvent* pKeyBoardEvent = pEvent->get<KeyboardEvent>();
-
-				if (pKeyBoardEvent->getKey() == 'W' || pKeyBoardEvent->getKey() == 'w')
+				if (m_nControllerID == 0)
 				{
-					bUp = pKeyBoardEvent->isKeyDown();
-				}
+					KeyboardEvent* pKeyBoardEvent = pEvent->get<KeyboardEvent>();
 
-				if (pKeyBoardEvent->getKey() == 'A' || pKeyBoardEvent->getKey() == 'a') 
-				{
-					bLeft = pKeyBoardEvent->isKeyDown();
-				}
+					if (pKeyBoardEvent->getKey() == 'W' || pKeyBoardEvent->getKey() == 'w')
+					{
+						bUp = pKeyBoardEvent->isKeyDown();
+					}
 
-				if (pKeyBoardEvent->getKey() == 'S' || pKeyBoardEvent->getKey() == 's')
-				{
-					bDown = pKeyBoardEvent->isKeyDown();
-				}
+					if (pKeyBoardEvent->getKey() == 'A' || pKeyBoardEvent->getKey() == 'a') 
+					{
+						bLeft = pKeyBoardEvent->isKeyDown();
+					}
 
-				if (pKeyBoardEvent->getKey() == 'D' || pKeyBoardEvent->getKey() == 'd')
-				{
-					bRight = pKeyBoardEvent->isKeyDown();
-				}
+					if (pKeyBoardEvent->getKey() == 'S' || pKeyBoardEvent->getKey() == 's')
+					{
+						bDown = pKeyBoardEvent->isKeyDown();
+					}
 
-
-				
-
+					if (pKeyBoardEvent->getKey() == 'D' || pKeyBoardEvent->getKey() == 'd')
+					{
+						bRight = pKeyBoardEvent->isKeyDown();
+					}
+			
+				} 
 				break;
 			}
 			case GAMEPAD_EVENT:
