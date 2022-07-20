@@ -70,7 +70,7 @@ int random(int min, int max)
 #include "GUI.h"
 
 #include "GameState.h"
-#include "CustomWindow.h"
+#include "BezierCurveTestWindow.h"
 
 class Engine
 {
@@ -206,6 +206,7 @@ public:
 		//	change to detect controller first?
 		// m_pData->add(new GameState(m_pEngineBuffer));
 
+		m_pStateManager->setState(new IsoTileMapTest());
 		m_pStateManager->start(m_pData, m_pSystems, m_pGUI);
 	}
 	

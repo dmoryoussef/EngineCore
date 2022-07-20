@@ -11,6 +11,7 @@ public:
 };
 
 #include "TestState.h"
+#include "IsoTileMapTest.h"
 
 class StateManager : public EventListener
 {
@@ -27,7 +28,12 @@ private:
 
 public:
 	StateManager() :
-		m_pCurrentState(new TestState()) {};
+		m_pCurrentState(NULL) {};
+
+	void setState(GameState* pState)
+	{
+		m_pCurrentState = pState;
+	}
 
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI)
 	{

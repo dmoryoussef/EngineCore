@@ -45,8 +45,6 @@ protected:
 	int nWidth;
 
 public:
-	Render2D() {}
-
 	Render2D(OutputBuffer *pBuffer) :
 		m_pTargetBuffer(pBuffer),
 		nHeight(pBuffer->getHeight()),

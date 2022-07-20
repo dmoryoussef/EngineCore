@@ -1,4 +1,4 @@
-class CustomWindow : public CameraViewWindow
+class BezierCurveTestWindow : public CameraViewWindow
 {
 private:
 	void onEvent(_Event* pEvent)
@@ -21,7 +21,7 @@ private:
 	}
 
 public:
-	CustomWindow(int nWidth, int nHeight, int nPosX, int nPosY) :
+	BezierCurveTestWindow(int nWidth, int nHeight, int nPosX, int nPosY) :
 		CameraViewWindow(nWidth, nHeight, nPosX, nPosY) {};
 
 	struct splineSegment

@@ -120,7 +120,6 @@ private:
 		}
 	}
 
-
 	void constructComponent(BaseNode* pBaseNode)
 	{
 		Render2D renderer(this);
@@ -133,7 +132,7 @@ private:
 		//	tile map rendering happens here
 		pBaseNode->baseRender(&renderer, vCurrentCameraPosition, vWorldMin, vWorldMax);
 
-		//	render ecs on top
+		//	render ecs on top, not called by baseRender...change???
 		EntityRenderSystem ecsRenderer;
 		ecsRenderer.render(pBaseNode, &renderer, vCurrentCameraPosition, vWorldMin, vWorldMax);
 
@@ -145,7 +144,7 @@ private:
 public:
 	CameraViewWindow(int nWidth, int nHeight, int nPosX, int nPosY) :
 		m_bCameraZoomable(true),
-		fMinZoom(1.0),
+		fMinZoom(0.1),
 		fMaxZoom(15.0),
 	    m_bCameraPanning(false),
 		WorldViewWindow(nWidth, nHeight, nPosX, nPosY)

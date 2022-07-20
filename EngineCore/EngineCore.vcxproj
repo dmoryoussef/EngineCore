@@ -146,7 +146,7 @@
     <ClInclude Include="CollisionResponse.h" />
     <ClInclude Include="CommandSystem.h" />
     <ClInclude Include="ControllerWidget.h" />
-    <ClInclude Include="CustomWindow.h" />
+    <ClInclude Include="BezierCurveTestWindow.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Damage.h" />
     <ClInclude Include="EntityComponentSystem.h" />
@@ -157,6 +157,7 @@
     <ClInclude Include="ControllerInput.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Health.h" />
+    <ClInclude Include="IsoTileMapTest.h" />
     <ClInclude Include="ListExplorerWindow.h" />
     <ClInclude Include="MouseInteraction.h" />
     <ClInclude Include="OutputBuffer.h" />

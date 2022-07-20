@@ -228,10 +228,13 @@
     <ClInclude Include="GameState.h">
       <Filter>Source Files\States</Filter>
     </ClInclude>
-    <ClInclude Include="CustomWindow.h">
+    <ClInclude Include="BezierCurveTestWindow.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
     <ClInclude Include="TestState.h">
+      <Filter>Source Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="IsoTileMapTest.h">
       <Filter>Source Files\States</Filter>
     </ClInclude>
   </ItemGroup>
