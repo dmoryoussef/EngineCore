@@ -102,6 +102,16 @@ public:
 		m_bKeyDown(bKeyDown),
 		_Event(CONSOLE_KEYBOARD_EVENT) {};
 
+	bool isKeyDown(char key)
+	{
+		return (m_bKeyDown && key == m_chKey);
+	}
+
+	bool isKeyUp(char key)
+	{
+		return (!m_bKeyDown && key == m_chKey);
+	}
+
 	bool isKeyDown()
 	{
 		return m_bKeyDown;

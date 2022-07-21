@@ -358,6 +358,49 @@ class OrthographicTileMap : public DefaultTileMap
 private:
 	Vector2 vTileSize;
 
+	void onEvent(_Event* pEvent)
+	{
+		switch (pEvent->m_eType)
+		{
+			case MOUSEWORLD_EVENT:
+			{
+				//// Get Mouse in world
+				//olc::vi2d vMouse = { GetMouseX(), GetMouseY() };
+				
+
+				//// Work out active cell
+				//olc::vi2d vCell = { vMouse.x / vTileSize.x, vMouse.y / vTileSize.y };
+
+				//// Work out mouse offset into cell
+				//olc::vi2d vOffset = { vMouse.x % vTileSize.x, vMouse.y % vTileSize.y };
+
+				//// Sample into cell offset colour
+				//olc::Pixel col = sprIsom->GetPixel(3 * vTileSize.x + vOffset.x, vOffset.y);
+
+				//// Work out selected cell by transforming screen cell
+				//olc::vi2d vSelected =
+				//{
+				//	(vCell.y - vOrigin.y) + (vCell.x - vOrigin.x),
+				//	(vCell.y - vOrigin.y) - (vCell.x - vOrigin.x)
+				//};
+
+				Vector2 vMouse = pEvent->get<MouseWorldEvent>()->getWorldPosition();
+				
+				Vector2 vCell(vMouse.X / vTileSize.X, vMouse.Y / vTileSize.Y);
+				Vector2 vSelected((vCell.Y - Position.Y) + (vCell.X - Position.X), (vCell.Y - Position.Y) - (vCell.X - Position.X));
+				DefaultTile* pTile = getTile(vSelected.X, vSelected.Y);
+				if (pTile)
+				{
+					if (m_pMouseOverTile != NULL)
+						m_pMouseOverTile->setMouseOver(false);
+					m_pMouseOverTile = pTile;
+					pTile->setMouseOver(true);
+				}
+				break;
+			}
+		}
+	}
+
 public:
 	OrthographicTileMap() :
 		vTileSize(2, 1),
@@ -403,7 +446,10 @@ public:
 		
 			for (int x = 0; x < Size.X; x++)
 			{
-				pRenderer->DrawPoint(x + 78, y + 78, pRenderer->getGreyscaleColor(m_pTileMap[x + (int)Size.X * y].getValue()));
+				if (getTile(x,y) == getMouseOverTile())
+					pRenderer->DrawPoint(x + 78, y + 78, pRenderer->getGreyscaleColor(1));
+				else
+					pRenderer->DrawPoint(x + 78, y + 78, pRenderer->getGreyscaleColor(m_pTileMap[x + (int)Size.X * y].getValue()));
 			}
 	
 	}

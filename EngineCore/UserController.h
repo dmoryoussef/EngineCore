@@ -69,10 +69,10 @@ private:
 						bUp = pKeyBoardEvent->isKeyDown();
 					}
 
-					if (pKeyBoardEvent->getKey() == 'A' || pKeyBoardEvent->getKey() == 'a') 
+					/*if (pKeyBoardEvent->getKey() == 'A' || pKeyBoardEvent->getKey() == 'a') 
 					{
 						bLeft = pKeyBoardEvent->isKeyDown();
-					}
+					}*/
 
 					if (pKeyBoardEvent->getKey() == 'S' || pKeyBoardEvent->getKey() == 's')
 					{
@@ -84,6 +84,15 @@ private:
 						bRight = pKeyBoardEvent->isKeyDown();
 					}
 			
+					if (pKeyBoardEvent->isKeyDown('a'))
+						bLeft = true;
+					
+					if (pKeyBoardEvent->isKeyUp('a'))
+						bLeft = false;
+
+					if (pKeyBoardEvent->isKeyDown(32))
+						addEvent(new CommandEvent(getParent(), new ActionCommand()));
+
 				} 
 				break;
 			}
