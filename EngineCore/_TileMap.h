@@ -124,7 +124,7 @@ public:
 	TileType* getTile(int nX, int nY)
 	{
 		if (nY <= Size.Y && nX <= Size.X)
-			return &m_pTileMap[(nX & int(Size.X) - 1) + int(Size.X) * (nY & int(Size.Y) - 1)];
+			return &m_pTileMap[nX + (int)Size.X * nY];
 		else
 			return NULL;
 	}
@@ -230,7 +230,7 @@ private:
 		for (int nY = 0; nY < Size.Y; nY++)
 			for (int nX = 0; nX < Size.X; nX++)
 			{
-				m_pTileMap[nX + (int)Size.X * nY].setValue(0.1);
+				getTile(nX, nY)->setValue(0.1);
 
 				if (nY == 0 || nY == Size.Y - 1 || nX == 0 || nX == Size.X - 1)
 					m_pTileMap[nX + (int)Size.X * nY].setValue(1.0); 
@@ -348,11 +348,6 @@ public:
 };
 
 
-//template <typename TileType> class _TileMap :
-//	public BaseNode,
-//	public EventListener
-
-
 class OrthographicTileMap : public DefaultTileMap
 {
 private:
@@ -364,38 +359,29 @@ private:
 		{
 			case MOUSEWORLD_EVENT:
 			{
-				//// Get Mouse in world
-				//olc::vi2d vMouse = { GetMouseX(), GetMouseY() };
-				
-
-				//// Work out active cell
-				//olc::vi2d vCell = { vMouse.x / vTileSize.x, vMouse.y / vTileSize.y };
-
-				//// Work out mouse offset into cell
-				//olc::vi2d vOffset = { vMouse.x % vTileSize.x, vMouse.y % vTileSize.y };
-
-				//// Sample into cell offset colour
-				//olc::Pixel col = sprIsom->GetPixel(3 * vTileSize.x + vOffset.x, vOffset.y);
-
-				//// Work out selected cell by transforming screen cell
-				//olc::vi2d vSelected =
-				//{
-				//	(vCell.y - vOrigin.y) + (vCell.x - vOrigin.x),
-				//	(vCell.y - vOrigin.y) - (vCell.x - vOrigin.x)
-				//};
-
 				Vector2 vMouse = pEvent->get<MouseWorldEvent>()->getWorldPosition();
-				
-				Vector2 vCell(vMouse.X / vTileSize.X, vMouse.Y / vTileSize.Y);
-				Vector2 vSelected((vCell.Y - Position.Y) + (vCell.X - Position.X), (vCell.Y - Position.Y) - (vCell.X - Position.X));
-				DefaultTile* pTile = getTile(vSelected.X, vSelected.Y);
-				if (pTile)
+
+				Vector2 vTransformed = orthoTransform(vMouse.X, vMouse.Y);
+				if (DefaultTile* pTile = getTile(vTransformed.X, vTransformed.Y))
 				{
 					if (m_pMouseOverTile != NULL)
 						m_pMouseOverTile->setMouseOver(false);
 					m_pMouseOverTile = pTile;
 					pTile->setMouseOver(true);
 				}
+
+				//Vector2 vCell(vMouse.X / vTileSize.X, vMouse.Y / vTileSize.Y);
+				////	Vector2 vOffset(vMouse.X % vTileSize.X, vMouse.Y % vTileSize.Y);
+				//Vector2 vSelected((vCell.Y - Position.Y) + (vCell.X - Position.X), (vCell.Y - Position.Y) - (vCell.X - Position.X));
+
+				//DefaultTile* pTile = getTile(vSelected.X, vSelected.Y);
+				//if (pTile)
+				//{
+				//	if (m_pMouseOverTile != NULL)
+				//		m_pMouseOverTile->setMouseOver(false);
+				//	m_pMouseOverTile = pTile;
+				//	pTile->setMouseOver(true);
+				//}
 				break;
 			}
 		}
@@ -409,7 +395,7 @@ public:
 		setPosition(0, 0);
 	};
 
-	Vector2 toScreen(int x, int y)
+	Vector2 orthoTransform(int x, int y)
 	{
 		float screenX = (Position.X * vTileSize.X) + (x - y) * (vTileSize.X / 2);
 		float screenY = (Position.Y * vTileSize.Y) + (x + y) * (vTileSize.Y / 2);
@@ -428,22 +414,21 @@ public:
 		{
 			for (int x = 0; x < Size.X; x++)
 			{
-				Vector2	vWorldCurrent = toScreen(x, y);
+				Vector2	vWorldCurrent = orthoTransform(x, y);
 				Vector2 vWorldScaled = scale(vWorldCurrent, vCameraPosition);
 
-				DefaultTile* pTile = &m_pTileMap[x + (int)Size.X * y];
+				DefaultTile* pTile = getTile(x, y);
 
-
-				pRenderer->DrawCircle(vWorldScaled.X, vWorldScaled.Y, (vTileSize.Y / vTileSize.X) * vCameraPosition.Z, pRenderer->getGreyscaleColor(pTile->getValue()));
-				
-				//if (getTile(x, y) == getMouseOverTile())
-				//	pRenderer->DrawCircle(vWorldScaled.X, vWorldScaled.Y, (vTileSize.Y / vTileSize.X) * vCameraPosition.Z, { PIXEL_SOLID, FG_LIGHTGREEN });
+				if (pTile == m_pMouseOverTile)
+					pRenderer->DrawCircle(vWorldScaled.X, vWorldScaled.Y, (vTileSize.Y / vTileSize.X) * vCameraPosition.Z, {PIXEL_SOLID, FG_LIGHTGREEN});
+				else
+					pRenderer->DrawCircle(vWorldScaled.X, vWorldScaled.Y, (vTileSize.Y / vTileSize.X) * vCameraPosition.Z, pRenderer->getGreyscaleColor(pTile->getValue()));
 
 			}
 		}
 
+		//	minimap (not in ortho)
 		for (int y = 0; y < Size.Y; y++)
-		
 			for (int x = 0; x < Size.X; x++)
 			{
 				if (getTile(x,y) == getMouseOverTile())
