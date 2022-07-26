@@ -51,6 +51,7 @@ protected:
 			{
 				updateMouseOver(pEvent->get<MouseEvent>()->getState().Position);
 
+				MouseState mouseState = pEvent->get<MouseEvent>()->getState();
 				switch (m_nState)
 				{
 					case DEFAULT:
@@ -66,7 +67,7 @@ protected:
 						break;
 
 					case LEFT_PRESSED:		
-						if (!pEvent->get<MouseEvent>()->getState().bLeftButtonDown)
+						if (!mouseState.bLeftButtonDown)
 						{
 							if (m_bMouseOver)
 							{	//	handle toggle between active/inactive
@@ -181,7 +182,7 @@ public:
 	{
 		setName("COMPONENT");
 		registerListener(CONSOLE_MOUSE_EVENT);
-		registerListener(CONSOLE_KEYBOARD_EVENT);
+		registerListener(KEYBOARD_EVENT);
 		registerListener(GUI_EVENT);
 	};
 
@@ -197,7 +198,7 @@ public:
 		ConsoleOutputBuffer(nWidth, nHeight)
 	{
 		registerListener(CONSOLE_MOUSE_EVENT);
-		registerListener(CONSOLE_KEYBOARD_EVENT);
+		registerListener(KEYBOARD_EVENT);
 		registerListener(GUI_EVENT);
 	};
 
@@ -214,7 +215,7 @@ public:
 	{
 		setName(strText);
 		registerListener(CONSOLE_MOUSE_EVENT);
-		registerListener(CONSOLE_KEYBOARD_EVENT);
+		registerListener(KEYBOARD_EVENT);
 		registerListener(GUI_EVENT);
 
 		//	set position based on other
@@ -234,7 +235,7 @@ public:
 	{
 		setName("COMPONENT");
 		registerListener(CONSOLE_MOUSE_EVENT);
-		registerListener(CONSOLE_KEYBOARD_EVENT);
+		registerListener(KEYBOARD_EVENT);
 		registerListener(GUI_EVENT);
 
 		//	set position based on other

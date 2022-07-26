@@ -1,3 +1,4 @@
+#include "SelectionSquare.h"
 #include "UIComponent.h"
 #include "UILayout.h"
 #include "UIWindow.h"

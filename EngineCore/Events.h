@@ -1,6 +1,6 @@
 enum EVENT_TYPE
 {
-	CONSOLE_KEYBOARD_EVENT,
+	KEYBOARD_EVENT,
 	CONSOLE_MOUSE_EVENT,
 	GAMEPAD_EVENT,
 	GUI_EVENT,
@@ -14,6 +14,36 @@ enum EVENT_TYPE
 	COMMAND_EVENT
 };
 
+
+class SelectionSquareEvent : public _Event
+{
+private:
+	Vector2 vMin;
+	Vector2 vMax;
+	bool bActive;
+
+public:
+	SelectionSquareEvent(Vector2 min, Vector2 max, bool active) :
+		vMin(min),
+		vMax(max),
+		bActive(active), 
+		_Event(SELECTIONSQUARE_EVENT) {};
+
+	Vector2 getMax()
+	{
+		return vMax;
+	}
+
+	Vector2 getMin()
+	{
+		return vMin;
+	}
+
+	bool isActive()
+	{
+		return bActive;
+	}
+};
 
 class GuiEvent : public _Event
 {
@@ -100,7 +130,7 @@ public:
 	KeyboardEvent(char chKey, bool bKeyDown) :
 		m_chKey(chKey),
 		m_bKeyDown(bKeyDown),
-		_Event(CONSOLE_KEYBOARD_EVENT) {};
+		_Event(KEYBOARD_EVENT) {};
 
 	bool isKeyDown(char key)
 	{

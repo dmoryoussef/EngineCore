@@ -78,11 +78,11 @@ public:
 							State.bLeftButtonDown = true;
 						if (m_pInputBuffer[nI].Event.MouseEvent.dwButtonState == RIGHTMOST_BUTTON_PRESSED)
 							State.bRightButtonDown = true;
-						if (m_pInputBuffer[nI].Event.MouseEvent.dwControlKeyState == SHIFT_PRESSED)
-							State.bShiftDown = true;
 						if (m_pInputBuffer[nI].Event.MouseEvent.dwButtonState == FROM_LEFT_2ND_BUTTON_PRESSED)
 							State.bWheelButtonDown = true;
 
+						if (m_pInputBuffer[nI].Event.MouseEvent.dwControlKeyState == SHIFT_PRESSED)
+							State.bShiftDown = true;
 
 						State.Position.Y = m_pInputBuffer[nI].Event.MouseEvent.dwMousePosition.Y;
 						State.Position.X = m_pInputBuffer[nI].Event.MouseEvent.dwMousePosition.X;

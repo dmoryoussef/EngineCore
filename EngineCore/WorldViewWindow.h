@@ -44,36 +44,6 @@ protected:
 				{
 					handleWorldPosition(mouseState);
 				}
-
-
-				//// handle selection square
-				//if (!m_bSelectionSquare)
-				//{
-				//	if (mouseState.bRightButtonDown)
-				//	{
-				//		Square.Start = mouseState.Position - Vector2(1, 1);
-				//		Square.update(mouseState.Position);
-				//		m_bSelectionSquare = true;
-				//	}
-				//}
-				//else
-				//{
-				//	Square.update(mouseState.Position);
-				//	if (!mouseState.bRightButtonDown)
-				//	{
-				//		//	event
-				//		//	get min/max
-				//		//	make square
-				//		// put in worldPosition
-				//		//	does not work when window is moved
-				//		Vector2 WorldMin = WorldPosition(Square.Min + Vector2(1, 1), CurrentCameraPosition.toVec2(), Position, CurrentCameraPosition.Z);
-				//		Vector2 WorldMax = WorldPosition(Square.Max, CurrentCameraPosition.toVec2(), Position, CurrentCameraPosition.Z);
-				//		addEvent(new SelectionSquareEvent(WorldMin, WorldMax));
-				//		m_bSelectionSquare = false;
-				//		Square.clear();
-				//	}
-				//}
-
 				break;
 			}
 

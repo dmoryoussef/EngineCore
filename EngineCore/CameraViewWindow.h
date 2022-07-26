@@ -92,16 +92,37 @@ private:
 		}
 	}
 
+	SelectionSquare* pSelectionSquare = NULL;
+
 	void onEvent(_Event* pEvent)
 	{
 		_UIComponent::onEvent(pEvent);
 
 		switch (pEvent->m_eType)
 		{
+			case MOUSEWORLD_EVENT:
+			{
+				if (pEvent->get<MouseWorldEvent>()->getState().bLeftButtonDown)
+				{
+					if (!pSelectionSquare)
+						pSelectionSquare = new SelectionSquare(pEvent->get<MouseWorldEvent>()->getWorldPosition());
+				}
+				
+				if (pSelectionSquare)
+				{
+					if (!pSelectionSquare->isActive())
+					{
+						delete pSelectionSquare;
+						pSelectionSquare = NULL;
+					}
+				}
+				
+				break;
+			}
+
 			case CONSOLE_MOUSE_EVENT:
 			{
-
-				// convert to component
+				// convert to component??
 				//	drag: area, event listener
 				//	close: area, event listener, 'x'
 				//	resize window, etc
@@ -112,7 +133,6 @@ private:
 				{
 					handleWorldPosition(mouseState);
 				}
-
 				handleCameraMove(mouseState);
 
 				break;
@@ -136,9 +156,13 @@ private:
 		EntityRenderSystem ecsRenderer;
 		ecsRenderer.render(pBaseNode, &renderer, vCurrentCameraPosition, vWorldMin, vWorldMax);
 
+		if (pSelectionSquare)
+		{
+			pSelectionSquare->render(&renderer, vCurrentCameraPosition);
+		}
+
 		set("Screen: " + vCurrentMousePosition.toString(), getWidth() - 20, 2, FG_WHITE);
-		set("World:  " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 20, 3, FG_WHITE);
-	
+		set("World:  " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 20, 3, FG_WHITE);	
 	}
 
 public:
@@ -152,6 +176,8 @@ public:
 		m_fScreenScale = 5;
 		m_pCamera = new BaseNode("Camera");
 		m_pCamera->add(new Transform3D({ 0, 0, m_fScreenScale }, { 0, 0, 0 }, { 0, 0, 0 }));
+
+		registerListener(MOUSEWORLD_EVENT);
 	}
 
 	BaseNode *getCamera()

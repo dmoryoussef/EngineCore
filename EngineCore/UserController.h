@@ -58,7 +58,7 @@ private:
 	{
 		switch (pEvent->m_eType)
 		{
-			case CONSOLE_KEYBOARD_EVENT:
+			case KEYBOARD_EVENT:
 			{
 				if (m_nControllerID == 0)
 				{
@@ -157,7 +157,7 @@ public:
 		_EntityComponent("USER_CONTROLLER")
 	{
 		registerListener(GAMEPAD_EVENT);
-		registerListener(CONSOLE_KEYBOARD_EVENT);
+		registerListener(KEYBOARD_EVENT);
 	}
 
 

@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="Actor.h" />
     <ClInclude Include="BaseNode.h" />
+    <ClInclude Include="BuildingTest.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="CollisionDetectionSystem.h" />
     <ClInclude Include="CollisionResponse.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="Polygon.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="Render2D.h" />
+    <ClInclude Include="SelectionSquare.h" />
     <ClInclude Include="ShootAction.h" />
     <ClInclude Include="TestState.h" />
     <ClInclude Include="TileMapSystem.h" />

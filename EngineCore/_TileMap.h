@@ -39,7 +39,37 @@ protected:
 				pCurrent->setValue(fInitialValue);
 				
 			}
+	}
 
+	Vector2 clipMin(Vector2 vWorldMin)
+	{
+		Vector2 vMapMin;
+		if (vWorldMin.Y <= Position.Y)
+			vMapMin.Y = 0;
+		else
+			vMapMin.Y = vWorldMin.Y - Position.Y;
+
+		if (vWorldMin.X <= Position.X)
+			vMapMin.X = 0;
+		else
+			vMapMin.X = vWorldMin.X - Position.X;
+		return vMapMin;
+	}
+	
+	Vector2 clipMax(Vector2 vWorldMax)
+	{
+		Vector2 vMapMax;
+
+		if (vWorldMax.Y >= Size.Y + Position.Y)
+			vMapMax.Y = Size.Y;
+		else
+			vMapMax.Y = Size.Y - (Position.Y + Size.Y - vWorldMax.Y);
+
+		if (vWorldMax.X >= Size.X + Position.X)
+			vMapMax.X = Size.X;
+		else
+			vMapMax.X = Size.X - (Position.X + Size.X - vWorldMax.X);
+		return vMapMax;
 	}
 
 	struct sEdge
@@ -90,11 +120,73 @@ protected:
 						m_pMouseOverTile = NULL;
 					}
 				}
-
-
-			}break;
-
+			}
+			break;
 		}
+	}
+
+
+	void createBoarderMap()
+	{
+		for (int nY = 0; nY < Size.Y; nY++)
+			for (int nX = 0; nX < Size.X; nX++)
+			{
+				getTile(nX, nY)->setValue(0.1);
+
+				if (nY == 0 || nY == Size.Y - 1 || nX == 0 || nX == Size.X - 1)
+					m_pTileMap[nX + (int)Size.X * nY].setValue(1.0);
+
+			}
+	}
+
+	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
+	{
+		Vector2 vTileMin = clipMin(vWorldMin);
+		Vector2 vTileMax = clipMax(vWorldMax);
+
+		int TilesRendered = 0;
+
+		//	render clipped part of map
+		for (int nY = vTileMin.Y; nY < vTileMax.Y; nY++)
+			for (int nX = vTileMin.X; nX < vTileMax.X; nX++)
+			{
+				float fTileSize = 1.0;
+				float fScaledTileSize = fTileSize * vCameraPosition.Z;
+
+				Vector2 Min(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z),
+					vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z));
+
+				Vector2 Max(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z) + fScaledTileSize,
+					vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z) + fScaledTileSize);
+
+				pRenderer->FillQuad(Min.X,
+					Min.Y,
+					Max.X,
+					Max.Y,
+					pRenderer->getGreyscaleColor(getTile(nX, nY)->getValue()));
+
+				TilesRendered++;
+			}
+
+		//	move to bottom of render, to put on top
+		if (getMouseOverTile())
+		{
+			float fTileSize = 1.0;
+			float fScaledTileSize = fTileSize * vCameraPosition.Z;
+			int nX = getMouseOverTile()->getPosition().X;
+			int nY = getMouseOverTile()->getPosition().Y;
+			Vector2 Min(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z),
+				vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z));
+
+			Vector2 Max(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z) + fScaledTileSize,
+				vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z) + fScaledTileSize);
+			pRenderer->DrawQuad(Min.X,
+				Min.Y,
+				Max.X,
+				Max.Y,
+				Pixel(PIXEL_SOLID, FG_LIGHTGREEN));
+		}
+		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 3, FG_WHITE);
 	}
 
 public:
@@ -121,6 +213,17 @@ public:
 		Position.Y = y;
 	}
 
+	TileType* getWorldTile(int nX, int nY)
+	{
+		//	account for non-zero position in world
+		nX = nX - Position.X;
+		nY = nY - Position.Y;
+		if (nY <= Size.Y && nX <= Size.X)
+			return &m_pTileMap[nX + (int)Size.X * nY];
+		else
+			return NULL;
+	}
+
 	TileType* getTile(int nX, int nY)
 	{
 		if (nY <= Size.Y && nX <= Size.X)
@@ -128,7 +231,6 @@ public:
 		else
 			return NULL;
 	}
-
 
 	BaseTile* getMouseOverTile()
 	{
@@ -165,12 +267,6 @@ public:
 	}
 
 	Vector2 getSize() { return Size; }
-
-	//void toString()
-	//{
-	//	return "[" + toString<int>(Size.X) + "x" + toString<int>(Size.Y) + "]";
-	//}
-
 };
 
 class DefaultTileMap :
@@ -223,21 +319,6 @@ private:
 								{	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1	}
 	};
 
-
-
-	void createBoarderMap()
-	{
-		for (int nY = 0; nY < Size.Y; nY++)
-			for (int nX = 0; nX < Size.X; nX++)
-			{
-				getTile(nX, nY)->setValue(0.1);
-
-				if (nY == 0 || nY == Size.Y - 1 || nX == 0 || nX == Size.X - 1)
-					m_pTileMap[nX + (int)Size.X * nY].setValue(1.0); 
-
-			}
-	}
-
 public:
 	DefaultTileMap() :
 		_TileMap({ 20, 20 }, "DEFAULT")
@@ -278,78 +359,16 @@ public:
 			}
 		}
 	}
-	void render(Render2D *pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
-	{
-	
-		Vector2 vTileMin;
-		Vector2 vTileMax;
-		
-		//	handle clipping
-		if (vWorldMin.Y <= Position.Y)
-			vTileMin.Y = 0;
-		else
-			vTileMin.Y = vWorldMin.Y - Position.Y;
-
-		if (vWorldMin.X <= Position.X)
-			vTileMin.X = 0;
-		else
-			vTileMin.X = vWorldMin.X - Position.X;
-
-		if (vWorldMax.Y >= Size.Y + Position.Y)
-			vTileMax.Y = Size.Y;
-		else
-			vTileMax.Y = Size.Y - (Position.Y + Size.Y - vWorldMax.Y);
-
-		if (vWorldMax.X >= Size.X + Position.X)
-			vTileMax.X = Size.X;
-		else
-			vTileMax.X = Size.X - (Position.X + Size.X - vWorldMax.X);
-
-		int TilesRendered = 0;
-
-
-		//	render clipped part of map
-		for (int nY = vTileMin.Y; nY < vTileMax.Y; nY++)
-			for (int nX = vTileMin.X; nX < vTileMax.X; nX++)
-			{
-				float fTileSize = 1.0;
-				float fScaledTileSize = fTileSize * vCameraPosition.Z;
-
-				Vector2 Min(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z),
-							vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z));
-
-				Vector2 Max(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z) + fScaledTileSize,
-							vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z) + fScaledTileSize);
-
-				
-				pRenderer->DrawQuad(Min.X,
-									Min.Y,
-									Max.X,
-									Max.Y,
-									pRenderer->getGreyscaleColor(getTile(nX, nY)->getValue()));
-				
-
-				TilesRendered++;
-
-				//	move to bottom of render, to put on top
-				if (getTile(nX, nY) == getMouseOverTile())
-				{
-					pRenderer->DrawQuad(Min.X,
-									Min.Y,
-									Max.X,
-									Max.Y,
-									Pixel(PIXEL_SOLID, FG_LIGHTGREEN));
-
-				}
-			}
-
-		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 3, FG_WHITE);
-	}
 };
-
 
 class OrthographicTileMap : public DefaultTileMap
 {
+
+	//	all this needs to be moved to the camera
+	//	the map should not know what mode it is in, isographic or orthographic
+	//	rendering should be seperate
+
+
 private:
 	Vector2 vTileSize;
 

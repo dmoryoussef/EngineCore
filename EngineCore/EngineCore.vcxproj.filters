@@ -237,6 +237,12 @@
     <ClInclude Include="IsoTileMapTest.h">
       <Filter>Source Files\States</Filter>
     </ClInclude>
+    <ClInclude Include="BuildingTest.h">
+      <Filter>Source Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectionSquare.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

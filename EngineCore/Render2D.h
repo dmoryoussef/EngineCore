@@ -44,8 +44,11 @@ protected:
 	int nHeight;
 	int nWidth;
 
+	float fScale;
+
 public:
 	Render2D(OutputBuffer *pBuffer) :
+		fScale(1.0),
 		m_pTargetBuffer(pBuffer),
 		nHeight(pBuffer->getHeight()),
 		nWidth(pBuffer->getWidth()) {};
@@ -799,6 +802,28 @@ public:
 	}
 
 	void DrawQuad(int nMinX, int nMinY, int nMaxX, int nMaxY, Pixel pixel)
+	{
+		if (nMinY < 0)
+			nMinY = 0;
+		if (nMinX < 0)
+			nMinX = 0;
+		if (nMaxX > nWidth)
+			nMaxX = nWidth;
+		if (nMaxY > nHeight)
+			nMaxY = nHeight;
+
+		for (int nY = nMinY; nY < nMaxY; nY++)
+		{
+			for (int nX = nMinX; nX < nMaxX; nX++)
+			{
+				if (nX == nMinX || nX == nMaxX - 1 || nY == nMinY || nY == nMaxY - 1)
+					DrawPoint(nX, nY, pixel);
+			}
+		}
+	}
+
+
+	void FillQuad(int nMinX, int nMinY, int nMaxX, int nMaxY, Pixel pixel)
 	{
 		if (nMinY < 0)
 			nMinY = 0;

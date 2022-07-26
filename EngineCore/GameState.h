@@ -10,8 +10,6 @@ public:
 	virtual void update(BaseNode *pData, float fDeltaTime) {}
 };
 
-#include "TestState.h"
-#include "IsoTileMapTest.h"
 
 class StateManager : public EventListener
 {

@@ -173,7 +173,7 @@ public:
 		return m_bRunning;
 	}
 
-	void start(OutputWindow *sb)
+	void start(OutputWindow *sb, GameState *pStartingState)
 	{
 		//	seed random generator
 		srand(0);
@@ -206,7 +206,7 @@ public:
 		//	change to detect controller first?
 		// m_pData->add(new GameState(m_pEngineBuffer));
 
-		m_pStateManager->setState(new IsoTileMapTest());
+		m_pStateManager->setState(pStartingState);
 		m_pStateManager->start(m_pData, m_pSystems, m_pGUI);
 	}
 	
