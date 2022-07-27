@@ -161,8 +161,9 @@ private:
 			pSelectionSquare->render(&renderer, vCurrentCameraPosition);
 		}
 
-		set("Screen: " + vCurrentMousePosition.toString(), getWidth() - 20, 2, FG_WHITE);
-		set("World:  " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 20, 3, FG_WHITE);	
+		set("Screen: " + vCurrentMousePosition.toString(), getWidth() - 25, 2, FG_WHITE);
+		set("World:  " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 25, 3, FG_WHITE);	
+		set("Zoom:   " + thingToString<float>(vCurrentCameraPosition.Z), getWidth() - 25, 4, FG_WHITE);
 	}
 
 public:

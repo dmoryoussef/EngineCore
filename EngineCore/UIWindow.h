@@ -101,7 +101,7 @@ protected:
 		string strPosition = formatPosition();
 
 		if (m_bDisplayPosition)
-			set(strPosition, Size.X - (strPosition.size() + 1), 0, nFinalColor);
+			set(strPosition, m_nWidth - (strPosition.size() + 1), 0, nFinalColor);
 
 		if (m_bDisplayTitle)
 			set(formatTitle(m_strText), 1, 0, nFinalColor);

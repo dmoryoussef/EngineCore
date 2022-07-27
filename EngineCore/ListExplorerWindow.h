@@ -65,49 +65,6 @@ class ListExplorerWindow : public UIWindow
 			}
 	};
 
-	class SingleSelectButtonComponent : public _UIComponent
-	{
-		private:
-			UIButton *m_pCurrent;
-
-			void onEvent(_Event* pEvent)
-			{
-				_UIComponent::onEvent(pEvent);
-
-				switch (pEvent->m_eType)
-				{
-					case GUI_EVENT:
-					{	
-						if (GuiEvent *pGuiEvent = pEvent->get<GuiEvent>())
-						{
-							if (UIButton* pButton = pGuiEvent->getComponent<UIButton>())
-							{
-								if (pButton->getParent() == this)
-								{
-									//	if current button is different from active button, update everything
-									if (pButton->getState() == LEFT_RELEASED)
-									if (pButton != m_pCurrent)
-									{
-
-									}
-								}
-							}
-
-						}
-						break;
-					}
-					
-				}
-			}
-				
-			
-
-		public:
-			SingleSelectButtonComponent() :
-				_UIComponent() {};
-
-	};
-
 	void onEvent(_Event* pEvent)
 	{
 		UIWindow::onEvent(pEvent);
@@ -215,7 +172,9 @@ class ListExplorerWindow : public UIWindow
 		{
 			while (m_pBaseNode->isIterating())
 			{
-				addComponent(new BaseNodeButton(m_pBaseNode->getCurrent()));
+				BaseNodeButton* pButton = new BaseNodeButton(m_pBaseNode->getCurrent());
+				addComponent(pButton);
+				pButton->setAlignment(ALIGN_RIGHT);
 			}
 		}
 
@@ -225,8 +184,13 @@ class ListExplorerWindow : public UIWindow
 public:
 	ListExplorerWindow(BaseNode *pNode) :
 		m_pBaseNode(pNode),
-		UIWindow(20, 15, 80, 0)
+		UIWindow()
 	{
+		m_bDraggable = true;
+		m_nWidth = 30;
+		m_nHeight = 80;
+		EdgeBuffer = { 1, 1 };
+		setText("EXPLORER_WINDOW");
 		registerListener(NEW_BASENODE_EVENT);
 		registerListener(DELETE_BASENODE_EVENT);
 		registerListener(GUI_EVENT);

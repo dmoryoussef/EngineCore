@@ -155,11 +155,11 @@ public:
 		{
 			_Event* pEvent = Events.front();
 			dispatchEvent(pEvent);
+			dispatchCallbackEvent(pEvent);
 			Events.pop();
 			delete pEvent;
 		}
-		//	while callbackEvents > 0
-			//dispatchCallbackEvent(pEvent);
+		
 	}
 
 	//void dispatchEvents()

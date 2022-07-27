@@ -35,7 +35,11 @@ protected:
 	void onEvent(_Event* pEvent)
 	{
 		_UIComponent::onEvent(pEvent);
+	}
 
+	void onStateChange()
+	{
+		addEvent(new GuiEvent(this));
 	}
 
 public:
@@ -64,6 +68,7 @@ public:
 		_UIComponent(strText.size(), 1, 0, 0)
 	{
 		setText(strText);
+		EdgeBuffer = { 0, 0 };
 		setAlignment(ALIGN_LEFT);
 	};
 

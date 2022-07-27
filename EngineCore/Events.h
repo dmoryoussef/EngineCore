@@ -20,12 +20,16 @@ class SelectionSquareEvent : public _Event
 private:
 	Vector2 vMin;
 	Vector2 vMax;
+	Vector2 vStart;
+	Vector2 vStop;
 	bool bActive;
 
 public:
-	SelectionSquareEvent(Vector2 min, Vector2 max, bool active) :
+	SelectionSquareEvent(Vector2 min, Vector2 max, Vector2 start, Vector2 stop, bool active) :
 		vMin(min),
 		vMax(max),
+		vStart(start),
+		vStop(stop),
 		bActive(active), 
 		_Event(SELECTIONSQUARE_EVENT) {};
 
@@ -37,6 +41,16 @@ public:
 	Vector2 getMin()
 	{
 		return vMin;
+	}
+
+	Vector2 getStart()
+	{
+		return vStart;
+	}
+
+	Vector2 getStop()
+	{
+		return vStop;
 	}
 
 	bool isActive()

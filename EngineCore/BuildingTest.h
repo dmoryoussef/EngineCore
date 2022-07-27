@@ -18,20 +18,42 @@ private:
 	//		building, selecting tiles
 	//		group selection
 
+	int nCurrentBuildMode;
+
 	void onEvent(_Event *pEvent)
 	{
 		_TileMap::onEvent(pEvent);
 
 		switch (pEvent->m_eType)
 		{
+			case GUI_EVENT:
+			{
+				if (pEvent->m_eType == GUI_EVENT)
+				{
+					if (pEvent->get<GuiEvent>()->getComponent<UIButton>()->getState() == LEFT_RELEASED)
+					{
+						if (pEvent->get<GuiEvent>()->getComponent<UIButton>()->getText() == "POINT")
+						{
+							nCurrentBuildMode = 0;
+						}
+
+						if (pEvent->get<GuiEvent>()->getComponent<UIButton>()->getText() == "QUAD")
+						{
+							nCurrentBuildMode = 1;
+						}
+					}
+				}
+				break;
+			}
+
 			case MOUSEWORLD_EVENT:
 			{
 				MouseWorldEvent* pMouseEvent = pEvent->get<MouseWorldEvent>();
-				if (BuildingTile* pTile = getTile(pMouseEvent->getWorldPosition()))
+				if (BuildingTile* pTile = getWorldTile(pMouseEvent->getWorldPosition().X, pMouseEvent->getWorldPosition().Y))
 				{
-					if (pMouseEvent->getState().bLeftButtonDown)
+					if (pMouseEvent->getState().bRightButtonDown)
 					{
-						//	pTile->setValue(1);
+						pTile->setValue(0.1);
 					}
 				}
 				break;
@@ -47,14 +69,30 @@ private:
 
 					//	fill square
 
-					//	draw square
-					for (int y = vMin.Y; y < vMax.Y; y++)
+					//	draw lerped line
+					if (nCurrentBuildMode == 0)
 					{
-						for (int x = vMin.X; x < vMax.X; x++)
+						Vector2 vStart = pSelectionEvent->getStart();
+						Vector2 vStop = pSelectionEvent->getStop();
+						for (float t = 0; t < 1; t = t + 0.01)
 						{
-							if (x == vMin.X || x == vMax.X - 1 || y == vMin.Y || y == vMax.Y - 1)
-							if (BuildingTile* pTile = getWorldTile(x, y))
+							Vector2 vLerp = lerp(vStart, vStop, t);
+							if (BuildingTile* pTile = getWorldTile(vLerp.X, vLerp.Y))
 								pTile->setValue(1);
+						}
+					}
+
+					//	draw square
+					if (nCurrentBuildMode == 1)
+					{
+						for (int y = vMin.Y; y < vMax.Y; y++)
+						{
+							for (int x = vMin.X; x < vMax.X; x++)
+							{
+								if (x == vMin.X || x == vMax.X - 1 || y == vMin.Y || y == vMax.Y - 1)
+									if (BuildingTile* pTile = getWorldTile(x, y))
+										pTile->setValue(1);
+							}
 						}
 					}
 
@@ -66,10 +104,12 @@ private:
 
 public:
 	BuildingMap() :
-		_TileMap({ 40, 40 }, "BUILDING_MAP")
+		nCurrentBuildMode(0),
+		_TileMap({ 100, 100 }, "BUILDING_MAP") 
 	{
 		setPosition(5, 5);
 		createBoarderMap();
+		registerListener(GUI_EVENT);
 		registerListener(SELECTIONSQUARE_EVENT);
 	}
 };
@@ -112,20 +152,34 @@ class BuildingTest : public GameState
 
 
 private:
-
+	enum BuildMode
+	{
+		POINT, 
+		QUAD
+	};
 
 public:
 	BuildingTest() 
 	{
-		
+		registerListener(MOUSEWORLD_EVENT);
+		registerListener(KEYBOARD_EVENT);
+		registerListener(GUI_EVENT);
 	};
 
 
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI)
 	{
-		CameraViewWindow* pCameraWindow = new CameraViewWindow(100, 100, 0, 0);
+		CameraViewWindow* pCameraWindow = new CameraViewWindow(180, 150, 0, 0);
 		pData->add(pCameraWindow->getCamera());
-		pGUI->addAtEnd(pCameraWindow);
+		pGUI->addChild(pCameraWindow);
+
+		SingleSelectButtonComponent* pComponent = new SingleSelectButtonComponent();
+		pComponent->addComponent(new UIButton("POINT"));
+		pComponent->addComponent(new UIButton("QUAD"));
+		pComponent->addComponent(new UIButton("CURVE"));
+		pComponent->refresh();
+		pCameraWindow->addComponent(pComponent);
+		pComponent->setAlignment(ALIGN_RIGHT);
 
 		pData->add(new BuildingMap());
 	}

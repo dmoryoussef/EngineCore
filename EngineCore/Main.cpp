@@ -8,7 +8,7 @@
 void main()
 {
 	Engine *pEngine = new Engine();
-	pEngine->start(new ConsoleWindow(100, 100, 4, 4), new BuildingTest());
+	pEngine->start(new ConsoleWindow(200, 150, 4, 4), new BuildingTest());
 	pEngine->run();
 	delete pEngine;
 }

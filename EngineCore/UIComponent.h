@@ -25,7 +25,7 @@ class _UIComponent :
 protected:
 	Vector2 MaxSize;			//	any size greater than this - add scroll bar
 	Vector2 Position;
-	Vector2 Border;
+	Vector2 EdgeBuffer;
 	string m_strText;			// window title, button name, textfield, etc
 	bool m_bMouseOver;
 
@@ -41,8 +41,6 @@ protected:
 	virtual void constructComponent(BaseNode* pData) {}
 	virtual void onStateChange() {};
 
-	
-
 	void onEvent(_Event* pEvent)
 	{
 		switch (pEvent->m_eType)
@@ -50,73 +48,7 @@ protected:
 			case CONSOLE_MOUSE_EVENT:
 			{
 				updateMouseOver(pEvent->get<MouseEvent>()->getState().Position);
-
-				MouseState mouseState = pEvent->get<MouseEvent>()->getState();
-				switch (m_nState)
-				{
-					case DEFAULT:
-						if (m_bMouseOver)
-							setState(MOUSE_OVER);
-						break;
-
-					case MOUSE_OVER:
-						if (pEvent->get<MouseEvent>()->getState().bLeftButtonDown)
-							setState(LEFT_PRESSED);
-						if (!m_bMouseOver)
-							setState(DEFAULT);
-						break;
-
-					case LEFT_PRESSED:		
-						if (!mouseState.bLeftButtonDown)
-						{
-							if (m_bMouseOver)
-							{	//	handle toggle between active/inactive
-								
-								if (m_bActive == false)
-								{
-									setState(LEFT_RELEASED);
-									m_bActive = true;
-
-								}
-								else
-								{
-									setState(DEFAULT);
-									m_bActive = false;
-								}
-							}
-							else							// if mouse is moved off, then button released - revert to previous state
-							{
-								if (m_bActive)
-									setState(LEFT_RELEASED);
-								else
-									setState(DEFAULT);
-							}
-						}
-
-						break;
-
-					case LEFT_RELEASED:
-						//	do something
-						if (m_bToggle == false)
-							if (m_bMouseOver)
-								setState(MOUSE_OVER);
-							else
-								setState(DEFAULT);
-
-						if (m_bMouseOver)
-							if (pEvent->get<MouseEvent>()->getState().bLeftButtonDown)
-								setState(LEFT_PRESSED);
-						break;
-
-					case RIGHT_RELEASED:
-						//	do something
-						if (m_bMouseOver)
-							setState(MOUSE_OVER);
-						else
-							setState(DEFAULT);
-						break;
-
-				}
+				updateState(pEvent->get<MouseEvent>()->getState());
 				break;
 			}
 		}
@@ -164,6 +96,75 @@ protected:
 			}
 	}
 
+	void updateState(MouseState mouseState)
+	{
+		switch (m_nState)
+		{
+			case DEFAULT:
+				if (m_bMouseOver)
+					setState(MOUSE_OVER);
+				break;
+
+			case MOUSE_OVER:
+				if (mouseState.bLeftButtonDown)
+					setState(LEFT_PRESSED);
+				if (!m_bMouseOver)
+					setState(DEFAULT);
+				break;
+
+			case LEFT_PRESSED:
+				if (!mouseState.bLeftButtonDown)
+				{
+					if (m_bMouseOver)
+					{	//	handle toggle between active/inactive
+
+						if (m_bActive == false)
+						{
+							setState(LEFT_RELEASED);
+							m_bActive = true;
+
+						}
+						else
+						{
+							setState(DEFAULT);
+							m_bActive = false;
+						}
+					}
+					else							// if mouse is moved off, then button released - revert to previous state
+					{
+						if (m_bActive)
+							setState(LEFT_RELEASED);
+						else
+							setState(DEFAULT);
+					}
+				}
+
+				break;
+
+			case LEFT_RELEASED:
+				//	do something
+				if (m_bToggle == false)
+					if (m_bMouseOver)
+						setState(MOUSE_OVER);
+					else
+						setState(DEFAULT);
+
+				if (m_bMouseOver)
+					if (mouseState.bLeftButtonDown)
+						setState(LEFT_PRESSED);
+				break;
+
+			case RIGHT_RELEASED:
+				//	do something
+				if (m_bMouseOver)
+					setState(MOUSE_OVER);
+				else
+					setState(DEFAULT);
+				break;
+		}
+
+	}
+
 	virtual void constructBase() {}
 
 public:
@@ -171,7 +172,7 @@ public:
 		m_nState(DEFAULT),
 		Position(nPosX, nPosY),
 		MaxSize(nWidth, nHeight),
-		Border(1, 0),
+		EdgeBuffer(0, 0),
 		m_bMouseOver(false),
 		m_bActive(false),
 		m_nAlignment(ALIGN_NONE),
@@ -191,7 +192,7 @@ public:
 		m_nAlignment(ALIGN_LEFT),
 		Position(0, 0),
 		MaxSize(0, 0),
-		Border(0, 0),
+		EdgeBuffer(0, 0),
 		m_bMouseOver(false),
 		m_bActive(false),
 		m_bToggle(true),
@@ -207,7 +208,7 @@ public:
 		m_nAlignment(ALIGN_LEFT),
 		Position(0, 0),
 		MaxSize(0, 0),
-		Border(0, 0),
+		EdgeBuffer(0, 0),
 		m_bMouseOver(false),
 		m_bActive(false),
 		m_bToggle(true),
@@ -227,7 +228,7 @@ public:
 		m_nAlignment(ALIGN_NONE),
 		Position(0, 0),
 		MaxSize(0, 0),
-		Border(0, 0),
+		EdgeBuffer(1, 1),
 		m_bMouseOver(false),
 		m_bActive(false),
 		m_bToggle(true),
@@ -273,8 +274,8 @@ public:
 	void setAlignment(int nAlignment)
 	{
 		m_nAlignment = nAlignment;
-		int nAlignY = 1; //	adjust for border
-		int nAlignX = 1;
+		int nAlignY = EdgeBuffer.Y; //	adjust for border
+		int nAlignX = EdgeBuffer.X;
 		if (m_pParent)
 		{
 			while (m_pParent->isIterating())
@@ -288,51 +289,53 @@ public:
 					}
 			}
 
-			switch (nAlignment)
-			{
-				case ALIGN_TOP:
-					break;
-				case ALIGN_BOTTOM:
-					/*int nX = 1;
-					int nY = getParent<_AComponent>()->getSize().Y;
-					Position = Vector2(nY - Size.Y, nX);*/
-					break;
-				case ALIGN_LEFT:
-				{
-					//	check other previous siblings for align left?
-					int nX = 1;
-					int nY = nAlignY;
-					Position = Vector2(nX, nY);
-				} break;
-				case ALIGN_CENTERLEFT:
-				{
-					int nX = 1;
-					int nY = nAlignY;
-					nY = getParent<_UIComponent>()->m_nHeight;
-					Position = Vector2(nX / 2 - m_nWidth, nY);
-				} break;
-				case ALIGN_RIGHT:
-				{
-					int nX = getParent<_UIComponent>()->m_nWidth;
-					int nY = nAlignY;
-					Position = Vector2(nX - m_nWidth - 1, nY);
-				} break;
-				case ALIGN_CENTER:
-				{
 
-				} break;
-				case ALIGN_OUTSIDE_LEFT:
-				{
-					int nPosY = 0;
-					int nPosX = 0;
-					nPosX = nPosX - m_nWidth + 1;
-					Vector2 NewPos(nPosX, nPosY);
-					Position = NewPos;
-				} break;
-				case ALIGN_OUTSIDE_RIGHT:
-					break;
+			switch (m_nAlignment)
+			{
+			case ALIGN_TOP:
+				break;
+			case ALIGN_BOTTOM:
+				/*int nX = 1;
+				int nY = getParent<_AComponent>()->getSize().Y;
+				Position = Vector2(nY - Size.Y, nX);*/
+				break;
+			case ALIGN_LEFT:
+			{
+				//	check other previous siblings for align left?
+				int nX = nAlignX;
+				int nY = nAlignY;
+				Position = Vector2(nX, nY);
+			} break;
+			case ALIGN_CENTERLEFT:
+			{
+				int nX = 1;
+				int nY = nAlignY;
+				nY = getParent<_UIComponent>()->m_nHeight;
+				Position = Vector2(nX / 2 - m_nWidth, nY);
+			} break;
+			case ALIGN_RIGHT:
+			{
+				int nX = getParent<_UIComponent>()->m_nWidth - getParent<_UIComponent>()->EdgeBuffer.X;
+				int nY = nAlignY + getParent<_UIComponent>()->EdgeBuffer.Y;
+				Position = Vector2(nX - m_nWidth - 1, nY);
+			} break;
+			case ALIGN_CENTER:
+			{
+
+			} break;
+			case ALIGN_OUTSIDE_LEFT:
+			{
+				int nPosY = 0;
+				int nPosX = 0;
+				nPosX = nPosX - m_nWidth + 1;
+				Vector2 NewPos(nPosX, nPosY);
+				Position = NewPos;
+			} break;
+			case ALIGN_OUTSIDE_RIGHT:
+				break;
 			}
 		}
+		
 	}
 	void setPosition(int nX, int nY)
 	{
@@ -350,7 +353,6 @@ public:
 			// specialized event if state changed to something important
 			onStateChange();
 		}
-		
 	}
 
 	void render(BaseNode* pData, OutputBuffer* pFrame)
@@ -373,11 +375,11 @@ public:
 			pChild->render(pData, pFrame);
 		}
 	}
-	void update(int nDeltaTime)
-	{
-		while (isIterating())
-			getCurrent()->update(nDeltaTime);
-	}
+	//void update(int nDeltaTime)
+	//{
+	//	while (isIterating())
+	//		getCurrent()->update(nDeltaTime);
+	//}
 
 	template <typename T> string toString(T data)
 	{
@@ -470,6 +472,22 @@ public:
 	{
 		addChild(pComponent);
 		pComponent->setAlignment(pComponent->getAlignment());
+	}
+
+	void refresh()
+	{
+		// set size based on the size of any child components
+		int width = 0;
+		int height = 0;
+		while (isIterating())
+		{
+			if (width < getCurrent<_UIComponent>()->getWidth())
+				width = getCurrent<_UIComponent>()->getWidth();
+			
+			if (height < height + getCurrent<_UIComponent>()->getHeight())
+				height = height + getCurrent<_UIComponent>()->getHeight();
+		}
+		resize(width, height);
 	}
 };
 

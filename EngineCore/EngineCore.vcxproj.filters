@@ -243,6 +243,9 @@
     <ClInclude Include="SelectionSquare.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="SingleSelectButtonComponent.h">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

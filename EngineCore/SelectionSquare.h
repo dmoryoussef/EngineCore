@@ -5,33 +5,22 @@ private:
 	Vector2 vStop;
 
 	bool m_bActive;
-	char m_chKey;
 
 	void onEvent(_Event* pEvent)
 	{
 		switch (pEvent->m_eType)
 		{
-			case KEYBOARD_EVENT:
-			{
-				/*KeyboardEvent* pKeyboardEvent = pEvent->get<KeyboardEvent>();
-				if (pKeyboardEvent->isKeyUp(m_chKey))
-				{
-					m_bActive = false;
-				}*/
-				break;
-			}
 			case MOUSEWORLD_EVENT:
 			{
 				MouseWorldEvent* pMouseEvent = pEvent->get<MouseWorldEvent>();
 				if (!pMouseEvent->getState().bLeftButtonDown)
 				{
 					m_bActive = false;
-
 				}
 				
-				vStop = pMouseEvent->getWorldPosition() + Vector2(1, 1);
+				vStop = pMouseEvent->getWorldPosition();
 				
-				addEvent(new SelectionSquareEvent(Min(), Max(), m_bActive));
+				addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, m_bActive));
 
 				break;
 			}
@@ -63,18 +52,16 @@ private:
 
 public:
 	SelectionSquare(Vector2 start) :
-		m_chKey('s'),
 		m_bActive(true),
 		vStart(start),
 		vStop(start)
 	{
-		registerListener(CONSOLE_MOUSE_EVENT);
 		registerListener(MOUSEWORLD_EVENT);
 		registerListener(KEYBOARD_EVENT);
 	};
 	~SelectionSquare()
 	{
-		addEvent(new SelectionSquareEvent(Min(), Max(), m_bActive));
+		addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, m_bActive));
 	}
 
 	bool isActive()
@@ -86,12 +73,18 @@ public:
 	{
 		// scale to screen:
 		Vector2 vScaledMin = vCamera.toVec2() + Min() * vCamera.Z;
-		Vector2 vScaledMax = vCamera.toVec2() + Max() * vCamera.Z;
-		// draw:
+		Vector2 vScaledMax = vCamera.toVec2()  + (Max() + Vector2(1, 1)) * vCamera.Z;  //	adding 1, 1 - should actually be *tile size*, only works in this form when tilesize = 1, 1
+		Vector2 vScaledStart = vCamera.toVec2() + vStart * vCamera.Z;
+		Vector2 vScaledStop = vCamera.toVec2() + vStop * vCamera.Z;
+		//	draw:
 		pRenderer->DrawQuad(vScaledMin.X, vScaledMin.Y, vScaledMax.X, vScaledMax.Y, { PIXEL_SOLID, FG_WHITE });
+		//	or draw a line from start to stop
+		pRenderer->DrawLine(vScaledStart, vScaledStop, { PIXEL_SOLID, FG_WHITE });
 		// show some data:
 		pRenderer->DrawString(Min().toString(), vScaledMax.X + 1, vScaledMax.Y - 3);
 		pRenderer->DrawString(Max().toString(), vScaledMax.X + 1, vScaledMax.Y - 2);
+
+		//pRenderer->DrawQuad(vScaledStart.X, vScaledStart.Y, vScaledStart.X, vScaledStart.Y, { PIXEL_SOLID, FG_LIGHTBLUE });
 	}
 
 };

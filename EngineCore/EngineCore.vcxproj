@@ -181,6 +181,7 @@
     <ClInclude Include="Render2D.h" />
     <ClInclude Include="SelectionSquare.h" />
     <ClInclude Include="ShootAction.h" />
+    <ClInclude Include="SingleSelectButtonComponent.h" />
     <ClInclude Include="TestState.h" />
     <ClInclude Include="TileMapSystem.h" />
     <ClInclude Include="Transform2D.h" />

@@ -218,7 +218,7 @@ public:
 		//	account for non-zero position in world
 		nX = nX - Position.X;
 		nY = nY - Position.Y;
-		if (nY <= Size.Y && nX <= Size.X)
+		if (nX >= 0 && nY >= 0 && nY <= Size.Y && nX <= Size.X)
 			return &m_pTileMap[nX + (int)Size.X * nY];
 		else
 			return NULL;

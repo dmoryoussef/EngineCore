@@ -53,6 +53,7 @@ public:
 	{
 		m_nWidth = nWidth;
 		m_nHeight = nHeight;
+		Size = { (float)nWidth, (float)nHeight };
 		delete m_pBuffer;
 		m_pBuffer = new Pixel[m_nWidth * m_nHeight];
 	}
