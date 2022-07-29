@@ -20,7 +20,7 @@ private:
 				
 				vStop = pMouseEvent->getWorldPosition();
 				
-				addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, m_bActive));
+				addEvent(new SelectionSquareEvent(Min(), (Max() + Vector2(1, 1)), vStart, vStop, m_bActive));
 
 				break;
 			}
@@ -61,7 +61,7 @@ public:
 	};
 	~SelectionSquare()
 	{
-		addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, m_bActive));
+		addEvent(new SelectionSquareEvent(Min(), (Max() + Vector2(1, 1)), vStart, vStop, m_bActive));
 	}
 
 	bool isActive()

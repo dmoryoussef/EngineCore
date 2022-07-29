@@ -104,7 +104,7 @@ private:
 
 public:
 	BuildingMap() :
-		nCurrentBuildMode(0),
+		nCurrentBuildMode(1),
 		_TileMap({ 100, 100 }, "BUILDING_MAP") 
 	{
 		setPosition(5, 5);
@@ -152,11 +152,6 @@ class BuildingTest : public GameState
 
 
 private:
-	enum BuildMode
-	{
-		POINT, 
-		QUAD
-	};
 
 public:
 	BuildingTest() 
