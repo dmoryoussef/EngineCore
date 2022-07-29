@@ -152,9 +152,12 @@ class BuildingTest : public GameState
 
 
 private:
+	Bezier bezier;
+	Transform3D* pCamera;
 
 public:
-	BuildingTest() 
+	BuildingTest() :
+		bezier({3, 3}, {9, 9})
 	{
 		registerListener(MOUSEWORLD_EVENT);
 		registerListener(KEYBOARD_EVENT);
@@ -166,22 +169,26 @@ public:
 	{
 		CameraViewWindow* pCameraWindow = new CameraViewWindow(180, 150, 0, 0);
 		pData->add(pCameraWindow->getCamera());
+		pCamera = pCameraWindow->getCamera()->getChild<Transform3D>();
 		pGUI->addChild(pCameraWindow);
 
-		SingleSelectButtonComponent* pComponent = new SingleSelectButtonComponent();
-		pComponent->addComponent(new UIButton("POINT"));
-		pComponent->addComponent(new UIButton("QUAD"));
-		pComponent->addComponent(new UIButton("CURVE"));
-		pComponent->refresh();
-		pCameraWindow->addComponent(pComponent);
-		pComponent->setAlignment(ALIGN_RIGHT);
+		//SingleSelectButtonComponent* pComponent = new SingleSelectButtonComponent();
+		//pComponent->addComponent(new UIButton("POINT"));
+		//pComponent->addComponent(new UIButton("QUAD"));
+		//pComponent->addComponent(new UIButton("CURVE"));
+		//pComponent->refresh();
+		//pCameraWindow->addComponent(pComponent);
+		//pComponent->setAlignment(ALIGN_RIGHT);
 
-		pData->add(new BuildingMap());
+		//pData->add(new BuildingMap());
 	}
 
 	void render(OutputBuffer* pEngineBuffer)
 	{
-
+		//	currently renders outside "window" becuase there is no bounding information
+		//	move to window to fix??
+		Render2D *renderer = new Render2D(pEngineBuffer);
+		bezier.render(renderer, pCamera->getPosition());
 	}
 
 	void update(BaseNode* pData, float fDeltaTime)
