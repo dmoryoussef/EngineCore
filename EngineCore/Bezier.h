@@ -1,4 +1,4 @@
-class Bezier : public EventListener
+class BezierSegment : public EventListener
 {
 private:
 	vector<Vector2> controlPoints;
@@ -89,7 +89,7 @@ private:
 	}
 
 public:
-	Bezier(Vector2 A, Vector2 B) :
+	BezierSegment(Vector2 A, Vector2 B) :
 		m_nActivePoint(-1),
 		m_fControlPointSize(0.5)
 	{
@@ -99,6 +99,11 @@ public:
 		controlPoints.push_back(B);
 
 		registerListener(MOUSEWORLD_EVENT);
+	}
+
+	vector<Vector2> getPoints()
+	{
+		return controlPoints;
 	}
 
 	void render(Render2D* renderer, Vector3 cameraPos)
@@ -131,6 +136,8 @@ public:
 			Vector2 text = cameraPos.toVec2() + (controlPoints[i] + Vector2(0, -0.2)) * cameraPos.Z;
 
 			renderer->DrawCircle(position.X, position.Y, fRadius, { PIXEL_SOLID, FG_LIGHTRED });
+			if (i == 0 || i == 3)
+				renderer->DrawCircle(position.X, position.Y, fRadius, { PIXEL_SOLID, FG_YELLOW });
 			renderer->DrawString(thingToString<int>(i), text.X, text.Y - 2);
 		}
 		//	draw active point
@@ -145,7 +152,7 @@ public:
 class BezierPath : public EventListener
 {
 private:
-	vector<Bezier*> Path;
+	vector<BezierSegment*> Path;
 
 public:
 	BezierPath()
@@ -154,9 +161,9 @@ public:
 		Vector2 B = {9, 9};
 		Vector2 C = { 15, 15 };
 
-		Bezier *bA = new Bezier(A, B);
-		Bezier *bB = new Bezier(B, C);
-		Bezier* bC = new Bezier(C, A);
+		BezierSegment *bA = new BezierSegment(A, B);
+		BezierSegment *bB = new BezierSegment(B, C);
+		BezierSegment* bC = new BezierSegment(C, A);
 
 		Path.push_back(bA);
 		Path.push_back(bB);
@@ -165,14 +172,48 @@ public:
 
 	~BezierPath()
 	{
-
+		for (auto b : Path)
+		{
+			delete b;
+		}
 	}
 
 	void render(Render2D* renderer, Vector3 cameraPos)
 	{
-		for (auto b : Path)
+		int n = 0;
+		float fRadius = 0.5 * cameraPos.Z;
+		float resolution = 0.1 / cameraPos.Z;
+
+		for (auto segment : Path)
 		{
-			b->render(renderer, cameraPos);
+			for (int i = 0; i < segment->getPoints().size() - 1; i++)
+		
+			{
+				//	draw lines between control points
+				Vector2 A = cameraPos.toVec2() + segment->getPoints()[i] * cameraPos.Z;
+				Vector2 B = cameraPos.toVec2() + segment->getPoints()[i + 1] * cameraPos.Z;
+				renderer->DrawLine(A, B, { PIXEL_QUARTER, FG_WHITE });
+			}
+			//	draw control points
+			for (int i = 0; i < segment->getPoints().size(); i++)
+			{
+				Vector2 position = cameraPos.toVec2() + segment->getPoints()[i] * cameraPos.Z;
+				Vector2 text = cameraPos.toVec2() + (segment->getPoints()[i] + Vector2(0, -0.2)) * cameraPos.Z;
+
+				renderer->DrawCircle(position.X, position.Y, fRadius, { PIXEL_SOLID, FG_LIGHTRED });
+				if (i == 0 || i == 3)
+					renderer->DrawCircle(position.X, position.Y, fRadius, { PIXEL_SOLID, FG_YELLOW });
+				renderer->DrawString(thingToString<int>(n), text.X, text.Y - 2);
+				if (i != 0)
+					n++;
+			}
+			//	draw active point
+			/*if (m_nActivePoint >= 0)
+			{
+				Vector2 position = cameraPos.toVec2() + controlPoints[m_nActivePoint] * cameraPos.Z;
+				renderer->DrawCircle(position.X, position.Y, fRadius, { PIXEL_SOLID, FG_LIGHTGREEN });
+			}*/
+			//b->render(renderer, cameraPos);
 		}
 	}
 };

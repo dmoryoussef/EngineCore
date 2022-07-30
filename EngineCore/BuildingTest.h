@@ -191,8 +191,4 @@ public:
 		bezier.render(&renderer, pCamera->getPosition());
 	}
 
-	void update(BaseNode* pData, float fDeltaTime)
-	{
-		
-	}
 };
