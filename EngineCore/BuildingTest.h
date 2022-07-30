@@ -152,12 +152,12 @@ class BuildingTest : public GameState
 
 
 private:
-	Bezier bezier;
+	BezierPath bezier;
 	Transform3D* pCamera;
 
 public:
 	BuildingTest() :
-		bezier({3, 3}, {9, 9})
+		bezier()
 	{
 		registerListener(MOUSEWORLD_EVENT);
 		registerListener(KEYBOARD_EVENT);

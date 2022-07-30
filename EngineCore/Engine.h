@@ -51,6 +51,7 @@ int random(int min, int max)
 
 #include "Render2D.h"
 
+
 #include "NodeCore.h"
 #include "BaseNode.h"
 
@@ -65,12 +66,13 @@ int random(int min, int max)
 #include "ConsoleInputBuffer.h"
 #include "ConsoleOutputBuffer.h"
 
+#include "Bezier.h"
+
 #include "EntityComponentSystem.h"
 #include "TileMapSystem.h"
 #include "GUI.h"
 
 #include "GameState.h"
-#include "BezierCurveTestWindow.h"
 
 class Engine
 {

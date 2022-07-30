@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="Actor.h" />
     <ClInclude Include="BaseNode.h" />
+    <ClInclude Include="Bezier.h" />
     <ClInclude Include="BuildingTest.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="CollisionDetectionSystem.h" />
