@@ -27,10 +27,13 @@ private:
 		}
 	}
 
+	//	min/max as INT will give tile aligned square
+	//	float will be smooth
+
 	Vector2 Min()
 	{
-		int minY = vStart.Y;
-		int minX = vStart.X;
+		float minY = vStart.Y;
+		float minX = vStart.X;
 		if (vStop.X < minX)
 			minX = vStop.X;
 		if (vStop.Y < minY)
@@ -41,13 +44,13 @@ private:
 
 	Vector2 Max()
 	{
-		int maxY = vStop.Y;
-		int maxX = vStop.X;
+		float maxY = vStop.Y;
+		float maxX = vStop.X;
 		if (vStart.X > maxX)
 			maxX = vStart.X;
 		if (vStart.Y > maxY)
 			maxY = vStart.Y;
-		return Vector2(maxX, maxY) + Vector2(1, 1);
+		return Vector2(maxX, maxY);
 	}
 
 public:
@@ -96,17 +99,39 @@ private:
 	int m_nActivePoint;
 	float m_fControlPointSize;
 
+	Vector2 lerpQuadP(Vector2 a, Vector2 b, Vector2 c, int t)
+	{
+		Vector2 linearA = lerp(a, b, t);
+		Vector2 linearB = lerp(b, c, t);
+		return lerp(linearA, linearB, t);
+	}
+
 	Vector2 cubicP(float t)
 	{
 		//	finds the point at t not using lerp
-		Vector2 p0 = controlPoints[0] * pow((1 - t), 3); 
+		Vector2 p0 = controlPoints[0] * pow((1 - t), 3);
 		Vector2 p1 = controlPoints[1] * 3 * pow((1 - t), 2) * t;
 		Vector2 p2 = controlPoints[2] * 3 * (1 - t) * pow(t, 2);
 		Vector2 p3 = controlPoints[3] * pow(t, 3);
 		return p0 + p1 + p2 + p3;
 	}
 
-	Vector2 lerpedCubicP(float t)
+	Vector2 lerpQuadP(float t, int i)
+	{
+		Vector2 linearA = lerp(controlPoints[i], controlPoints[i + 1], t);
+		Vector2 linearB = lerp(controlPoints[i + 1], controlPoints[i + 2], t);
+		return lerp(linearA, linearB, t);
+	}
+
+	Vector2 lerpQuadP(float t)
+	{
+		Vector2 linearA = lerp(controlPoints[0], controlPoints[1], t);
+		Vector2 linearB = lerp(controlPoints[1], controlPoints[2], t);
+		return lerp(linearA, linearB, t);
+	}
+
+
+	Vector2 lerpCubicP(float t)
 	{
 		//	finds the point at t using the lerp function
 		Vector2 linearA = lerp(controlPoints[0], controlPoints[1], t);
@@ -153,10 +178,15 @@ public:
 		m_nActivePoint(-1),
 		m_fControlPointSize(0.5)
 	{
+		Vector2 C = { 12, 12 };
+		Vector2 D = { 15, 15 };
+
 		controlPoints.push_back(A);
 		controlPoints.push_back({B.X, A.Y});
 		controlPoints.push_back({A.X, B.Y});
 		controlPoints.push_back(B);
+		controlPoints.push_back(C);
+		controlPoints.push_back(D);
 
 		registerListener(MOUSEWORLD_EVENT);
 	}
@@ -175,13 +205,17 @@ public:
 		}
 		
 		//	draw curve
-		for (float t = 0; t < 1.0 - resolution; t = t + resolution)
+		for (int i = 0; i < controlPoints.size() - 2; i = i + 2)
 		{
-			Vector2 scaledPointA = cameraPos.toVec2() + cubicP(t) * cameraPos.Z;
-			Vector2 scaledPointB = cameraPos.toVec2() + cubicP(t + resolution) * cameraPos.Z;
+			for (float j = 1; j <= 3; j++)
+			{
+				float t = j / 3.0f;
+				Vector2 scaledPointA = cameraPos.toVec2() + lerpQuadP(controlPoints[i], controlPoints[i + 1], controlPoints[i + 2], t) * cameraPos.Z;
 
-			renderer->DrawLine(scaledPointA, scaledPointB, { PIXEL_SOLID, FG_WHITE });
+				renderer->DrawCircle(scaledPointA.X, scaledPointA.Y, 1.0, { PIXEL_SOLID, FG_WHITE });
+			}
 		}
+
 
 		//	draw control points
 		for (int i = 0; i < controlPoints.size(); i++)

@@ -187,8 +187,8 @@ public:
 	{
 		//	currently renders outside "window" becuase there is no bounding information
 		//	move to window to fix??
-		Render2D *renderer = new Render2D(pEngineBuffer);
-		bezier.render(renderer, pCamera->getPosition());
+		Render2D renderer(pEngineBuffer);
+		bezier.render(&renderer, pCamera->getPosition());
 	}
 
 	void update(BaseNode* pData, float fDeltaTime)

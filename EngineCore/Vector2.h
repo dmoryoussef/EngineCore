@@ -186,7 +186,7 @@ Vector2 getMin(Vector2 A, Vector2 B)
 
 Vector2 getNormal(Vector2 &A, Vector2& B)
 {
-	return Vector2(- (B.Y - A.Y), B.X - A.X );
+	return Vector2(-(B.Y - A.Y), B.X - A.X );
 }
 
 float dotProduct(Vector2 A, Vector2 B)
@@ -200,6 +200,10 @@ float hypotenuse(Vector2& A, Vector2& B)
 	return hypo;
 }
 
+float distance(Vector2& A, Vector2& B)
+{
+	return hypotenuse(A, B);
+}
 
 float lerp(float a, float b, float t)
 {
