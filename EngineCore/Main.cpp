@@ -4,6 +4,7 @@
 #include "TestState.h"
 #include "IsoTileMapTest.h"
 #include "BuildingTest.h"
+#include "BezierDemo.h"
 
 void main()
 {

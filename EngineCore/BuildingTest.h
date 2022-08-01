@@ -152,12 +152,9 @@ class BuildingTest : public GameState
 
 
 private:
-	BezierPath bezier;
-	Transform3D* pCamera;
 
 public:
-	BuildingTest() :
-		bezier()
+	BuildingTest()
 	{
 		registerListener(MOUSEWORLD_EVENT);
 		registerListener(KEYBOARD_EVENT);
@@ -167,28 +164,24 @@ public:
 
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI)
 	{
-		CameraViewWindow* pCameraWindow = new CameraViewWindow(180, 150, 0, 0);
+		CameraViewWindow* pCameraWindow = new CameraViewWindow(150, 100, 0, 0);
 		pData->add(pCameraWindow->getCamera());
-		pCamera = pCameraWindow->getCamera()->getChild<Transform3D>();
 		pGUI->addChild(pCameraWindow);
 
-		//SingleSelectButtonComponent* pComponent = new SingleSelectButtonComponent();
-		//pComponent->addComponent(new UIButton("POINT"));
-		//pComponent->addComponent(new UIButton("QUAD"));
-		//pComponent->addComponent(new UIButton("CURVE"));
-		//pComponent->refresh();
-		//pCameraWindow->addComponent(pComponent);
-		//pComponent->setAlignment(ALIGN_RIGHT);
+		SingleSelectButtonComponent* pComponent = new SingleSelectButtonComponent();
+		pComponent->addComponent(new UIButton("POINT"));
+		pComponent->addComponent(new UIButton("QUAD"));
+		pComponent->addComponent(new UIButton("CURVE"));
+		pComponent->refresh();
+		pCameraWindow->addComponent(pComponent);
+		pComponent->setAlignment(ALIGN_RIGHT);
 
-		//pData->add(new BuildingMap());
+		pData->add(new BuildingMap());
 	}
 
 	void render(OutputBuffer* pEngineBuffer)
 	{
-		//	currently renders outside "window" becuase there is no bounding information
-		//	move to window to fix??
 		Render2D renderer(pEngineBuffer);
-		bezier.render(&renderer, pCamera->getPosition());
 	}
 
 };

@@ -88,6 +88,11 @@ public:
 		pRenderer->DrawString(Max().toString(), vScaledMax.X + 1, vScaledMax.Y - 2);
 
 		//pRenderer->DrawQuad(vScaledStart.X, vScaledStart.Y, vScaledStart.X, vScaledStart.Y, { PIXEL_SOLID, FG_LIGHTBLUE });
+		// draw bezier curve for rounded edges:
+		//BezierSegment bezier(vStart, vStop);
+		//bezier.setPoint(1, { Min().X, Max().Y });
+		//bezier.setPoint(2, { Min().X, Max().Y });
+		//bezier.render(pRenderer, vCamera);
 	}
 
 };
