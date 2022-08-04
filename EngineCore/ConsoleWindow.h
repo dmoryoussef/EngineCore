@@ -81,24 +81,24 @@ public:
 		//	https://docs.microsoft.com/en-us/windows/console/getconsolescreenbufferinfo
 		if (!GetConsoleScreenBufferInfo(WindowHandle, &csbi))
 		{
-			OutputDebugStringA("GetConsoleScreenBufferInfo \n");
+			OutputDebugStringA("Error: GetConsoleScreenBufferInfo failed \n");
 		}
 
 		if (m_nScreenHeight > csbi.dwMaximumWindowSize.Y)
 		{
-			OutputDebugStringA("Screen Height / Font Height Too Big \n");
+			OutputDebugStringA("Error: Screen Height / Font Height Too Big \n");
 		}
 
 		if (m_nScreenWidth > csbi.dwMaximumWindowSize.X)
 		{
-			OutputDebugStringA("Screen Width / Font Width Too Big \n");
+			OutputDebugStringA("Error: Screen Width / Font Width Too Big \n");
 		}
 
 		// Set Physical Console Window Size
 		m_rectWindow = { 0, 0, (short)(m_nScreenWidth - 1), (short)(m_nScreenHeight - 1) };
 		if (!SetConsoleWindowInfo(WindowHandle, TRUE, &m_rectWindow))
 		{
-			OutputDebugStringA("SetConsoleWindowInfo \n");
+			OutputDebugStringA("Error: SetConsoleWindowInfo failed \n");
 		}
 
 		// Set flags to allow mouse input		

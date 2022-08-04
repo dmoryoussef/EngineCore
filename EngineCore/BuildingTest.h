@@ -6,6 +6,20 @@ private:
 public:
 	BuildingTile() :
 		_Tile2D("BUILDING_TILE") {}
+
+};
+
+class Floor
+{
+	Vector2 Min;
+	Vector2 Max;
+};
+
+class Building : public BaseNode
+{
+private:
+
+	vector<Floor> Floors;
 };
 
 class BuildingMap : public _TileMap<BuildingTile>
@@ -19,6 +33,8 @@ private:
 	//		group selection
 
 	int nCurrentBuildMode;
+	vector<BuildingTile*> SelectedTiles;
+	vector<BaseNode*> Buildings;
 
 	void onEvent(_Event *pEvent)
 	{
@@ -61,12 +77,12 @@ private:
 
 			case SELECTIONSQUARE_EVENT:
 			{
-				if (!pEvent->get<SelectionSquareEvent>()->isActive())
+				SelectionSquareEvent* pSelectionEvent = pEvent->get<SelectionSquareEvent>();
+				Vector2 vMin = pSelectionEvent->getMin();
+				Vector2 vMax = pSelectionEvent->getMax();
+				if (!pSelectionEvent->isActive())
 				{
-					SelectionSquareEvent* pSelectionEvent = pEvent->get<SelectionSquareEvent>();
-					Vector2 vMin = pSelectionEvent->getMin();
-					Vector2 vMax = pSelectionEvent->getMax();
-
+					SelectedTiles.clear();
 					//	fill square
 
 					//	draw lerped line
@@ -89,13 +105,30 @@ private:
 						{
 							for (int x = vMin.X; x < vMax.X; x++)
 							{
-								if (x == vMin.X || x == vMax.X - 1 || y == vMin.Y || y == vMax.Y - 1)
+								//if (x == (int)vMin.X || x >= (int)vMax.X || y == (int)vMin.Y || y >= (int)vMax.Y)
 									if (BuildingTile* pTile = getWorldTile(x, y))
 										pTile->setValue(1);
+									//	create building:
+									//	if valid building placement
+									//		no current building in quad
+									//	add building to list
 							}
 						}
 					}
 
+				}
+				else
+				{
+					//	square not set/hovering
+					SelectedTiles.clear();
+					for (int y = vMin.Y; y < vMax.Y; y++)
+					{
+						for (int x = vMin.X; x < vMax.X; x++)
+						{
+							if (BuildingTile* pTile = getWorldTile(x, y))
+								SelectedTiles.push_back(pTile);
+						}
+					}
 				}
 				break;
 			}
@@ -112,6 +145,87 @@ public:
 		registerListener(GUI_EVENT);
 		registerListener(SELECTIONSQUARE_EVENT);
 	}
+
+	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
+	{
+		Vector2 vTileMin = clipMin(vWorldMin);
+		Vector2 vTileMax = clipMax(vWorldMax);
+
+		int TilesRendered = 0;
+
+		//	render clipped part of map
+		for (int nY = vTileMin.Y; nY < vTileMax.Y; nY++)
+			for (int nX = vTileMin.X; nX < vTileMax.X; nX++)
+			{
+				float fTileSize = 1.0;
+				float fScaledTileSize = fTileSize * vCameraPosition.Z;
+
+				Vector2 Min(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z),
+					vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z));
+
+				Vector2 Max(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z) + fScaledTileSize,
+					vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z) + fScaledTileSize);
+
+				pRenderer->FillQuad(Min.X,
+					Min.Y,
+					Max.X,
+					Max.Y,
+					pRenderer->getGreyscaleColor(getTile(nX, nY)->getValue()));
+
+				TilesRendered++;
+			}
+
+		//	move to bottom of render, to put on top
+		if (getMouseOverTile())
+		{
+			float fTileSize = 1.0;
+			float fScaledTileSize = fTileSize * vCameraPosition.Z;
+			int nX = getMouseOverTile()->getPosition().X;
+			int nY = getMouseOverTile()->getPosition().Y;
+			Vector2 Min(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z),
+				vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z));
+
+			Vector2 Max(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z) + fScaledTileSize,
+				vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z) + fScaledTileSize);
+
+			pRenderer->DrawQuad(Min.X,
+				Min.Y,
+				Max.X,
+				Max.Y,
+				Pixel(PIXEL_SOLID, FG_LIGHTGREEN));
+		}
+
+		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 3, FG_WHITE);
+
+		for (auto t : SelectedTiles)
+		{
+			float fTileSize = 1.0;
+			float fScaledTileSize = fTileSize * vCameraPosition.Z;
+			int nX = t->getPosition().X;
+			int nY = t->getPosition().Y;
+
+			Vector2 Min(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z),
+				vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z));
+
+			Vector2 Max(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z) + fScaledTileSize,
+				vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z) + fScaledTileSize);
+
+			pRenderer->FillQuad(Min.X,
+				Min.Y,
+				Max.X,
+				Max.Y,
+				{PIXEL_SOLID, FG_LIGHTGREEN});
+
+			
+			pRenderer->DrawQuad(Min.X,
+				Min.Y,
+				Max.X,
+				Max.Y,
+				Pixel(PIXEL_SOLID, FG_BLACK));
+		}
+
+	}
+
 };
 
 class BuildingTest : public GameState

@@ -186,6 +186,7 @@ protected:
 				Max.Y,
 				Pixel(PIXEL_SOLID, FG_LIGHTGREEN));
 		}
+
 		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 3, FG_WHITE);
 	}
 
