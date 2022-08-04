@@ -13,7 +13,8 @@ private:
 			Vector2 axisProj = getNormal(polyA[a], polyA[b]).normalize();
 
 			// Work out min and max 1D points for r1
-			float min_r1 = INFINITY, max_r1 = -INFINITY;
+			float min_r1 = INFINITY;
+			float max_r1 = -INFINITY;
 			for (int p = 0; p < polyA.size(); p++)
 			{
 				float dp = dotProduct(polyA[p], axisProj);

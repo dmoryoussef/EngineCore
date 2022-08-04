@@ -6,6 +6,7 @@ private:
 
 public:
 	BezierDemo() :
+		pCamera(NULL),
 		bezier()
 	{
 		Vector2 A = { 3, 3 };

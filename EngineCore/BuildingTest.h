@@ -11,15 +11,52 @@ public:
 
 class Floor
 {
+private:
 	Vector2 Min;
 	Vector2 Max;
+	BuildingTile *map;
+
+public:
+	Floor(Vector2 min, Vector2 max) :
+		Min(min),
+		Max(max),
+		map(NULL)
+	{
+		map = new BuildingTile[(Max.X - Min.X) * (Max.Y - Min.Y)];
+	}
+
+	void render()
+	{
+		for (int y = Min.Y; y < Max.Y; y++)
+		{
+			for (int x = Min.X; x < Max.X; x++)
+			{
+				//	draw to main building tilemap
+			}
+		}
+	}
 };
 
 class Building : public BaseNode
 {
 private:
-
+	Floor* current;
 	vector<Floor> Floors;
+
+public:
+	Building(Vector2 min, Vector2 max) :
+		Min(min),
+		Max(max)
+	{};
+
+	Vector2 Min;
+	Vector2 Max;
+
+	void render()
+	{
+		//	render current floor 
+		//	default: top floor?
+	}
 };
 
 class BuildingMap : public _TileMap<BuildingTile>
@@ -34,7 +71,21 @@ private:
 
 	int nCurrentBuildMode;
 	vector<BuildingTile*> SelectedTiles;
-	vector<BaseNode*> Buildings;
+	vector<Building*> Buildings;
+
+	bool isValidPlacement(Vector2 vMin, Vector2 vMax)
+	{
+		for (auto b : Buildings)
+		{
+			if (vMax.X > b->Min.X)
+				if (vMin.X < b->Max.X)
+					if (vMax.Y > b->Min.Y)
+						if (vMin.Y < b->Max.Y)
+							return false;
+		}
+
+		return true;
+	}
 
 	void onEvent(_Event *pEvent)
 	{
@@ -101,17 +152,29 @@ private:
 					//	draw square
 					if (nCurrentBuildMode == 1)
 					{
-						for (int y = vMin.Y; y < vMax.Y; y++)
+						//	transform from world coord to tilemap coords
+						Vector2 vMinTest = vMin - Position;
+						Vector2 vMaxTest = vMax - Position;
+
+						if (isValidPlacement(vMinTest, vMaxTest))
 						{
-							for (int x = vMin.X; x < vMax.X; x++)
+							//	add building to list
+							//	building position relative to tilemap at (0, 0)
+							Buildings.push_back(new Building(vMinTest, vMaxTest));
+
+							//	move to building object:  
+							//	set building object to building map for rendering
+							//	current floor will change
+							for (int worldY = vMin.Y; worldY < vMax.Y; worldY++)
 							{
-								//if (x == (int)vMin.X || x >= (int)vMax.X || y == (int)vMin.Y || y >= (int)vMax.Y)
-									if (BuildingTile* pTile = getWorldTile(x, y))
-										pTile->setValue(1);
-									//	create building:
-									//	if valid building placement
-									//		no current building in quad
-									//	add building to list
+								for (int worldX = vMin.X; worldX < vMax.X; worldX++)
+								{
+									//if (x == (int)vMin.X || x >= (int)vMax.X || y == (int)vMin.Y || y >= (int)vMax.Y)
+										if (BuildingTile* pTile = getWorldTile(worldX, worldY))
+											pTile->setValue(1);
+										//	create building:
+										//	if valid building placement
+								}
 							}
 						}
 					}
@@ -125,6 +188,10 @@ private:
 					{
 						for (int x = vMin.X; x < vMax.X; x++)
 						{
+							//	if tile is overlapping building
+							//	add to red blocking tiles
+							//	else
+							//	add to valid tiles
 							if (BuildingTile* pTile = getWorldTile(x, y))
 								SelectedTiles.push_back(pTile);
 						}
@@ -195,7 +262,6 @@ public:
 				Pixel(PIXEL_SOLID, FG_LIGHTGREEN));
 		}
 
-		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 3, FG_WHITE);
 
 		for (auto t : SelectedTiles)
 		{
@@ -223,6 +289,9 @@ public:
 				Max.Y,
 				Pixel(PIXEL_SOLID, FG_BLACK));
 		}
+
+		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 3, FG_WHITE);
+		pRenderer->DrawNum<int>(Buildings.size(), 2, pRenderer->getSize().Y - 2, FG_WHITE);
 
 	}
 
@@ -282,13 +351,13 @@ public:
 		pData->add(pCameraWindow->getCamera());
 		pGUI->addChild(pCameraWindow);
 
-		SingleSelectButtonComponent* pComponent = new SingleSelectButtonComponent();
-		pComponent->addComponent(new UIButton("POINT"));
-		pComponent->addComponent(new UIButton("QUAD"));
-		pComponent->addComponent(new UIButton("CURVE"));
-		pComponent->refresh();
-		pCameraWindow->addComponent(pComponent);
-		pComponent->setAlignment(ALIGN_RIGHT);
+		//SingleSelectButtonComponent* pComponent = new SingleSelectButtonComponent();
+		//pComponent->addComponent(new UIButton("POINT"));
+		//pComponent->addComponent(new UIButton("QUAD"));
+		//pComponent->addComponent(new UIButton("CURVE"));
+		//pComponent->refresh();
+		//pCameraWindow->addComponent(pComponent);
+		//pComponent->setAlignment(ALIGN_RIGHT);
 
 		pData->add(new BuildingMap());
 	}
