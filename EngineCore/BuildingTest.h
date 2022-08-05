@@ -70,18 +70,53 @@ private:
 	//		group selection
 
 	int nCurrentBuildMode;
-	vector<BuildingTile*> SelectedTiles;
+	vector<BuildingTile*> ValidTiles;
+	vector<BuildingTile*> InvalidTiles;
 	vector<Building*> Buildings;
 
 	bool isValidPlacement(Vector2 vMin, Vector2 vMax)
 	{
 		for (auto b : Buildings)
 		{
+			//	create overlap quad
+			//	use to fill invalid tile list
 			if (vMax.X > b->Min.X)
 				if (vMin.X < b->Max.X)
+				{
+					//	calc x axis overlap
 					if (vMax.Y > b->Min.Y)
 						if (vMin.Y < b->Max.Y)
+						{
+							InvalidTiles.clear();
+							//	calc y axis overlap
+							float fMinX = b->Min.X;
+							if (fMinX < vMax.X)
+								fMinX = vMax.X;
+							float fMinY = b->Min.Y;
+							if (fMinY < vMax.Y)
+								fMinY = vMax.Y;
+							Vector2 vOverlapMin(fMinX, fMinY);
+
+							float fMaxX = b->Min.X;
+							if (fMinX < vMax.X)
+								fMaxX = vMax.X;
+							float fMaxY = b->Min.Y;
+							if (fMinY < vMax.Y)
+								fMaxY = vMax.Y;
+							Vector2 vOverlapMax(vMax.X, vMax.Y);
+							for (int worldY = vOverlapMin.Y; worldY < vOverlapMax.Y; worldY++)
+							{
+								for (int worldX = vOverlapMin.X; worldX < vOverlapMax.X; worldX++)
+								{
+									if (BuildingTile* pTile = getWorldTile(worldX, worldY))
+										InvalidTiles.push_back(pTile);
+								}
+							}
+
 							return false;
+						}
+				}
+					
 		}
 
 		return true;
@@ -133,7 +168,7 @@ private:
 				Vector2 vMax = pSelectionEvent->getMax();
 				if (!pSelectionEvent->isActive())
 				{
-					SelectedTiles.clear();
+					ValidTiles.clear();
 					//	fill square
 
 					//	draw lerped line
@@ -183,7 +218,7 @@ private:
 				else
 				{
 					//	square not set/hovering
-					SelectedTiles.clear();
+					ValidTiles.clear();
 					for (int y = vMin.Y; y < vMax.Y; y++)
 					{
 						for (int x = vMin.X; x < vMax.X; x++)
@@ -193,9 +228,10 @@ private:
 							//	else
 							//	add to valid tiles
 							if (BuildingTile* pTile = getWorldTile(x, y))
-								SelectedTiles.push_back(pTile);
+								ValidTiles.push_back(pTile);
 						}
 					}
+					isValidPlacement(vMin, vMax);
 				}
 				break;
 			}
@@ -263,7 +299,7 @@ public:
 		}
 
 
-		for (auto t : SelectedTiles)
+		for (auto t : ValidTiles)
 		{
 			float fTileSize = 1.0;
 			float fScaledTileSize = fTileSize * vCameraPosition.Z;
@@ -290,8 +326,35 @@ public:
 				Pixel(PIXEL_SOLID, FG_BLACK));
 		}
 
-		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 3, FG_WHITE);
-		pRenderer->DrawNum<int>(Buildings.size(), 2, pRenderer->getSize().Y - 2, FG_WHITE);
+		for (auto t : InvalidTiles)
+		{
+			float fTileSize = 1.0;
+			float fScaledTileSize = fTileSize * vCameraPosition.Z;
+			int nX = t->getPosition().X;
+			int nY = t->getPosition().Y;
+
+			Vector2 Min(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z),
+				vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z));
+
+			Vector2 Max(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z) + fScaledTileSize,
+				vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z) + fScaledTileSize);
+
+			pRenderer->FillQuad(Min.X,
+				Min.Y,
+				Max.X,
+				Max.Y,
+				{ PIXEL_SOLID, FG_LIGHTRED });
+
+
+			pRenderer->DrawQuad(Min.X,
+				Min.Y,
+				Max.X,
+				Max.Y,
+				Pixel(PIXEL_SOLID, FG_BLACK));
+		}
+
+		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 4, FG_WHITE);
+		pRenderer->DrawNum<int>(Buildings.size(), 2, pRenderer->getSize().Y - 3, FG_WHITE);
 
 	}
 
