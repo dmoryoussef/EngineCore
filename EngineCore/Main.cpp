@@ -9,7 +9,7 @@
 void main()
 {
 	Engine *pEngine = new Engine();
-	pEngine->start(new ConsoleWindow(150, 100, 4, 4), new BuildingTest());
+	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new BuildingTest());
 	pEngine->run();
 	delete pEngine;
 }

@@ -201,22 +201,19 @@ private:
 						{
 							Vector2 vLerp = lerp(vStart, vStop, t);
 							if (BuildingTile* pTile = getWorldTile(vLerp.X, vLerp.Y))
-								pTile->setValue(1);
+								pTile->setValue(0.4);
 						}
 					}
 
 					//	draw square
 					if (nCurrentBuildMode == 1)
 					{
-						//	transform from world coord to tilemap coords
-						Vector2 vMinTest = vWorldMin - Position;
-						Vector2 vMaxTest = vWorldMax - Position;
-
-						if (isValidPlacement(vMinTest, vMaxTest))
+						if (isValidPlacement(vWorldMin - Position, vWorldMax - Position))
 						{
 							//	add building to list
 							Buildings.push_back(new Building(vWorldMin, vWorldMax));
-
+							
+							
 							//	move to building object:  
 							//	set building object to building map for rendering
 							//	current floor will change
@@ -224,11 +221,28 @@ private:
 							{
 								for (int worldX = vWorldMin.X; worldX < vWorldMax.X; worldX++)
 								{
-									//if (x == (int)vMin.X || x >= (int)vMax.X || y == (int)vMin.Y || y >= (int)vMax.Y)
-										if (BuildingTile* pTile = getWorldTile(worldX, worldY))
-											pTile->setValue(1);
 										//	create building:
 										//	if valid building placement
+										if (BuildingTile* pTile = getWorldTile(worldX, worldY))
+											//	put down foundation
+											pTile->setValue(0.4);
+								}
+							}
+						}
+						else
+						{
+							//	selection area is over a building
+							//	if building level is 0 (foundation)
+							//	add level, create walls, floor, etc
+							for (int worldY = vWorldMin.Y; worldY < vWorldMax.Y; worldY++)
+							{
+								for (int worldX = vWorldMin.X; worldX < vWorldMax.X; worldX++)
+								{
+									if (worldX == (int)vWorldMin.X || worldX >= (int)vWorldMax.X || worldY == (int)vWorldMin.Y || worldY >= (int)vWorldMax.Y)
+										//if (inside building)
+										if (BuildingTile* pTile = getWorldTile(worldX, worldY))
+											//	put down foundation
+											pTile->setValue(1.0);
 								}
 							}
 						}
@@ -285,12 +299,12 @@ public:
 	{
 		float fTileSize = 1.0;
 		int TilesRendered = 0;
-
-		Vector2 vClippedWorldMin = clipMin(vWorldMin);
-		Vector2 vClippedWorldMax = clipMax(vWorldMax);
 		float fScaledTileSize = fTileSize * vCameraPosition.Z;
 
+
 		//	render clipped part of map
+		Vector2 vClippedWorldMin = clipMin(vWorldMin);
+		Vector2 vClippedWorldMax = clipMax(vWorldMax);
 		for (int nY = vClippedWorldMin.Y; nY < vClippedWorldMax.Y; nY++)
 			for (int nX = vClippedWorldMin.X; nX < vClippedWorldMax.X; nX++)
 			{
@@ -323,7 +337,7 @@ public:
 								Pixel(PIXEL_SOLID, FG_LIGHTGREEN));
 		}
 
-
+		//	render valid tile list
 		for (auto t : ValidTiles)
 		{
 			int nX = t->getPosition().X;
@@ -336,11 +350,13 @@ public:
 								vTileMax.X,
 								vTileMax.Y,
 								{PIXEL_SOLID, FG_LIGHTGREEN});
-			pRenderer->DrawQuad(vTileMin.X,
-								vTileMin.Y,
-								vTileMax.X,
-								vTileMax.Y,
-								Pixel(PIXEL_SOLID, FG_BLACK));
+
+			if (vCameraPosition.Z > 4.0)
+				pRenderer->DrawQuad(vTileMin.X,
+									vTileMin.Y,
+									vTileMax.X,
+									vTileMax.Y,
+									Pixel(PIXEL_SOLID, FG_BLACK));
 		}
 
 		/*for (auto t : InvalidTiles)
@@ -442,7 +458,7 @@ public:
 
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI)
 	{
-		CameraViewWindow* pCameraWindow = new CameraViewWindow(150, 100, 0, 0);
+		CameraViewWindow* pCameraWindow = new CameraViewWindow(300, 150, 0, 0);
 		pData->add(pCameraWindow->getCamera());
 		pGUI->addChild(pCameraWindow);
 
