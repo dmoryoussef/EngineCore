@@ -266,7 +266,7 @@ public:
 		else
 			return NULL;
 	}
-
+	Vector2 getPosition() { return Position; }
 	Vector2 getSize() { return Size; }
 };
 

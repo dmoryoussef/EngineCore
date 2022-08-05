@@ -12,24 +12,29 @@ public:
 class Floor
 {
 private:
-	Vector2 Min;
-	Vector2 Max;
-	BuildingTile *map;
+	_TileMap<BuildingTile> *map;
 
 public:
-	Floor(Vector2 min, Vector2 max) :
-		Min(min),
-		Max(max),
+	Vector2 Size;
+	Floor(Vector2 size) :
+		Size(size),
 		map(NULL)
 	{
-		map = new BuildingTile[(Max.X - Min.X) * (Max.Y - Min.Y)];
+		map = new _TileMap<BuildingTile>(size, "map");
+		for (int y = 0; y < Size.Y; y++)
+		{
+			for (int x = 0; x < Size.X; x++)
+			{
+				map->getTile(x, y)->setValue(0.0);
+			}
+		}
 	}
 
 	void render()
 	{
-		for (int y = Min.Y; y < Max.Y; y++)
+		for (int y = Size.Y; y < Size.Y; y++)
 		{
-			for (int x = Min.X; x < Max.X; x++)
+			for (int x = Size.X; x < Size.X; x++)
 			{
 				//	draw to main building tilemap
 			}
@@ -41,22 +46,47 @@ class Building : public BaseNode
 {
 private:
 	Floor* current;
-	vector<Floor> Floors;
+	vector<Floor*> Floors;
+
 public:
 	Building(Vector2 min, Vector2 max) :
-		bMouseOver(false),
 		Min(min),
-		Max(max)
-	{};
+		Max(max),
+		bMouseOver(false)
+	{
+		Floors.push_back(new Floor(max - min));
+	};
+
+	~Building()
+	{
+		for (auto f : Floors)
+		{
+			delete f;
+		}
+
+		Floors.clear();
+	}
 
 	bool bMouseOver;
-	Vector2 Min;
-	Vector2 Max;
+	Vector2 Min;	//	Position
+	Vector2 Max;	//	Size
 
-	void render()
+	void addFloor(Floor *f)
 	{
-		//	render current floor 
-		//	default: top floor?
+		Floors.push_back(f);
+	}
+
+	void render(_TileMap<BuildingTile> *map)
+	{
+		Floor* pCurrent = Floors[Floors.size() - 1];
+		for (int y = 0; y < pCurrent->Size.Y; y++)
+		{
+			for (int x = 0; x < pCurrent->Size.X; x++)
+			{
+				Vector2 tileWorldPosition(x + Min.X, y + Min.Y);
+				map->getWorldTile(tileWorldPosition.X, tileWorldPosition.Y)->setValue(0.4);
+			}
+		}
 	}
 };
 
@@ -211,40 +241,39 @@ private:
 						if (isValidPlacement(vWorldMin - Position, vWorldMax - Position))
 						{
 							//	add building to list
-							Buildings.push_back(new Building(vWorldMin, vWorldMax));
-							
-							
-							//	move to building object:  
-							//	set building object to building map for rendering
-							//	current floor will change
-							for (int worldY = vWorldMin.Y; worldY < vWorldMax.Y; worldY++)
-							{
-								for (int worldX = vWorldMin.X; worldX < vWorldMax.X; worldX++)
-								{
-										//	create building:
-										//	if valid building placement
-										if (BuildingTile* pTile = getWorldTile(worldX, worldY))
-											//	put down foundation
-											pTile->setValue(0.4);
-								}
-							}
+							Building *b = new Building(vWorldMin, vWorldMax);
+							Buildings.push_back(b);
+							updateMap(b);	// refresh map with new building data
+
 						}
 						else
 						{
 							//	selection area is over a building
 							//	if building level is 0 (foundation)
 							//	add level, create walls, floor, etc
-							for (int worldY = vWorldMin.Y; worldY < vWorldMax.Y; worldY++)
+							for (auto b : Buildings)
 							{
-								for (int worldX = vWorldMin.X; worldX < vWorldMax.X; worldX++)
+								if (b->bMouseOver)
 								{
-									if (worldX == (int)vWorldMin.X || worldX >= (int)vWorldMax.X || worldY == (int)vWorldMin.Y || worldY >= (int)vWorldMax.Y)
-										//if (inside building)
-										if (BuildingTile* pTile = getWorldTile(worldX, worldY))
-											//	put down foundation
-											pTile->setValue(1.0);
+									if (vWorldMin >= b->Min && vWorldMax <= b->Max)
+									{
+										Floor* f = new Floor(vWorldMax - vWorldMax);
+										b->addFloor(f);
+									}
 								}
 							}
+
+							//for (int worldY = vWorldMin.Y; worldY < vWorldMax.Y; worldY++)
+							//{
+							//	for (int worldX = vWorldMin.X; worldX < vWorldMax.X; worldX++)
+							//	{
+							//		if (worldX == (int)vWorldMin.X || worldX >= (int)vWorldMax.X || worldY == (int)vWorldMin.Y || worldY >= (int)vWorldMax.Y)
+							//			//if (inside building)
+							//			if (BuildingTile* pTile = getWorldTile(worldX, worldY))
+							//				//	put down foundation
+							//				pTile->setValue(1.0);
+							//	}
+							//}
 						}
 					}
 
@@ -265,11 +294,18 @@ private:
 								ValidTiles.push_back(pTile);
 						}
 					}
-					isValidPlacement(vWorldMin, vWorldMax);
+					//	calling this would set the invalid tiles
+					//	isValidPlacement(vWorldMin, vWorldMax);
+					
 				}
 				break;
 			}
 		}
+	}
+
+	void updateMap(Building* b)
+	{
+		b->render(this);
 	}
 
 public:
@@ -387,7 +423,6 @@ public:
 		//	render mouse over building outline
 		for (auto b : Buildings)
 		{
-			if (b->bMouseOver == true)
 			{
 				//	buildings are in world space already
 				//	vScaled functions go from tile space to world space
@@ -397,7 +432,11 @@ public:
 				Vector2 vTileMin = vScaledMin(vOutlineMin.X, vOutlineMin.Y, vCameraPosition);
 				Vector2 vTileMax = vScaledMax(vOutlineMax.X, vOutlineMax.Y, fScaledTileSize, vCameraPosition);
 
-				pRenderer->DrawQuad(vTileMin.X, vTileMin.Y, vTileMax.X, vTileMax.Y, { PIXEL_SOLID, FG_LIGHTBLUE });
+				if (b->bMouseOver == true)
+					pRenderer->DrawQuad(vTileMin.X, vTileMin.Y, vTileMax.X, vTileMax.Y, { PIXEL_SOLID, FG_LIGHTBLUE });
+
+				pRenderer->DrawString(b->Min.toString(), vTileMin.X + 2, vTileMin.Y + 2);
+				pRenderer->DrawString(b->Max.toString(), vTileMin.X + 2, vTileMin.Y + 3);
 			}
 		}
 
