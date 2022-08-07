@@ -42,21 +42,43 @@ public:
 	}
 };
 
-class Building : public BaseNode
+class Building : public BaseNode, EventListener
 {
 private:
 	Floor* current;
 	vector<Floor*> Floors;
+	bool isMouseOver(Vector2 mouseWorldPosition)
+	{
+		return (mouseWorldPosition.X > (int)Min.X &&
+			mouseWorldPosition.X < (int)Max.X + 1 &&
+			mouseWorldPosition.Y >(int)Min.Y &&
+			mouseWorldPosition.Y < (int)Max.Y + 1);
+	}
+
+	void onEvent(_Event *pEvent)
+	{
+		if (pEvent->m_eType == MOUSEWORLD_EVENT)
+		{
+			MouseWorldEvent* mouseEvent = pEvent->get<MouseWorldEvent>();
+			bMouseOver = isMouseOver(mouseEvent->getWorldPosition());
+			if (bMouseOver && mouseEvent->getState().bLeftButtonDown)
+			{
+				bSelected = true;
+			}
+		}
+	}
 
 public:
 	Building(Vector2 min, Vector2 max) :
 		Min(min.X, min.Y),
 		Max((int)max.X, (int)max.Y),
-		bMouseOver(false)
+		bMouseOver(false),
+		bSelected(false)
 	{
 		int sizeX = (int)Max.X - (int)Min.X + 1;
 		int sizeY = (int)Max.Y - (int)Min.Y + 1;
 		Floors.push_back(new Floor(Vector2(sizeX, sizeY)));
+		registerListener(MOUSEWORLD_EVENT);
 	};
 
 	~Building()
@@ -70,12 +92,19 @@ public:
 	}
 
 	bool bMouseOver;
+	bool bSelected;
 	Vector2 Min;	//	Position
 	Vector2 Max;	//	Size
+
 
 	void addFloor(Floor *f)
 	{
 		Floors.push_back(f);
+	}
+
+	vector<Floor*> getFloors()
+	{
+		return Floors;
 	}
 
 	void render(_TileMap<BuildingTile> *map)
@@ -155,19 +184,6 @@ private:
 		return true;
 	}
 
-	void mouseOverBuildings(Vector2 mouseWorldPosition)
-	{
-		for (auto b : Buildings)
-		{
-			b->bMouseOver = false;
-			if (mouseWorldPosition.X > (int)b->Min.X &&
-				mouseWorldPosition.X < (int)b->Max.X + 1 &&
-				mouseWorldPosition.Y > (int)b->Min.Y &&
-				mouseWorldPosition.Y < (int)b->Max.Y + 1)
-				b->bMouseOver = true;
-		}
-	}
-
 	void onEvent(_Event *pEvent)
 	{
 		_TileMap::onEvent(pEvent);
@@ -198,7 +214,6 @@ private:
 			{
 				MouseWorldEvent* pMouseEvent = pEvent->get<MouseWorldEvent>();
 				
-				mouseOverBuildings(pMouseEvent->getWorldPosition());
 				
 				if (pMouseEvent->getState().bRightButtonDown)
 				{
@@ -253,7 +268,7 @@ private:
 							//	selection area is over a building
 							//	if building level is 0 (foundation)
 							//	add level, create walls, floor, etc
-							for (auto b : Buildings)
+							/*for (auto b : Buildings)
 							{
 								if (b->bMouseOver)
 								{
@@ -263,7 +278,7 @@ private:
 										b->addFloor(f);
 									}
 								}
-							}
+							}*/
 
 							//for (int worldY = vWorldMin.Y; worldY < vWorldMax.Y; worldY++)
 							//{
@@ -423,7 +438,6 @@ public:
 		}*/
 
 		//	render mouse over building outline
-		int i = 0;
 		for (auto b : Buildings)
 		{
 			//	buildings are in world space already
@@ -441,12 +455,11 @@ public:
 				vTileMin.Y >= 0 && vTileMax.Y < pRenderer->getSize().Y)
 			{
 				// currently only renders if building is fully within the screen dimensions
-				pRenderer->DrawString(thingToString<int>(i), vTileMin.X + 2, vTileMin.Y + 2);
+				pRenderer->DrawString(thingToString<int>(b->getFloors().size()), vTileMin.X + 2, vTileMin.Y + 2);
 				pRenderer->DrawString(b->Min.toString(), vTileMin.X + 2, vTileMin.Y + 3);
 				pRenderer->DrawString(b->Max.toString(), vTileMin.X + 2, vTileMin.Y + 4);
 			}
 
-			i++;
 		}
 
 		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 4, FG_WHITE);
