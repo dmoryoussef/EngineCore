@@ -208,6 +208,7 @@ public:
 		//	change to detect controller first?
 		// m_pData->add(new GameState(m_pEngineBuffer));
 
+		m_pStateManager->setEngineBufferSize(m_pWindow->getWidth(), m_pWindow->getHeight());
 		m_pStateManager->setState(pStartingState);
 		m_pStateManager->start(m_pData, m_pSystems, m_pGUI);
 	}

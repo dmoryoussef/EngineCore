@@ -189,6 +189,7 @@ public:
 		return NULL;
 	}
 	template <typename T> T* getParent() { return static_cast<T*>(m_pParent); }
+	template <typename T> T* cast() { return static_cast<T*>(this); }
 
 	virtual void addChild(BaseNode* pChild)
 	{

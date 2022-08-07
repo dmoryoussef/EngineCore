@@ -55,8 +55,11 @@
     <Filter Include="Source Files\EngineCore\Window">
       <UniqueIdentifier>{534877da-d345-456f-8e9f-4cd1a5153969}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\States">
+    <Filter Include="Source Files\StatesManager">
       <UniqueIdentifier>{385478e8-f09a-4844-9553-2d0f31a7f947}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\StatesManager\States">
+      <UniqueIdentifier>{82968515-443e-4080-8ccd-9f70f53a6a42}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -226,19 +229,10 @@
       <Filter>Source Files\EntityComponentSystem\Components</Filter>
     </ClInclude>
     <ClInclude Include="GameState.h">
-      <Filter>Source Files\States</Filter>
+      <Filter>Source Files\StatesManager</Filter>
     </ClInclude>
     <ClInclude Include="BezierCurveTestWindow.h">
       <Filter>Source Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="TestState.h">
-      <Filter>Source Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="IsoTileMapTest.h">
-      <Filter>Source Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="BuildingTest.h">
-      <Filter>Source Files\States</Filter>
     </ClInclude>
     <ClInclude Include="SelectionSquare.h">
       <Filter>Source Files\GUI</Filter>
@@ -250,7 +244,16 @@
       <Filter>Source Files\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="BezierDemo.h">
-      <Filter>Source Files\States</Filter>
+      <Filter>Source Files\StatesManager\States</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildingTest.h">
+      <Filter>Source Files\StatesManager\States</Filter>
+    </ClInclude>
+    <ClInclude Include="IsoTileMapTest.h">
+      <Filter>Source Files\StatesManager\States</Filter>
+    </ClInclude>
+    <ClInclude Include="TestState.h">
+      <Filter>Source Files\StatesManager\States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

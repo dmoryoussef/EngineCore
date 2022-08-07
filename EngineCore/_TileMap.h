@@ -28,7 +28,7 @@ protected:
 
 	void initialize(float fInitialValue)
 	{
-		m_pTileMap = new TileType[Size.Y * Size.X];
+		m_pTileMap = new TileType[(int)Size.Y * (int)Size.X];
 
 		for (int nY = 0; nY < Size.Y; nY++)
 			for (int nX = 0; nX < Size.X; nX++)

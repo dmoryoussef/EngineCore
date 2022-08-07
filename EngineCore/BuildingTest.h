@@ -50,11 +50,13 @@ private:
 
 public:
 	Building(Vector2 min, Vector2 max) :
-		Min(min),
-		Max(max),
+		Min(min.X, min.Y),
+		Max((int)max.X, (int)max.Y),
 		bMouseOver(false)
 	{
-		Floors.push_back(new Floor(max - min));
+		int sizeX = (int)Max.X - (int)Min.X + 1;
+		int sizeY = (int)Max.Y - (int)Min.Y + 1;
+		Floors.push_back(new Floor(Vector2(sizeX, sizeY)));
 	};
 
 	~Building()
@@ -79,9 +81,9 @@ public:
 	void render(_TileMap<BuildingTile> *map)
 	{
 		Floor* pCurrent = Floors[Floors.size() - 1];
-		for (int y = 0; y < pCurrent->Size.Y; y++)
+		for (int y = 0; y < (int)pCurrent->Size.Y; y++)
 		{
-			for (int x = 0; x < pCurrent->Size.X; x++)
+			for (int x = 0; x < (int)pCurrent->Size.X; x++)
 			{
 				Vector2 tileWorldPosition(x + Min.X, y + Min.Y);
 				map->getWorldTile(tileWorldPosition.X, tileWorldPosition.Y)->setValue(0.4);
@@ -158,10 +160,10 @@ private:
 		for (auto b : Buildings)
 		{
 			b->bMouseOver = false;
-			if (mouseWorldPosition.X > b->Min.X &&
-				mouseWorldPosition.X < b->Max.X &&
-				mouseWorldPosition.Y > b->Min.Y &&
-				mouseWorldPosition.Y < b->Max.Y)
+			if (mouseWorldPosition.X > (int)b->Min.X &&
+				mouseWorldPosition.X < (int)b->Max.X + 1 &&
+				mouseWorldPosition.Y > (int)b->Min.Y &&
+				mouseWorldPosition.Y < (int)b->Max.Y + 1)
 				b->bMouseOver = true;
 		}
 	}
@@ -421,23 +423,30 @@ public:
 		}*/
 
 		//	render mouse over building outline
+		int i = 0;
 		for (auto b : Buildings)
 		{
+			//	buildings are in world space already
+			//	vScaled functions go from tile space to world space
+			//	subtract position to normalize
+			Vector2 vOutlineMin = b->Min - Position;
+			Vector2 vOutlineMax = b->Max - Position;
+			Vector2 vTileMin = vScaledMin(vOutlineMin.X, vOutlineMin.Y, vCameraPosition);
+			Vector2 vTileMax = vScaledMax(vOutlineMax.X, vOutlineMax.Y, fScaledTileSize, vCameraPosition);
+
+			if (b->bMouseOver == true)
+				pRenderer->DrawQuad(vTileMin.X, vTileMin.Y, vTileMax.X, vTileMax.Y, { PIXEL_SOLID, FG_LIGHTBLUE });
+
+			if (vTileMin.X >= 0 && vTileMax.X < pRenderer->getSize().X &&
+				vTileMin.Y >= 0 && vTileMax.Y < pRenderer->getSize().Y)
 			{
-				//	buildings are in world space already
-				//	vScaled functions go from tile space to world space
-				//	subtract position to normalize
-				Vector2 vOutlineMin = b->Min - Position;
-				Vector2 vOutlineMax = b->Max - Position;
-				Vector2 vTileMin = vScaledMin(vOutlineMin.X, vOutlineMin.Y, vCameraPosition);
-				Vector2 vTileMax = vScaledMax(vOutlineMax.X, vOutlineMax.Y, fScaledTileSize, vCameraPosition);
-
-				if (b->bMouseOver == true)
-					pRenderer->DrawQuad(vTileMin.X, vTileMin.Y, vTileMax.X, vTileMax.Y, { PIXEL_SOLID, FG_LIGHTBLUE });
-
-				pRenderer->DrawString(b->Min.toString(), vTileMin.X + 2, vTileMin.Y + 2);
-				pRenderer->DrawString(b->Max.toString(), vTileMin.X + 2, vTileMin.Y + 3);
+				// currently only renders if building is fully within the screen dimensions
+				pRenderer->DrawString(thingToString<int>(i), vTileMin.X + 2, vTileMin.Y + 2);
+				pRenderer->DrawString(b->Min.toString(), vTileMin.X + 2, vTileMin.Y + 3);
+				pRenderer->DrawString(b->Max.toString(), vTileMin.X + 2, vTileMin.Y + 4);
 			}
+
+			i++;
 		}
 
 		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 4, FG_WHITE);
@@ -497,7 +506,9 @@ public:
 
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI)
 	{
-		CameraViewWindow* pCameraWindow = new CameraViewWindow(300, 150, 0, 0);
+		int height = pGUI->cast<_UIComponent>()->getHeight();
+		int width = pGUI->cast<_UIComponent>()->getWidth();
+		CameraViewWindow* pCameraWindow = new CameraViewWindow(width - 3, height - 3, 0, 0);
 		pData->add(pCameraWindow->getCamera());
 		pGUI->addChild(pCameraWindow);
 

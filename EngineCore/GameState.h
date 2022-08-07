@@ -1,7 +1,10 @@
 class GameState : public EventListener
 {
+protected:
+	
 public:
-	GameState() {};
+	GameState()
+	{};
 
 	virtual void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI) {}
 
@@ -17,7 +20,8 @@ private:
 	GameState* m_pCurrentState;
 
 	vector<GameState> StateStack;
-
+	int m_nBufferWidth;
+	int m_nBufferHeight;
 	void onEvent(_Event* pEvent)
 	{
 		//	change states
@@ -26,6 +30,8 @@ private:
 
 public:
 	StateManager() :
+		m_nBufferHeight(0),
+		m_nBufferWidth(0),
 		m_pCurrentState(NULL) {};
 
 	void setState(GameState* pState)
@@ -33,10 +39,17 @@ public:
 		m_pCurrentState = pState;
 	}
 
+	void setEngineBufferSize(int width, int height)
+	{
+		m_nBufferHeight = height;
+		m_nBufferWidth = width;
+	}
+
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI)
 	{
 		if (m_pCurrentState)
 			m_pCurrentState->start(pData, pSystems, pGUI);
+
 	}
 
 	void render(OutputBuffer* pEngineBuffer)

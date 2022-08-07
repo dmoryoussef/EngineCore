@@ -3,8 +3,8 @@
 
 struct Vector2
 {
-	float Y;
 	float X;
+	float Y;
 
 	Vector2() :
 		Y(0.0),

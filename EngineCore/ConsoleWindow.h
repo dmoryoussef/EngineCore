@@ -87,11 +87,15 @@ public:
 		if (m_nScreenHeight > csbi.dwMaximumWindowSize.Y)
 		{
 			OutputDebugStringA("Error: Screen Height / Font Height Too Big \n");
+			OutputDebugStringA("resizing screen height \n");
+			m_nScreenHeight = csbi.dwMaximumWindowSize.Y;
 		}
 
 		if (m_nScreenWidth > csbi.dwMaximumWindowSize.X)
 		{
 			OutputDebugStringA("Error: Screen Width / Font Width Too Big \n");
+			OutputDebugStringA("resizing screen width \n");
+			m_nScreenWidth = csbi.dwMaximumWindowSize.X;
 		}
 
 		// Set Physical Console Window Size
@@ -117,6 +121,8 @@ public:
 		//	https://docs.microsoft.com/en-us/windows/console/setconsolectrlhandler
 		//	SetConsoleCtrlHandler((PHANDLER_ROUTINE)CloseHandler, TRUE);
 
+		//	https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowpos?redirectedfrom=MSDN
+		SetWindowPos(GetConsoleWindow(), 0, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	}
 
 	void outputToWindow()
