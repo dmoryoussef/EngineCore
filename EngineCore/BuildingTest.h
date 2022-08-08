@@ -61,10 +61,12 @@ private:
 		{
 			MouseWorldEvent* mouseEvent = pEvent->get<MouseWorldEvent>();
 			bMouseOver = isMouseOver(mouseEvent->getWorldPosition());
-			if (bMouseOver && mouseEvent->getState().bLeftButtonDown)
+
+			if (bMouseOver && !bSelected && mouseEvent->getState().bLeftButtonDown)
 			{
 				bSelected = true;
 			}
+
 		}
 	}
 
@@ -336,6 +338,9 @@ public:
 		registerListener(SELECTIONSQUARE_EVENT);
 	}
 
+	//	move down to _tilemap
+	//	or move to renderer
+	//	orrrrrr both
 	Vector2 vScaledMin(int nX, int nY, Vector3 vCamera)
 	{
 		return Vector2(vCamera.X + ((nX + Position.X) * vCamera.Z),
@@ -450,6 +455,11 @@ public:
 
 			if (b->bMouseOver == true)
 				pRenderer->DrawQuad(vTileMin.X, vTileMin.Y, vTileMax.X, vTileMax.Y, { PIXEL_SOLID, FG_LIGHTBLUE });
+
+			if (b->bSelected == true)
+			{
+				pRenderer->DrawQuad(vTileMin.X, vTileMin.Y, vTileMax.X, vTileMax.Y, { PIXEL_SOLID, FG_LIGHTGREEN });
+			}
 
 			if (vTileMin.X >= 0 && vTileMax.X < pRenderer->getSize().X &&
 				vTileMin.Y >= 0 && vTileMax.Y < pRenderer->getSize().Y)
