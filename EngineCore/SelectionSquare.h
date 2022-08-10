@@ -4,7 +4,7 @@ private:
 	Vector2 vStart;
 	Vector2 vStop;
 
-	bool m_bActive;
+	bool m_bHovering;
 
 	void onEvent(_Event* pEvent)
 	{
@@ -15,12 +15,12 @@ private:
 				MouseWorldEvent* pMouseEvent = pEvent->get<MouseWorldEvent>();
 				if (!pMouseEvent->getState().bLeftButtonDown)
 				{
-					m_bActive = false;
+					m_bHovering = false;
 				}
 				
 				vStop = pMouseEvent->getWorldPosition();
 				
-				addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, m_bActive));
+				addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, m_bHovering));
 
 				break;
 			}
@@ -55,7 +55,7 @@ private:
 
 public:
 	SelectionSquare(Vector2 start) :
-		m_bActive(true),
+		m_bHovering(true),
 		vStart(start),
 		vStop(start)
 	{
@@ -64,12 +64,12 @@ public:
 	};
 	~SelectionSquare()
 	{
-		addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, m_bActive));
+		addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, m_bHovering));
 	}
 
 	bool isActive()
 	{
-		return m_bActive;
+		return m_bHovering;
 	}
 
 	void render(Render2D* pRenderer, Vector3 vCamera)

@@ -22,7 +22,7 @@ private:
 	Vector2 vMax;
 	Vector2 vStart;
 	Vector2 vStop;
-	bool bActive;
+	bool bHovering;
 
 public:
 	SelectionSquareEvent(Vector2 min, Vector2 max, Vector2 start, Vector2 stop, bool active) :
@@ -30,7 +30,7 @@ public:
 		vMax(max),
 		vStart(start),
 		vStop(stop),
-		bActive(active), 
+		bHovering(active), 
 		_Event(SELECTIONSQUARE_EVENT) {};
 
 	Vector2 getMax()
@@ -53,9 +53,9 @@ public:
 		return vStop;
 	}
 
-	bool isActive()
+	bool isHovering()
 	{
-		return bActive;
+		return bHovering;
 	}
 };
 

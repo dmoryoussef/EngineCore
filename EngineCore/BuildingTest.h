@@ -70,29 +70,27 @@ private:
 				MouseWorldEvent* mouseEvent = pEvent->get<MouseWorldEvent>();
 				bMouseOver = isMouseOver(mouseEvent->getWorldPosition());
 
-				if (bMouseOver && !bSelected && mouseEvent->getState().bLeftButtonDown)
-				{
-					bSelected = true;
-				}
 				break;
 			}
 
 			case SELECTIONSQUARE_EVENT:
 			{
 				SelectionSquareEvent* selectionEvent = pEvent->get<SelectionSquareEvent>();
-				if (selectionEvent->isActive())
-				if (bSelected)
+				if (!selectionEvent->isHovering())
 				{
-					Vector2 vMin = selectionEvent->getMin();
-					Vector2 vMax = selectionEvent->getMax();
-					for (int y = vMin.Y; y < vMax.Y; y++)
+					if (bSelected)
 					{
-						for (int x = vMin.X; x < vMax.X; x++)
+						Vector2 vMin = selectionEvent->getMin();
+						Vector2 vMax = selectionEvent->getMax();
+						for (int y = vMin.Y; y < vMax.Y; y++)
 						{
-							if (BuildingTile* pTile = getTile(0, x, y))
+							for (int x = vMin.X; x < vMax.X; x++)
 							{
-								OutputDebugStringA(pTile->getPosition().toString().c_str());
-								OutputDebugStringA("\n");
+								if (BuildingTile* pTile = getTile(0, x, y))
+								{
+									OutputDebugStringA(pTile->getPosition().toString().c_str());
+									OutputDebugStringA("\n");
+								}
 							}
 						}
 					}
@@ -131,6 +129,30 @@ public:
 	bool bSelected;
 	Vector2 Min;	//	Position
 	Vector2 Max;	//	Size
+
+	void onSelect(bool select)
+	{
+		if (bSelected)
+		{
+			//	already selected
+			if (select == false)
+			{
+				//	deselect
+				bSelected = select;
+				//	remove widget
+			}
+		}
+		else
+		{
+			//	not selected
+			if (select == true)
+			{
+				//	select
+				bSelected = select;
+				//	add widget
+			}
+		}
+	}
 
 	BuildingTile* getTile(int floor, int x, int y)
 	{
@@ -177,6 +199,7 @@ private:
 	vector<BuildingTile*> ValidTiles;
 	vector<BuildingTile*> InvalidTiles;
 	vector<Building*> Buildings;
+	Building* pSelected;
 
 	bool isValidPlacement(Vector2 vMin, Vector2 vMax)
 	{
@@ -256,6 +279,16 @@ private:
 			{
 				MouseWorldEvent* pMouseEvent = pEvent->get<MouseWorldEvent>();
 				
+				for (auto b : Buildings)
+				{
+					if (b->bMouseOver && !b->bSelected && pMouseEvent->getState().bLeftButtonDown)
+					{
+						b->bSelected = true;
+						if (pSelected)
+							pSelected->bSelected = false;
+						pSelected = b;
+					}
+				}
 				
 				if (pMouseEvent->getState().bRightButtonDown)
 				{
@@ -276,7 +309,7 @@ private:
 				SelectionSquareEvent* pSelectionEvent = pEvent->get<SelectionSquareEvent>();
 				Vector2 vWorldMin = pSelectionEvent->getMin();
 				Vector2 vWorldMax = pSelectionEvent->getMax();
-				if (!pSelectionEvent->isActive())
+				if (!pSelectionEvent->isHovering())
 				{
 					ValidTiles.clear();
 					//	fill square
@@ -370,6 +403,7 @@ private:
 public:
 	BuildingMap() :
 		nCurrentBuildMode(1),
+		pSelected(NULL),
 		_TileMap({ 100, 100 }, "BUILDING_MAP") 
 	{
 		setPosition(5, 5);
