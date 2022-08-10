@@ -30,6 +30,11 @@ public:
 		}
 	}
 
+	_TileMap<BuildingTile> *getMap()
+	{
+		return map;
+	}
+
 	void render()
 	{
 		for (int y = Size.Y; y < Size.Y; y++)
@@ -47,6 +52,7 @@ class Building : public BaseNode, EventListener
 private:
 	Floor* current;
 	vector<Floor*> Floors;
+
 	bool isMouseOver(Vector2 mouseWorldPosition)
 	{
 		return (mouseWorldPosition.X > (int)Min.X &&
@@ -57,17 +63,44 @@ private:
 
 	void onEvent(_Event *pEvent)
 	{
-		if (pEvent->m_eType == MOUSEWORLD_EVENT)
+		switch (pEvent->m_eType)
 		{
-			MouseWorldEvent* mouseEvent = pEvent->get<MouseWorldEvent>();
-			bMouseOver = isMouseOver(mouseEvent->getWorldPosition());
-
-			if (bMouseOver && !bSelected && mouseEvent->getState().bLeftButtonDown)
+			case MOUSEWORLD_EVENT:
 			{
-				bSelected = true;
+				MouseWorldEvent* mouseEvent = pEvent->get<MouseWorldEvent>();
+				bMouseOver = isMouseOver(mouseEvent->getWorldPosition());
+
+				if (bMouseOver && !bSelected && mouseEvent->getState().bLeftButtonDown)
+				{
+					bSelected = true;
+				}
+				break;
 			}
 
+			case SELECTIONSQUARE_EVENT:
+			{
+				SelectionSquareEvent* selectionEvent = pEvent->get<SelectionSquareEvent>();
+				if (selectionEvent->isActive())
+				if (bSelected)
+				{
+					Vector2 vMin = selectionEvent->getMin();
+					Vector2 vMax = selectionEvent->getMax();
+					for (int y = vMin.Y; y < vMax.Y; y++)
+					{
+						for (int x = vMin.X; x < vMax.X; x++)
+						{
+							if (BuildingTile* pTile = getTile(0, x, y))
+							{
+								OutputDebugStringA(pTile->getPosition().toString().c_str());
+								OutputDebugStringA("\n");
+							}
+						}
+					}
+				}
+				break;
+			}
 		}
+	
 	}
 
 public:
@@ -81,6 +114,7 @@ public:
 		int sizeY = (int)Max.Y - (int)Min.Y + 1;
 		Floors.push_back(new Floor(Vector2(sizeX, sizeY)));
 		registerListener(MOUSEWORLD_EVENT);
+		registerListener(SELECTIONSQUARE_EVENT);
 	};
 
 	~Building()
@@ -98,6 +132,12 @@ public:
 	Vector2 Min;	//	Position
 	Vector2 Max;	//	Size
 
+	BuildingTile* getTile(int floor, int x, int y)
+	{
+		int localX = x - (int)Min.X;
+		int localY = y - (int)Min.Y;
+		return Floors[floor]->getMap()->getTile(localX, localY);
+	}
 
 	void addFloor(Floor *f)
 	{
@@ -144,12 +184,12 @@ private:
 		{
 			//	create overlap quad
 			//	use to fill invalid tile list
-			if (vMax.X > b->Min.X - Position.X)
-				if (vMin.X < b->Max.X - Position.X)
+			if ((int)vMax.X >= (int)b->Min.X - (int)Position.X)
+				if ((int)vMin.X <= (int)b->Max.X - (int)Position.X)
 				{
 					//	calc x axis overlap
-					if (vMax.Y > b->Min.Y - Position.Y)
-						if (vMin.Y < b->Max.Y - Position.Y)
+					if ((int)vMax.Y >= (int)b->Min.Y - (int)Position.Y)
+						if ((int)vMin.Y <= (int)b->Max.Y - (int)Position.Y)
 						{
 							//InvalidTiles.clear();
 							////	calc y axis overlap
