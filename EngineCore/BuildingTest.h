@@ -9,10 +9,36 @@ public:
 
 };
 
+class Door : public BaseNode
+{
+private:
+	bool m_bOpen;
+
+	//	0 = open out
+	//		position outside of tile
+	//	1 = open in
+	//		position inside of tile
+	int m_nMountPosition;
+	Vector2 vMapPosition;
+
+	bool m_bLocked;
+	BaseNode* m_pKey;
+
+public:
+	Door(int x, int y) :
+		vMapPosition(x, y),
+		m_bOpen(false),
+		m_bLocked(false),
+		m_nMountPosition(0),
+		m_pKey(NULL),
+		BaseNode("Door") {};
+};
+
 class Floor
 {
 private:
 	_TileMap<BuildingTile> *map;
+	vector<Door*> Doors;
 
 public:
 	Vector2 Size;
@@ -25,9 +51,28 @@ public:
 		{
 			for (int x = 0; x < Size.X; x++)
 			{
-				map->getTile(x, y)->setValue(0.0);
+				if (x == 0 || x == size.X - 1 || y == 0 || y == size.Y - 1)
+					//	walls
+					map->getTile(x, y)->setValue(1.0);
+				else
+					//	floor
+					map->getTile(x, y)->setValue(0.4);
 			}
 		}
+		//	door
+		BuildingTile* pDoorTile = map->getTile(0, size.Y / 2);
+		pDoorTile->setValue(0.3);
+		Doors.push_back(new Door(pDoorTile->getPosition().X, pDoorTile->getPosition().Y));
+	}
+
+	~Floor()
+	{
+		delete map;
+		for (auto d : Doors)
+		{
+			delete d;
+		}
+		Doors.clear();
 	}
 
 	_TileMap<BuildingTile> *getMap()
@@ -178,8 +223,9 @@ public:
 		{
 			for (int x = 0; x < (int)pCurrent->Size.X; x++)
 			{
+				BuildingTile* pCurrentTile = pCurrent->getMap()->getTile(x, y);
 				Vector2 tileWorldPosition(x + Min.X, y + Min.Y);
-				map->getWorldTile(tileWorldPosition.X, tileWorldPosition.Y)->setValue(0.4);
+				map->getWorldTile(tileWorldPosition.X, tileWorldPosition.Y)->setValue(pCurrentTile->getValue());
 			}
 		}
 	}
