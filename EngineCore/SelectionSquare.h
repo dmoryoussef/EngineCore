@@ -64,7 +64,7 @@ public:
 	};
 	~SelectionSquare()
 	{
-		addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, m_bHovering));
+		//	addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, m_bHovering));
 	}
 
 	bool isActive()

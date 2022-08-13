@@ -255,6 +255,12 @@
     <ClInclude Include="TestState.h">
       <Filter>Source Files\StatesManager\States</Filter>
     </ClInclude>
+    <ClInclude Include="BuildingMap.h">
+      <Filter>Source Files\TileMapSystem\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildingTile.h">
+      <Filter>Source Files\TileMapSystem\Tiles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

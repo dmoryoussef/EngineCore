@@ -143,7 +143,9 @@
     <ClInclude Include="BaseNode.h" />
     <ClInclude Include="Bezier.h" />
     <ClInclude Include="BezierDemo.h" />
+    <ClInclude Include="BuildingMap.h" />
     <ClInclude Include="BuildingTest.h" />
+    <ClInclude Include="BuildingTile.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="CollisionDetectionSystem.h" />
     <ClInclude Include="CollisionResponse.h" />

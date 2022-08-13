@@ -69,8 +69,8 @@ int random(int min, int max)
 #include "Bezier.h"
 
 #include "EntityComponentSystem.h"
-#include "TileMapSystem.h"
 #include "GUI.h"
+#include "TileMapSystem.h"
 
 #include "GameState.h"
 
