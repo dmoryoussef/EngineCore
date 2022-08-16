@@ -336,6 +336,7 @@ public:
 		_TileMap({ (float)nWidth, (float)nHeight }, "DEFAULT")
 	{
 		//	createCheckerMap();
+		createBoarderMap();
 	}
 
 	void createCheckerMap()

@@ -50,7 +50,7 @@ public:
 	{
 		int height = pGUI->cast<_UIComponent>()->getHeight();
 		int width = pGUI->cast<_UIComponent>()->getWidth();
-		CameraViewWindow* pCameraWindow = new CameraViewWindow(width - 3, height - 3, 0, 0);
+		CameraViewWindow* pCameraWindow = new CameraViewWindow(width, height, 0, 0);
 		pData->add(pCameraWindow->getCamera());
 		pGUI->addChild(pCameraWindow);
 

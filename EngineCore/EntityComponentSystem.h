@@ -12,6 +12,8 @@
 #include "CollisionResponse.h"
 #include "UIState.h"
 
+#include "Behavior.h"
+
 #include "Damage.h"
 #include "Health.h"
 

@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="Actor.h" />
     <ClInclude Include="BaseNode.h" />
+    <ClInclude Include="Behavior.h" />
     <ClInclude Include="Bezier.h" />
     <ClInclude Include="BezierDemo.h" />
     <ClInclude Include="BuildingMap.h" />
@@ -183,6 +184,7 @@
     <ClInclude Include="Polygon.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="Render2D.h" />
+    <ClInclude Include="RogueLikeDemo.h" />
     <ClInclude Include="SelectionSquare.h" />
     <ClInclude Include="ShootAction.h" />
     <ClInclude Include="SingleSelectButtonComponent.h" />
