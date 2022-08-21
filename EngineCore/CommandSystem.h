@@ -1,6 +1,10 @@
 class EntityCommandSystem : public BaseNode, EventListener
 {
 private:
+	//	This entire system should be completely replaced by components handling their own commands
+	//	for now everthing is lumped here to test functionality
+
+
 	BaseNode* m_pEntityList;
 
 	BaseNode* getEntity(int id)

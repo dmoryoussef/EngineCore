@@ -105,7 +105,9 @@ private:
 				if (pEvent->get<MouseWorldEvent>()->getState().bLeftButtonDown)
 				{
 					if (!pSelectionSquare)
-						pSelectionSquare = new SelectionSquare(pEvent->get<MouseWorldEvent>()->getWorldPosition());
+					{
+						//	pSelectionSquare = new SelectionSquare(pEvent->get<MouseWorldEvent>()->getWorldPosition());
+					}
 				}
 				
 				if (pSelectionSquare)

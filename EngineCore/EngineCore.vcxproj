@@ -165,6 +165,7 @@
     <ClInclude Include="Health.h" />
     <ClInclude Include="IsoTileMapTest.h" />
     <ClInclude Include="ListExplorerWindow.h" />
+    <ClInclude Include="LivePolyEditor.h" />
     <ClInclude Include="MouseInteraction.h" />
     <ClInclude Include="OutputBuffer.h" />
     <ClInclude Include="CameraViewWindow.h" />

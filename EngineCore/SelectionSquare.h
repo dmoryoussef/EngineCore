@@ -13,14 +13,10 @@ private:
 			case MOUSEWORLD_EVENT:
 			{
 				MouseWorldEvent* pMouseEvent = pEvent->get<MouseWorldEvent>();
-				if (!pMouseEvent->getState().bLeftButtonDown)
-				{
-					m_bHovering = false;
-				}
-				
+
 				vStop = pMouseEvent->getWorldPosition();
-				
-				addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, m_bHovering));
+
+				addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, pMouseEvent->getState().bLeftButtonDown));
 
 				break;
 			}
@@ -72,11 +68,22 @@ public:
 		return m_bHovering;
 	}
 
+	void render(Render2D* pRenderer)
+	{
+		//	draw:
+		pRenderer->DrawQuad(Min().X, Min().Y, Max().X, Max().Y, {PIXEL_SOLID, FG_WHITE});
+		//	or draw a line from start to stop
+		pRenderer->DrawLine(vStart, vStop, { PIXEL_SOLID, FG_WHITE });
+		// show some data:
+		pRenderer->DrawString(Min().toString(), Max().X + 1, Max().Y - 3);
+		pRenderer->DrawString(Max().toString(), Max().X + 1, Max().Y - 2);
+	}
+
 	void render(Render2D* pRenderer, Vector3 vCamera)
 	{
 		// scale to screen:
 		Vector2 vScaledMin = vCamera.toVec2() + Min() * vCamera.Z;
-		Vector2 vScaledMax = vCamera.toVec2()  + Max() * vCamera.Z;  //	adding 1, 1 - should actually be *tile size*, only works in this form when tilesize = 1, 1
+		Vector2 vScaledMax = vCamera.toVec2()  + Max() * vCamera.Z;  
 		Vector2 vScaledStart = vCamera.toVec2() + vStart * vCamera.Z;
 		Vector2 vScaledStop = vCamera.toVec2() + vStop * vCamera.Z;
 		//	draw:
