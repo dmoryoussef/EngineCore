@@ -470,10 +470,10 @@ private:
 	}
 
 public:
-	BuildingMap() :
+	BuildingMap(float width = 100, float height = 100) :
 		nCurrentBuildMode(1),
 		pSelected(NULL),
-		_TileMap({ 100, 100 }, "BUILDING_MAP") 
+		_TileMap({ width, height }, "BUILDING_MAP") 
 	{
 		setPosition(5, 5);
 		createBoarderMap();
@@ -496,129 +496,156 @@ public:
 			vCamera.Y + ((nY + Position.Y) * vCamera.Z) + fScaledTile);
 	}
 
-	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
-	{
-		float fTileSize = 1.0;
-		int TilesRendered = 0;
-		float fScaledTileSize = fTileSize * vCameraPosition.Z;
+	//void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
+	//{
+	//	float fTileSize = 1.0;
+	//	int TilesRendered = 0;
+
+	//	//	render clipped part of map
+	//	Vector2 vClippedWorldMin = clipMin(vWorldMin);
+	//	Vector2 vClippedWorldMax = clipMax(vWorldMax);
+	//	for (int nY = vClippedWorldMin.Y; nY < vClippedWorldMax.Y; nY++)
+	//		for (int nX = vClippedWorldMin.X; nX < vClippedWorldMax.X; nX++)
+	//		{
+	//			Vector2 vTileMin = Vector2(nX, nY);
+	//			Vector2 vTileMax = Vector2(nX, nY) + Vector2(fTileSize, fTileSize);
+
+	//			pRenderer->FillQuad(vTileMin.X,
+	//								vTileMin.Y,
+	//								vTileMax.X,
+	//								vTileMax.Y,
+	//								pRenderer->getGreyscaleColor(getTile(nX, nY)->getValue()));
+
+	//			TilesRendered++;
+	//		}
+
+	//	pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 4, FG_WHITE);
+
+	//}
+
+	//void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
+	//{
+	//	float fTileSize = 1.0;
+	//	int TilesRendered = 0;
+	//	float fScaledTileSize = fTileSize * vCameraPosition.Z;
 
 
-		//	render clipped part of map
-		Vector2 vClippedWorldMin = clipMin(vWorldMin);
-		Vector2 vClippedWorldMax = clipMax(vWorldMax);
-		for (int nY = vClippedWorldMin.Y; nY < vClippedWorldMax.Y; nY++)
-			for (int nX = vClippedWorldMin.X; nX < vClippedWorldMax.X; nX++)
-			{
-				float fTileSize = 1.0;
+	//	//	render clipped part of map
+	//	Vector2 vClippedWorldMin = clipMin(vWorldMin);
+	//	Vector2 vClippedWorldMax = clipMax(vWorldMax);
+	//	for (int nY = vClippedWorldMin.Y; nY < vClippedWorldMax.Y; nY++)
+	//		for (int nX = vClippedWorldMin.X; nX < vClippedWorldMax.X; nX++)
+	//		{
+	//			float fTileSize = 1.0;
 
-				Vector2 vTileMin = vScaledMin(nX, nY, vCameraPosition);
-				Vector2 vTileMax = vScaledMax(nX, nY, fScaledTileSize, vCameraPosition);
+	//			Vector2 vTileMin = vScaledMin(nX, nY, vCameraPosition);
+	//			Vector2 vTileMax = vScaledMax(nX, nY, fScaledTileSize, vCameraPosition);
 
-				pRenderer->FillQuad(vTileMin.X,
-									vTileMin.Y,
-									vTileMax.X,
-									vTileMax.Y,
-									pRenderer->getGreyscaleColor(getTile(nX, nY)->getValue()));
+	//			pRenderer->FillQuad(vTileMin.X,
+	//								vTileMin.Y,
+	//								vTileMax.X,
+	//								vTileMax.Y,
+	//								pRenderer->getGreyscaleColor(getTile(nX, nY)->getValue()));
 
-				TilesRendered++;
-			}
+	//			TilesRendered++;
+	//		}
 
-		//	move to bottom of render, to put on top
-		if (getMouseOverTile())
-		{
-			int nX = getMouseOverTile()->getPosition().X;
-			int nY = getMouseOverTile()->getPosition().Y;
-			Vector2 vTileMin = vScaledMin(nX, nY, vCameraPosition);
-			Vector2 vTileMax = vScaledMax(nX, nY, fScaledTileSize, vCameraPosition);
+	//	//	move to bottom of render, to put on top
+	//	if (getMouseOverTile())
+	//	{
+	//		int nX = getMouseOverTile()->getPosition().X;
+	//		int nY = getMouseOverTile()->getPosition().Y;
+	//		Vector2 vTileMin = vScaledMin(nX, nY, vCameraPosition);
+	//		Vector2 vTileMax = vScaledMax(nX, nY, fScaledTileSize, vCameraPosition);
 
-			pRenderer->DrawQuad(vTileMin.X,
-								vTileMin.Y,
-								vTileMax.X,
-								vTileMax.Y,
-								Pixel(PIXEL_SOLID, FG_LIGHTGREEN));
-		}
+	//		pRenderer->DrawQuad(vTileMin.X,
+	//							vTileMin.Y,
+	//							vTileMax.X,
+	//							vTileMax.Y,
+	//							Pixel(PIXEL_SOLID, FG_LIGHTGREEN));
+	//	}
 
-		//	render valid tile list
-		for (auto t : ValidTiles)
-		{
-			int nX = t->getPosition().X;
-			int nY = t->getPosition().Y;
-			Vector2 vTileMin = vScaledMin(nX, nY, vCameraPosition);
-			Vector2 vTileMax = vScaledMax(nX, nY, fScaledTileSize, vCameraPosition);
+	//	//	render valid tile list
+	//	for (auto t : ValidTiles)
+	//	{
+	//		int nX = t->getPosition().X;
+	//		int nY = t->getPosition().Y;
+	//		Vector2 vTileMin = vScaledMin(nX, nY, vCameraPosition);
+	//		Vector2 vTileMax = vScaledMax(nX, nY, fScaledTileSize, vCameraPosition);
 
-			pRenderer->FillQuad(vTileMin.X,
-								vTileMin.Y,
-								vTileMax.X,
-								vTileMax.Y,
-								{PIXEL_SOLID, FG_LIGHTGREEN});
+	//		pRenderer->FillQuad(vTileMin.X,
+	//							vTileMin.Y,
+	//							vTileMax.X,
+	//							vTileMax.Y,
+	//							{PIXEL_SOLID, FG_LIGHTGREEN});
 
-			if (vCameraPosition.Z > 4.0)
-				pRenderer->DrawQuad(vTileMin.X,
-									vTileMin.Y,
-									vTileMax.X,
-									vTileMax.Y,
-									Pixel(PIXEL_SOLID, FG_BLACK));
-		}
+	//		if (vCameraPosition.Z > 4.0)
+	//			pRenderer->DrawQuad(vTileMin.X,
+	//								vTileMin.Y,
+	//								vTileMax.X,
+	//								vTileMax.Y,
+	//								Pixel(PIXEL_SOLID, FG_BLACK));
+	//	}
 
-		/*for (auto t : InvalidTiles)
-		{
-			int nX = t->getPosition().X;
-			int nY = t->getPosition().Y;
+	//	/*for (auto t : InvalidTiles)
+	//	{
+	//		int nX = t->getPosition().X;
+	//		int nY = t->getPosition().Y;
 
-			Vector2 Min(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z),
-				vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z));
+	//		Vector2 Min(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z),
+	//			vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z));
 
-			Vector2 Max(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z) + fScaledTileSize,
-				vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z) + fScaledTileSize);
+	//		Vector2 Max(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z) + fScaledTileSize,
+	//			vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z) + fScaledTileSize);
 
-			pRenderer->FillQuad(Min.X,
-				Min.Y,
-				Max.X,
-				Max.Y,
-				{ PIXEL_SOLID, FG_LIGHTRED });
+	//		pRenderer->FillQuad(Min.X,
+	//			Min.Y,
+	//			Max.X,
+	//			Max.Y,
+	//			{ PIXEL_SOLID, FG_LIGHTRED });
 
 
-			pRenderer->DrawQuad(Min.X,
-				Min.Y,
-				Max.X,
-				Max.Y,
-				Pixel(PIXEL_SOLID, FG_BLACK));
-		}*/
+	//		pRenderer->DrawQuad(Min.X,
+	//			Min.Y,
+	//			Max.X,
+	//			Max.Y,
+	//			Pixel(PIXEL_SOLID, FG_BLACK));
+	//	}*/
 
-		//	render mouse over building outline
-		for (auto b : Buildings)
-		{
-			//	buildings are in world space already
-			//	vScaled functions go from tile space to world space
-			//	subtract position to normalize
+	//	//	render mouse over building outline
+	//	for (auto b : Buildings)
+	//	{
+	//		//	buildings are in world space already
+	//		//	vScaled functions go from tile space to world space
+	//		//	subtract position to normalize
 
-			//Vector2 vOutlineMin = b->Min - Position;
-			//Vector2 vOutlineMax = b->Max - Position;
-			//Vector2 vTileMin = vScaledMin(vOutlineMin.X, vOutlineMin.Y, vCameraPosition);
-			//Vector2 vTileMax = vScaledMax(vOutlineMax.X, vOutlineMax.Y, fScaledTileSize, vCameraPosition);
+	//		//Vector2 vOutlineMin = b->Min - Position;
+	//		//Vector2 vOutlineMax = b->Max - Position;
+	//		//Vector2 vTileMin = vScaledMin(vOutlineMin.X, vOutlineMin.Y, vCameraPosition);
+	//		//Vector2 vTileMax = vScaledMax(vOutlineMax.X, vOutlineMax.Y, fScaledTileSize, vCameraPosition);
 
-			//if (b->bMouseOver == true)
-			//	pRenderer->DrawQuad(vTileMin.X, vTileMin.Y, vTileMax.X, vTileMax.Y, { PIXEL_SOLID, FG_LIGHTBLUE });
+	//		//if (b->bMouseOver == true)
+	//		//	pRenderer->DrawQuad(vTileMin.X, vTileMin.Y, vTileMax.X, vTileMax.Y, { PIXEL_SOLID, FG_LIGHTBLUE });
 
-			//if (b->bSelected == true)
-			//{
-			//	pRenderer->DrawQuad(vTileMin.X, vTileMin.Y, vTileMax.X, vTileMax.Y, { PIXEL_SOLID, FG_LIGHTGREEN });
-			//}
+	//		//if (b->bSelected == true)
+	//		//{
+	//		//	pRenderer->DrawQuad(vTileMin.X, vTileMin.Y, vTileMax.X, vTileMax.Y, { PIXEL_SOLID, FG_LIGHTGREEN });
+	//		//}
 
-			//if (vTileMin.X >= 0 && vTileMax.X < pRenderer->getSize().X &&
-			//	vTileMin.Y >= 0 && vTileMax.Y < pRenderer->getSize().Y)
-			//{
-			//	// currently only renders if building is fully within the screen dimensions
-			//	pRenderer->DrawString(thingToString<int>(b->getRooms().size()), vTileMin.X + 2, vTileMin.Y + 2);
-			//	pRenderer->DrawString(b->Min.toString(), vTileMin.X + 2, vTileMin.Y + 3);
-			//	pRenderer->DrawString(b->Max.toString(), vTileMin.X + 2, vTileMin.Y + 4);
-			//}
+	//		//if (vTileMin.X >= 0 && vTileMax.X < pRenderer->getSize().X &&
+	//		//	vTileMin.Y >= 0 && vTileMax.Y < pRenderer->getSize().Y)
+	//		//{
+	//		//	// currently only renders if building is fully within the screen dimensions
+	//		//	pRenderer->DrawString(thingToString<int>(b->getRooms().size()), vTileMin.X + 2, vTileMin.Y + 2);
+	//		//	pRenderer->DrawString(b->Min.toString(), vTileMin.X + 2, vTileMin.Y + 3);
+	//		//	pRenderer->DrawString(b->Max.toString(), vTileMin.X + 2, vTileMin.Y + 4);
+	//		//}
 
-		}
+	//	}
 
-		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 4, FG_WHITE);
-		pRenderer->DrawNum<int>(Buildings.size(), 2, pRenderer->getSize().Y - 3, FG_WHITE);
+	//	pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 4, FG_WHITE);
+	//	pRenderer->DrawNum<int>(Buildings.size(), 2, pRenderer->getSize().Y - 3, FG_WHITE);
 
-	}
+	//}
 
 };

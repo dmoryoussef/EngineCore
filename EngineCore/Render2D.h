@@ -521,57 +521,67 @@ public:
 		}
 	}
 
-	void DrawQuad(float nMinX, float nMinY, float nMaxX, float nMaxY, Pixel pixel)
+	void DrawQuad(float minX, float minY, float maxX, float maxY, Pixel pixel)
 	{
 		//	scale
-		nMinX = vCameraTransform.X + nMinX * vCameraTransform.Z;
-		nMinY = vCameraTransform.Y + nMinY * vCameraTransform.Z;
-		nMaxX = vCameraTransform.X + nMaxX * vCameraTransform.Z;
-		nMaxY = vCameraTransform.Y + nMaxY * vCameraTransform.Z;
+		float fMinX = vCameraTransform.X + minX * vCameraTransform.Z;
+		float fMinY = vCameraTransform.Y + minY * vCameraTransform.Z;
+		float fMaxX = vCameraTransform.X + maxX * vCameraTransform.Z;
+		float fMaxY = vCameraTransform.Y + maxY * vCameraTransform.Z;
 
 		//	clip
-		if (nMinY < 0)
-			nMinY = 0;
-		if (nMinX < 0)
-			nMinX = 0;
-		if (nMaxX > nWidth)
-			nMaxX = nWidth;
-		if (nMaxY > nHeight)
-			nMaxY = nHeight;
+		if (fMinY < 0)
+			fMinY = 0;
+		if (fMinX < 0)
+			fMinX = 0;
+		if (fMaxX > nWidth)
+			fMaxX = nWidth;
+		if (fMaxY > nHeight)
+			fMaxY = nHeight;
+
+		//	inner?
+		fMaxX--;
+		fMaxY--;
+
+		//	or outer?
+		fMinX--;
+		fMinY--;
+		fMaxX++;
+		fMaxY++;
 
 		// render
-		for (int nY = nMinY; nY <= nMaxY; nY++)
+		for (int nY = fMinY; nY <= (int)fMaxY; nY++)
 		{
-			for (int nX = nMinX; nX <= nMaxX; nX++)
+			for (int nX = fMinX; nX <= (int)fMaxX; nX++)
 			{
-				if (nX == nMinX || nX == nMaxX || nY == nMinY || nY == nMaxY)
+				if (nX == (int)fMinX || nX == (int)fMaxX || nY == (int)fMinY || nY == (int)fMaxY)
 					DrawPoint(nX, nY, pixel);
 			}
 		}
 	}
 
 
-	void FillQuad(int nMinX, int nMinY, int nMaxX, int nMaxY, Pixel pixel)
+	void FillQuad(float minX, float minY, float maxX, float maxY, Pixel pixel)
 	{
 		//	scale
-		nMinX = vCameraTransform.X + nMinX * vCameraTransform.Z;
-		nMinY = vCameraTransform.Y + nMinY * vCameraTransform.Z;
-		nMaxX = vCameraTransform.X + nMaxX * vCameraTransform.Z;
-		nMaxY = vCameraTransform.Y + nMaxY * vCameraTransform.Z;
+		float fMinX = vCameraTransform.X + minX * vCameraTransform.Z;
+		float fMinY = vCameraTransform.Y + minY * vCameraTransform.Z;
+		float fMaxX = vCameraTransform.X + maxX * vCameraTransform.Z;
+		float fMaxY = vCameraTransform.Y + maxY * vCameraTransform.Z;
 
 		//	clip
-		if (nMinY < 0)
-			nMinY = 0;
-		if (nMinX < 0)
-			nMinX = 0;
-		if (nMaxX > nWidth)
-			nMaxX = nWidth;
-		if (nMaxY > nHeight)
-			nMaxY = nHeight;
+		if (fMinY < 0)
+			fMinY = 0;
+		if (fMinX < 0)
+			fMinX = 0;
+		if (fMaxX > nWidth)
+			fMaxX = nWidth;
+		if (fMaxY > nHeight)
+			fMaxY = nHeight;
 
-		for (int nY = nMinY; nY < nMaxY; nY++)
+		for (int nY = fMinY; nY < fMaxY; nY++)
 		{
-			for (int nX = nMinX; nX < nMaxX; nX++)
+			for (int nX = fMinX; nX < fMaxX; nX++)
 			{
 				DrawPoint(nX, nY, pixel);
 			}

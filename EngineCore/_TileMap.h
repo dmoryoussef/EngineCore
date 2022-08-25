@@ -41,34 +41,37 @@ protected:
 			}
 	}
 
-	Vector2 clipMin(Vector2 vWorldMin)
+	Vector2 clipMin(Vector2 vCameraMin)
 	{
 		Vector2 vMapMin;
-		if (vWorldMin.Y <= Position.Y)
+
+		if (vCameraMin.Y <= Position.Y)
 			vMapMin.Y = 0;
 		else
-			vMapMin.Y = vWorldMin.Y - Position.Y;
+			vMapMin.Y = vCameraMin.Y - Position.Y;
 
-		if (vWorldMin.X <= Position.X)
+		if (vCameraMin.X <= Position.X)
 			vMapMin.X = 0;
 		else
-			vMapMin.X = vWorldMin.X - Position.X;
+			vMapMin.X = vCameraMin.X - Position.X;
+
 		return vMapMin;
 	}
 	
-	Vector2 clipMax(Vector2 vWorldMax)
+	Vector2 clipMax(Vector2 vCameraMax)
 	{
 		Vector2 vMapMax;
 
-		if (vWorldMax.Y >= Size.Y + Position.Y)
+		if (vCameraMax.Y >= Size.Y + Position.Y)
 			vMapMax.Y = Size.Y;
 		else
-			vMapMax.Y = Size.Y - (Position.Y + Size.Y - vWorldMax.Y);
+			vMapMax.Y = Size.Y - (Position.Y + Size.Y - vCameraMax.Y);
 
-		if (vWorldMax.X >= Size.X + Position.X)
+		if (vCameraMax.X >= Size.X + Position.X)
 			vMapMax.X = Size.X;
 		else
-			vMapMax.X = Size.X - (Position.X + Size.X - vWorldMax.X);
+			vMapMax.X = Size.X - (Position.X + Size.X - vCameraMax.X);
+
 		return vMapMax;
 	}
 
@@ -89,7 +92,7 @@ protected:
 				if (WorldPosition.Y >= Position.Y && WorldPosition.Y < Size.Y + Position.Y && 
 					WorldPosition.X >= Position.X && WorldPosition.X < Size.X + Position.X)
 				{
-					if (TileType* pTile = getTile(WorldPosition - Position))
+					if (TileType* pTile = getWorldTile(WorldPosition.X, WorldPosition.Y))
 					{
 						if (m_pMouseOverTile != pTile)
 						{
@@ -144,26 +147,23 @@ protected:
 		Vector2 vTileMin = clipMin(vWorldMin);
 		Vector2 vTileMax = clipMax(vWorldMax);
 
+		float fTileSize = 1.0f;
 		int TilesRendered = 0;
 
 		//	render clipped part of map
 		for (int nY = vTileMin.Y; nY < vTileMax.Y; nY++)
 			for (int nX = vTileMin.X; nX < vTileMax.X; nX++)
 			{
-				float fTileSize = 1.0;
 				float fScaledTileSize = fTileSize * vCameraPosition.Z;
 
-				Vector2 Min(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z),
-					vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z));
-
-				Vector2 Max(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z) + fScaledTileSize,
-					vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z) + fScaledTileSize);
+				Vector2 Min = Vector2(nX, nY) + Position;
+				Vector2 Max = Min + Vector2(fTileSize, fTileSize);
 
 				pRenderer->FillQuad(Min.X,
-					Min.Y,
-					Max.X,
-					Max.Y,
-					pRenderer->getGreyscaleColor(getTile(nX, nY)->getValue()));
+									Min.Y,
+									Max.X,
+									Max.Y,
+									pRenderer->getGreyscaleColor(getTile(nX, nY)->getValue()));
 
 				TilesRendered++;
 			}
@@ -171,20 +171,17 @@ protected:
 		//	move to bottom of render, to put on top
 		if (getMouseOverTile())
 		{
-			float fTileSize = 1.0;
-			float fScaledTileSize = fTileSize * vCameraPosition.Z;
-			int nX = getMouseOverTile()->getPosition().X;
-			int nY = getMouseOverTile()->getPosition().Y;
-			Vector2 Min(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z),
-				vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z));
-
-			Vector2 Max(vCameraPosition.X + ((nX + Position.X) * vCameraPosition.Z) + fScaledTileSize,
-				vCameraPosition.Y + ((nY + Position.Y) * vCameraPosition.Z) + fScaledTileSize);
+			int nX = getMouseOverTile()->getPosition().X + Position.X;
+			int nY = getMouseOverTile()->getPosition().Y + Position.X;
+			
+			Vector2 Min(nX, nY);
+			Vector2 Max = Min + Vector2(fTileSize, fTileSize);
+			
 			pRenderer->DrawQuad(Min.X,
-				Min.Y,
-				Max.X,
-				Max.Y,
-				Pixel(PIXEL_SOLID, FG_LIGHTGREEN));
+								Min.Y,
+								Max.X,
+								Max.Y,
+								Pixel(PIXEL_SOLID, FG_LIGHTGREEN));
 		}
 
 		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 3, FG_WHITE);
@@ -336,7 +333,7 @@ public:
 		_TileMap({ (float)nWidth, (float)nHeight }, "DEFAULT")
 	{
 		//	createCheckerMap();
-		createBoarderMap();
+		createCheckerMap();
 	}
 
 	void createCheckerMap()

@@ -144,8 +144,8 @@ private:
 
 	void constructComponent(BaseNode* pBaseNode)
 	{
-		Render2D renderer(this);
 		Vector3 vCurrentCameraPosition = m_pCamera->getChild<Transform3D>()->getPosition();
+		Render2D renderer(this, vCurrentCameraPosition); 
 		Vector2 vWorldMin = WorldPosition({ 0, 0 }, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 		Vector2 vWorldMax = WorldPosition(Size + Position, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 		

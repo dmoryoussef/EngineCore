@@ -339,6 +339,8 @@ public:
 		pCameraTransform = pCamera->getChild<Transform3D>();
 		pData->add(pCamera);
 		pGUI->addAtEnd(pCameraWindow);
+
+		pData->add(new BuildingMap(20, 20));
 	}
 
 	void render(OutputBuffer* pEngineBuffer)
