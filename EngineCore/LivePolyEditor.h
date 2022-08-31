@@ -59,21 +59,9 @@ private:
 	Side* bottom;
 	Side* right;
 
-	Vector2 getMin()
-	{
-		if (top->A->position < bottom->B->position)
-			return (top->A->position);
-		else
-			return bottom->A->position;
-	}
+	Vector2 vPreviousMin;
+	Vector2 vPreviousMax;
 
-	Vector2 getMax()
-	{
-		if (top->A->position < bottom->B->position)
-			return (bottom->B->position);
-		else
-			return (top->B->position);
-	}
 
 	void onMouseOverVerts(Vector2 pos, bool bButton)
 	{
@@ -112,6 +100,9 @@ private:
 		{
 			if (ActiveSide)
 			{
+				vPreviousMin = getMin();
+				vPreviousMax = getMax();
+
 				if (ActiveSide == top || ActiveSide == bottom)
 				{
 					ActiveSide->A->position.Y = ActiveSide->A->position.Y + diffMouse.Y;
@@ -122,6 +113,11 @@ private:
 					ActiveSide->A->position.X = ActiveSide->A->position.X + diffMouse.X;
 					ActiveSide->B->position.X = ActiveSide->B->position.X + diffMouse.X;
 				}
+
+				if ((int)vPreviousMin.X != (int)getMin().X || (int)vPreviousMin.Y != (int)getMin().Y ||
+					(int)vPreviousMax.X != (int)getMax().X || (int)vPreviousMax.Y != (int)getMax().Y)
+					addEvent(new EditorObjectEvent(vPreviousMin, vPreviousMax, getMin(), getMax()));
+				
 			}
 		}
 
@@ -134,26 +130,34 @@ private:
 	void onMouseOverPoly(Vector2 pos, bool bButton)
 	{
 		m_bMouseOver = isPointvQuad(pos, getMin(), getMax());
+		
 		if (!ActiveVert && bButton)
 		{
 			if (m_bMouseOver)
 			{
+				vPreviousMin = getMin();
+				vPreviousMax = getMax();
+
 				Vector2 mouseDiff = pos - vPrevMouse;
 				for (auto v : Verts)
 				{
 					v->position = (v->position + mouseDiff);
 				}
+
+				if (moved())
+					addEvent(new EditorObjectEvent(vPreviousMin, vPreviousMax, getMin(), getMax()));
 			}
 		}
 	}
+
 
 	void onMouseWorldEvent(MouseWorldEvent* pEvent)
 	{
 		Vector2 mouse = pEvent->getWorldPosition();
 
-		onMouseOverVerts(mouse, pEvent->getState().bLeftButtonDown);
-		onMouseOverSides(mouse, pEvent->getState().bLeftButtonDown);
-		onMouseOverPoly(mouse, pEvent->getState().bRightButtonDown);
+		//	onMouseOverVerts(mouse, pEvent->getState().bLeftButtonDown);
+		//	onMouseOverSides(mouse, pEvent->getState().bLeftButtonDown);
+		//	onMouseOverPoly(mouse, pEvent->getState().bRightButtonDown);
 
 		vPrevMouse = mouse;
 	}
@@ -193,6 +197,8 @@ public:
 		Sides.push_back(left);
 		Sides.push_back(bottom);
 		Sides.push_back(right);
+
+		//	addEvent(new EditorObjectEvent(getMin(), getMax(), getMin(), getMax()));
 	};
 
 	~EditablePoly2D()
@@ -209,6 +215,53 @@ public:
 			delete v;
 		}
 		Verts.clear();
+	}
+
+	Vector2 getMin()
+	{
+		if (top->A->position < bottom->B->position)
+			return (top->A->position);
+		else
+			return bottom->A->position;
+	}
+	Vector2 getMax()
+	{
+		if (top->A->position < bottom->B->position)
+			return (bottom->B->position);
+		else
+			return (top->B->position);
+	}
+	
+	Vector2 getPrevMin() { return vPreviousMin; }
+	Vector2 getPrevMax() { return vPreviousMax; }
+
+	void setMouseOver(bool mouseOver)
+	{
+		m_bMouseOver = mouseOver;
+	}
+
+	void updatePosition(Vector2 mouseDiff)
+	{
+		vPreviousMin = getMin();
+		vPreviousMax = getMax();
+
+		for (auto v : Verts)
+		{
+			v->position = (v->position + mouseDiff);
+		}
+	}
+
+
+
+	bool moved()
+	{
+		return ((int)vPreviousMin.X != (int)getMin().X || (int)vPreviousMin.Y != (int)getMin().Y ||
+			(int)vPreviousMax.X != (int)getMax().X || (int)vPreviousMax.Y != (int)getMax().Y);
+	}
+
+	bool isMouseOver()
+	{
+		return m_bMouseOver;
 	}
 
 	void render(Render2D* renderer)
@@ -243,31 +296,127 @@ public:
 	}
 };
 
-class EditablePoly2DGroup : public EventListener
+class PolyList : public EventListener
 {
 private:
 	vector<EditablePoly2D*> Polys;
-	EditablePoly2D* ActivePoly;
+	EditablePoly2D* currentPoly;
+	Vector2 vPrevMouse;
+
+	void onSelectionSquareEvent(SelectionSquareEvent* pEvent)
+	{
+		if (pEvent->isReleased())
+		{
+			Polys.push_back(new EditablePoly2D(pEvent->getMin(), pEvent->getMax()));
+			
+			
+			EditorObjectEvent* pObjEvent = new EditorObjectEvent();
+			for (auto p : Polys)
+			{
+				pObjEvent->addObject(p->getPrevMin(), p->getPrevMax(), p->getMin(), p->getMax());
+			}
+
+			addEvent(pObjEvent);
+		}
+	}
 
 	void onMouseWorldEvent(MouseWorldEvent* pEvent)
 	{
+		Vector2 mouse = pEvent->getWorldPosition();
 
+		//	onMouseOverVerts(mouse, pEvent->getState().bLeftButtonDown);
+		//	onMouseOverSides(mouse, pEvent->getState().bLeftButtonDown);
+		//	onMouseOverPoly(mouse, pEvent->getState().bRightButtonDown);
+
+		for (auto p : Polys)
+		{
+			if (isPointvQuad(mouse, p->getMin(), p->getMax()))
+			{
+				p->setMouseOver(true);
+				if (pEvent->getState().bRightButtonDown && !currentPoly)
+				{
+					currentPoly = p;
+				}
+			}
+			else
+				p->setMouseOver(false);
+		}
+
+		if (!pEvent->getState().bRightButtonDown)
+			currentPoly = NULL;
+
+		if (currentPoly)
+		{
+			currentPoly->updatePosition(mouse - vPrevMouse);
+			//	if previous position != new position
+			//	send event
+			if (currentPoly->moved())
+			{
+				// addEvent(new EditorObjectEvent(vPreviousMin, vPreviousMax, getMin(), getMax()));
+				EditorObjectEvent* pEvent = new EditorObjectEvent();
+				for (auto p : Polys)
+				{
+					pEvent->addObject(p->getPrevMin(), p->getPrevMax(), p->getMin(), p->getMax());
+				}
+
+				addEvent(pEvent);
+			}
+		}
+
+		vPrevMouse = mouse;
+	}
+
+	void onKeyboardEvent(KeyboardEvent* pEvent)
+	{
+		switch (pEvent->getKey())
+		{
+			case 0:
+			{
+				int i = 0;
+				for (auto p : Polys)
+				{
+					if (p->isMouseOver())
+					{
+						auto erase = Polys.begin() + i;
+						Polys.erase(erase);
+						delete p;
+					}
+					i++;
+				}
+			}
+			break;
+		}
 	}
 
 	void onEvent(_Event* pEvent)
 	{
 		switch (pEvent->m_eType)
 		{
+			case SELECTIONSQUARE_EVENT: onSelectionSquareEvent(pEvent->get<SelectionSquareEvent>());
+				break;
+			case KEYBOARD_EVENT: onKeyboardEvent(pEvent->get<KeyboardEvent>());
+				break;
 			case MOUSEWORLD_EVENT: onMouseWorldEvent(pEvent->get<MouseWorldEvent>());
 				break;
 		}
 	}
 
 public:
-	EditablePoly2DGroup()
+	PolyList() : 
+		currentPoly(NULL),
+		vPrevMouse()
 	{
+		registerListener(KEYBOARD_EVENT);
+		registerListener(SELECTIONSQUARE_EVENT);
 		registerListener(MOUSEWORLD_EVENT);
-	};
+	}
+
+	void render(Render2D* renderer)
+	{
+		for (auto p : Polys) p->render(renderer);
+		renderer->DrawNum<int>(Polys.size(), 2, 2, FG_WHITE);
+	}
+
 };
 
 class LivePolyEditor : public GameState
@@ -276,15 +425,11 @@ private:
 	SelectionSquare* selectionSquare;
 	Transform3D* pCameraTransform;
 	bool bSelectionSquareHotkey;
-
-	vector<EditablePoly2D*> Polys;
+	PolyList Polys;
 
 	void onSelectionSquareEvent(SelectionSquareEvent* pEvent)
 	{
-		if (!pEvent->isHovering())
-			Polys.push_back(new EditablePoly2D(pEvent->getMin(), pEvent->getMax()));
-
-		if (!pEvent->isHovering())
+		if (pEvent->isReleased())
 		{
 			delete selectionSquare;
 			selectionSquare = NULL;
@@ -303,7 +448,11 @@ private:
 	
 	void onKeyboardEvent(KeyboardEvent* pEvent)
 	{
-		bSelectionSquareHotkey = pEvent->isKeyDown('p');
+		switch (pEvent->getKey())
+		{
+			case 'p': bSelectionSquareHotkey = pEvent->isKeyDown('p');
+				break;
+		}
 	}
 
 	void onEvent(_Event* pEvent)
@@ -322,7 +471,8 @@ private:
 public:
 	LivePolyEditor() :
 		bSelectionSquareHotkey(false),
-		selectionSquare(NULL)
+		selectionSquare(NULL),
+		Polys()
 	{
 		registerListener(KEYBOARD_EVENT);
 		registerListener(SELECTIONSQUARE_EVENT);
@@ -340,15 +490,17 @@ public:
 		pData->add(pCamera);
 		pGUI->addAtEnd(pCameraWindow);
 
-		pData->add(new BuildingMap(20, 20));
+
+
+		pData->add(new BuildingMap(200, 100));
 	}
 
 	void render(OutputBuffer* pEngineBuffer)
 	{
 		Render2D renderer(pEngineBuffer, pCameraTransform->getPosition());
 
-		for (auto p : Polys) p->render(&renderer);
-
 		if (selectionSquare) selectionSquare->render(&renderer);
+
+		Polys.render(&renderer);
 	}
 };

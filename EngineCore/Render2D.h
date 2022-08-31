@@ -156,6 +156,18 @@ public:
 			m_pTargetBuffer->set(pixel, nX, nY);
 	}
 
+	Vector2 vScaledMin(int nX, int nY, Vector3 vCamera)
+	{
+		return Vector2(vCamera.X + ((nX) * vCamera.Z),
+			vCamera.Y + ((nY) * vCamera.Z));
+	}
+
+	Vector2 vScaledMax(int nX, int nY, float fScaledTile, Vector3 vCamera)
+	{
+		return Vector2(vCamera.X + ((nX) * vCamera.Z) + fScaledTile,
+			vCamera.Y + ((nY) * vCamera.Z) + fScaledTile);
+	}
+
 	void DrawLine(Vector2 start, Vector2 end, Pixel pixel)
 	{
 		Vector2 Start = vCameraTransform.toVec2() + start * vCameraTransform.Z;

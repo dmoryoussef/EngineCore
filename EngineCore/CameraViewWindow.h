@@ -112,7 +112,7 @@ private:
 				
 				if (pSelectionSquare)
 				{
-					if (!pSelectionSquare->isActive())
+					if (!pSelectionSquare->isReleased())
 					{
 						delete pSelectionSquare;
 						pSelectionSquare = NULL;

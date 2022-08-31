@@ -11,9 +11,36 @@ enum EVENT_TYPE
 	SELECTIONSQUARE_EVENT,
 	BASENODE_EVENT,
 	ACTION_EVENT,
-	COMMAND_EVENT
+	COMMAND_EVENT,
+	EDITOROBJECT_EVENT
 };
 
+class EditorObjectEvent : public _Event
+{
+private:
+	vector<Vector2> Objects;
+
+public:
+	EditorObjectEvent(Vector2 prevMin, Vector2 prevMax, Vector2 curMin, Vector2 curMax) :
+		_Event(EDITOROBJECT_EVENT) 
+	{
+		addObject(prevMin, prevMax, curMin, curMax);
+	};
+
+	EditorObjectEvent() :
+		Objects(),
+		_Event(EDITOROBJECT_EVENT) {};
+
+	void addObject(Vector2 prevMin, Vector2 prevMax, Vector2 curMin, Vector2 curMax)
+	{
+		Objects.push_back(prevMin); 
+		Objects.push_back(prevMax);
+		Objects.push_back(curMin);
+		Objects.push_back(curMax);
+	}
+
+	vector<Vector2> getObjects() { return Objects; }
+};
 
 class SelectionSquareEvent : public _Event
 {
@@ -22,15 +49,20 @@ private:
 	Vector2 vMax;
 	Vector2 vStart;
 	Vector2 vStop;
-	bool bHovering;
+	bool bReleased;
+
+	Vector2 vPrevMin;
+	Vector2 vPrevMax;
 
 public:
-	SelectionSquareEvent(Vector2 min, Vector2 max, Vector2 start, Vector2 stop, bool active) :
+	SelectionSquareEvent(Vector2 min, Vector2 max, Vector2 start, Vector2 stop, bool active, Vector2 prevMin = {0, 0}, Vector2 prevMax = {0, 0}) :
 		vMin(min),
 		vMax(max),
 		vStart(start),
 		vStop(stop),
-		bHovering(active), 
+		vPrevMin(prevMin),
+		vPrevMax(prevMax),
+		bReleased(active), 
 		_Event(SELECTIONSQUARE_EVENT) {};
 
 	Vector2 getMax()
@@ -53,9 +85,9 @@ public:
 		return vStop;
 	}
 
-	bool isHovering()
+	bool isReleased()
 	{
-		return bHovering;
+		return bReleased;
 	}
 };
 
