@@ -168,6 +168,21 @@ public:
 			vCamera.Y + ((nY) * vCamera.Z) + fScaledTile);
 	}
 
+	void DrawString(vector<string> strings, float x, float y)
+	{
+		x = vCameraTransform.X + x * vCameraTransform.Z;
+		y = vCameraTransform.Y + y * vCameraTransform.Z;
+
+		int offsetY = 0;
+		for (string s : strings)
+		{
+			for (int nI = 0; nI < s.length(); nI++)
+			{
+				m_pTargetBuffer->set(s, x, y + offsetY, FG_WHITE);
+			}
+			offsetY++;
+		}
+	}
 	void DrawLine(Vector2 start, Vector2 end, Pixel pixel)
 	{
 		Vector2 Start = vCameraTransform.toVec2() + start * vCameraTransform.Z;

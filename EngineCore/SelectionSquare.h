@@ -71,8 +71,10 @@ public:
 		//	or draw a line from start to stop
 		pRenderer->DrawLine(vStart, vStop, { PIXEL_SOLID, FG_WHITE });
 		// show some data:
-		pRenderer->DrawString(Min().toString(), Max().X + 1, Max().Y - 3);
-		pRenderer->DrawString(Max().toString(), Max().X + 1, Max().Y - 2);
+		vector<string> data;
+		data.push_back(Min().toString());
+		data.push_back(Max().toString());
+		pRenderer->DrawString(data, Max().X + 1, Max().Y);
 	}
 
 	void render(Render2D* pRenderer, Vector3 vCamera)

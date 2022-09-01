@@ -62,6 +62,8 @@ private:
 	Vector2 vPreviousMin;
 	Vector2 vPreviousMax;
 
+	vector<EditablePoly2D*> Edges; 
+
 
 	void onMouseOverVerts(Vector2 pos, bool bButton)
 	{
@@ -296,12 +298,15 @@ public:
 	}
 };
 
+
 class PolyList : public EventListener
 {
 private:
 	vector<EditablePoly2D*> Polys;
 	EditablePoly2D* currentPoly;
 	Vector2 vPrevMouse;
+
+	BaseNode PolyTree;
 
 	void onSelectionSquareEvent(SelectionSquareEvent* pEvent)
 	{
