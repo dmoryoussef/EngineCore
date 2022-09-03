@@ -366,7 +366,7 @@ private:
 	void onSelectionLineEvent(SelectionLineEvent* pEvent)
 	{
 		//	if start is over a poly
-		//		set poly to "selected color" for visual feedback
+		//	set poly to "selected color" for visual feedback
 		EditablePoly2D* start = NULL;
 		EditablePoly2D* end = NULL;
 		for (auto p : Polys)
@@ -378,9 +378,9 @@ private:
 			}
 		}
 
-		// if end of over a poly
+		//	if end of over a poly
 		//	if poly is not equal to start poly
-		//	 set end poly to different color for visual feedback
+		//	set end poly to different color for visual feedback
 		for (auto p : Polys)
 		{
 			if (isPointvQuad(pEvent->getStop(), p->getMin(), p->getMax()))
@@ -399,7 +399,6 @@ private:
 					start->addEdge(end);
 					end->addEdge(start);
 				}
-
 	}
 
 	void onSelectionSquareEvent(SelectionSquareEvent* pEvent)
@@ -434,28 +433,35 @@ private:
 				p->setMouseOver(false);
 		}
 
-		if (!button)
-			currentPoly = NULL;
-
 		if (currentPoly)
 		{
 			currentPoly->updatePosition(mouse - vPrevMouse);
-			//	if previous position != new position
-			//	send event
-			collisionTest();
-
 			if (currentPoly->moved())
 			{
-				EditorObjectEvent* pEvent = new EditorObjectEvent();
-				for (auto p : Polys)
+				collisionTest();
+				PolyEvent();
+			}
+			else
+			{
+				if (!button)
 				{
-					pEvent->addObject(p->getPrevMin(), p->getPrevMax(), p->getMin(), p->getMax());
-
+					//	if didnt move and released button
+					//	open option windows?
+					currentPoly = NULL;
 				}
-
-				addEvent(pEvent);
 			}
 		}
+	}
+
+	void PolyEvent()
+	{
+		EditorObjectEvent* pEvent = new EditorObjectEvent();
+		for (auto p : Polys)
+		{
+			pEvent->addObject(p->getPrevMin(), p->getPrevMax(), p->getMin(), p->getMax());
+		}
+
+		addEvent(pEvent);
 	}
 
 	void collisionTest()
