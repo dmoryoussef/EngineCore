@@ -5,6 +5,8 @@ private:
 	Vector2 vStop;
 
 	bool m_bReleased;
+	bool m_bDrawQuad;
+	bool m_bDrawLine;
 
 	void onEvent(_Event* pEvent)
 	{
@@ -16,7 +18,11 @@ private:
 
 				vStop = pMouseEvent->getWorldPosition();
 
-				addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, !pMouseEvent->getState().bLeftButtonDown));
+				if (!m_bDrawQuad && m_bDrawLine)
+					addEvent(new SelectionLineEvent(vStart, vStop, !pMouseEvent->getState().bLeftButtonDown));
+
+				if (m_bDrawQuad)
+					addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, !pMouseEvent->getState().bLeftButtonDown));
 
 				break;
 			}
@@ -50,10 +56,12 @@ private:
 	}
 
 public:
-	SelectionSquare(Vector2 start) :
+	SelectionSquare(Vector2 start, bool drawLine = true, bool drawQuad = true) :
 		m_bReleased(true),
 		vStart(start),
-		vStop(start)
+		vStop(start),
+		m_bDrawQuad(drawQuad),
+		m_bDrawLine(drawLine)
 	{
 		registerListener(MOUSEWORLD_EVENT);
 		registerListener(KEYBOARD_EVENT);
@@ -67,9 +75,11 @@ public:
 	void render(Render2D* pRenderer)
 	{
 		//	draw:
-		pRenderer->DrawQuad(Min().X, Min().Y, Max().X, Max().Y, {PIXEL_SOLID, FG_WHITE});
+		if (m_bDrawQuad)
+			pRenderer->DrawQuad(Min().X, Min().Y, Max().X, Max().Y, {PIXEL_SOLID, FG_WHITE});
 		//	or draw a line from start to stop
-		pRenderer->DrawLine(vStart, vStop, { PIXEL_SOLID, FG_WHITE });
+		if (m_bDrawLine)
+			pRenderer->DrawLine(vStart, vStop, { PIXEL_SOLID, FG_WHITE });
 		// show some data:
 		vector<string> data;
 		data.push_back(Min().toString());

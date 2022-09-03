@@ -462,7 +462,7 @@ private:
 		return false;
 	}
 
-	void update(Vector2 prevMin, Vector2 prevMax, Vector2 newMin, Vector2 newMax)
+	void updateSingle(Vector2 prevMin, Vector2 prevMax, Vector2 newMin, Vector2 newMax)
 	{
 		for (int y = prevMin.Y; y <= prevMax.Y; y++)
 			for (int x = prevMin.X; x <= prevMax.X; x++)
@@ -486,68 +486,40 @@ private:
 	
 	void onEditorObjectEvent(EditorObjectEvent* pEvent)
 	{
+		//	clear all
 		for (int i = 0; i < pEvent->getObjects().size(); i = i + 4)
 		{
 			Vector2 prevMin = pEvent->getObjects()[i];
 			Vector2 prevMax = pEvent->getObjects()[i + 1];
-			Vector2 curMin = pEvent->getObjects()[i + 2];
-			Vector2 curMax = pEvent->getObjects()[i + 3];
-			update(prevMin, prevMax, curMin, curMax);
 
+			for (int y = prevMin.Y; y <= prevMax.Y; y++)
+				for (int x = prevMin.X; x <= prevMax.X; x++)
+				{
+					if (BuildingTile* pTile = getWorldTile(x, y))
+						pTile->setValue(0.1);
+				}
 		}
 		
+		//	apply walls
+		for (int i = 0; i < pEvent->getObjects().size(); i = i + 4)
+		{
+			Vector2 newMin = pEvent->getObjects()[i + 2];
+			Vector2 newMax = pEvent->getObjects()[i + 3];
+			for (int y = newMin.Y; y <= newMax.Y; y++)
+				for (int x = newMin.X; x <= newMax.X; x++)
+				{
+					if (BuildingTile* pTile = getWorldTile(x, y))
+					{
+						if (x == (int)newMin.X || x == (int)newMax.X || y == (int)newMin.Y || y == (int)newMax.Y)
+							pTile->setValue(1.0);
+						else
+							pTile->setValue(0.4);
+					}
+				}
+		}
+
+		//	find doors
 		
-
-		////	create list of tiles for prev quad
-		//vector<BuildingTile*> prevList;
-		//for (int y = pEvent->getPrevMin().Y; y <= pEvent->getPrevMax().Y; y++)
-		//	for (int x = pEvent->getPrevMin().X; x <= pEvent->getPrevMax().X; x++)
-		//	{
-		//		prevList.push_back(getWorldTile(x, y));
-		//	}
-		////	create list of tiles for new quad
-		//vector<BuildingTile*> newList;
-		//for (int y = pEvent->getCurMin().Y; y <= pEvent->getCurMax().Y; y++)
-		//	for (int x = pEvent->getCurMin().X; x <= pEvent->getCurMax().X; x++)
-		//	{
-		//		newList.push_back(getWorldTile(x, y));
-		//	}
-		////	if tile is in prev and not new
-		//for (auto t : prevList)
-		//{
-		//	if (!isInList(t, newList))
-		//	{
-		//		t->setValue(0.1);
-		//	}
-		//}
-
-		////	if tile is in new and not prev
-		//for (auto t : newList)
-		//{
-		//	if (!isInList(t, prevList))
-		//	{
-		//		t->setValue(1.0);
-		//	}
-		//}
-		
-		// 
-		// handle removing previous
-		//for (int y = pEvent->getPrevMin().Y; y <= pEvent->getPrevMax().Y; y++)
-		//	for (int x = pEvent->getPrevMin().X; x <= pEvent->getPrevMax().X; x++)
-		//	{
-		//		if (x == pEvent->getPrevMin().X || x == pEvent->getPrevMax().X || y == pEvent->getPrevMin().Y || y == pEvent->getPrevMax().Y)
-		//			getWorldTile(x, y)->setValue(0.4);
-		//	}
-
-		//// handle adding new
-		//for (int y = pEvent->getCurMin().Y; y <= pEvent->getCurMax().Y; y++)
-		//	for (int x = pEvent->getCurMin().X; x <= pEvent->getCurMax().X; x++)
-		//	{
-		//		if (x == pEvent->getCurMin().X || x == pEvent->getCurMax().X || y == pEvent->getCurMin().Y || y == pEvent->getCurMax().Y)
-		//		{
-		//			getWorldTile(x, y)->setValue(1.0);
-		//		}
-		//	}
 	}
 
 	void onEvent(_Event *pEvent)

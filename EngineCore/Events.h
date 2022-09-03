@@ -9,6 +9,7 @@ enum EVENT_TYPE
 	TRANSFORMUPDATE_EVENT,
 	MOUSEWORLD_EVENT,
 	SELECTIONSQUARE_EVENT,
+	SELECTIONLINE_EVENT,
 	BASENODE_EVENT,
 	ACTION_EVENT,
 	COMMAND_EVENT,
@@ -41,6 +42,36 @@ public:
 
 	vector<Vector2> getObjects() { return Objects; }
 };
+
+class SelectionLineEvent : public _Event
+{
+private:
+	Vector2 vStart;
+	Vector2 vStop;
+	bool bReleased;
+
+public:
+	SelectionLineEvent(Vector2 start, Vector2 stop, bool released) :
+		vStart(start),
+		vStop(stop),
+		bReleased(released),
+		_Event(SELECTIONLINE_EVENT)	{}
+
+	Vector2 getStart()
+	{
+		return vStart;
+	}
+
+	Vector2 getStop()
+	{
+		return vStop;
+	}
+
+	bool isReleased()
+	{
+		return bReleased;
+	}
+}; 
 
 class SelectionSquareEvent : public _Event
 {
