@@ -5,6 +5,41 @@ class EntityFactory :
 private:
 	BaseNode* m_pEntityList;
 
+	void onCommandEvent(CommandEvent* pEvent)
+	{
+		BaseNode* pParent = pEvent->getParent();
+		_Command* pCommand = pEvent->getCommand();
+		if (pCommand->getType() == FIRE)
+		{
+			if (Transform2D* transform = pParent->getChild<Transform2D>())
+			{
+				if (ShootAction* pShoot = pParent->getChild<ShootAction>())
+				{
+					if (pShoot->canShoot())
+					{
+						Vector2 rotation = transform->getRotation();
+						Vector2 forward = transform->getForward();
+						Vector2 position = transform->getPosition() + (forward * 1.1);
+
+						// move to entity factory??
+						//	spawn entity event
+						BaseNode* pEntity = new BaseNode("Projectile");
+						pEntity->addChild(new Render(2));
+						pEntity->addChild(new Transform2D(position, rotation, { 0.1, 0.1 }));
+						pEntity->addChild(new Velocity(forward * 0.05));
+						pEntity->addChild(new Collider());
+						pEntity->addChild(new OutOfBoundsCollision());
+						pEntity->addChild(new Damage(25));
+						m_pEntityList->add(pEntity);
+						addEvent(new NewBaseNodeEvent(pEntity));
+					}
+				}
+			}
+
+			delete pCommand;
+		}
+	}
+
 	void onEvent(_Event* pEvent)
 	{
 		switch (pEvent->m_eType)
@@ -33,6 +68,9 @@ private:
 				
 				break;
 			}
+			case COMMAND_EVENT: onCommandEvent(pEvent->get<CommandEvent>());
+				break;
+
 		}
 	}
 
@@ -42,6 +80,7 @@ public:
 		BaseNode("EntityFactory")
 	{
 		registerListener(DELETE_BASENODE_EVENT);
+		registerListener(COMMAND_EVENT);
 	}
 
 	BaseNode *createPlayer(int playerId)
@@ -51,12 +90,13 @@ public:
 		BaseNode* pEntity = new BaseNode(s);
 		pEntity->addChild(new Render(3));
 		pEntity->addChild(new Transform2D({ float(random(1, 10)), float(random(1, 10))}, {0, 0}, {1, 1}));
-		pEntity->addChild(new Physics());
+		pEntity->addChild(new Velocity());
 		pEntity->addChild(new UserController(playerId));
 		pEntity->addChild(new ShootAction(100000, 200.0));
 		pEntity->addChild(new Collider());
 		pEntity->addChild(new UIState()); 
 		pEntity->addChild(new Health(100));
+		pEntity->addChild(new Accelerate(10.0));
 		
 		addEvent(new NewBaseNodeEvent(pEntity));
 

@@ -39,7 +39,7 @@ protected:
 
 	void onStateChange()
 	{
-		addEvent(new GuiEvent(this));
+		addEvent(new GuiEvent(this, m_nState));
 	}
 
 public:

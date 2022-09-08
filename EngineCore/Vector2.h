@@ -18,13 +18,7 @@ struct Vector2
 		Y(sin(rad)),
 		X(cos(rad)) {};
 
-	//void degreesToVec(float degrees)
-	//{
-	//	float radians = degrees * (PI / 180);
-	//	X = cos(degrees);
-	//	Y = sin(degrees);
-	//}
-
+	
 	float magnitude()
 	{
 		return sqrt((Y * Y) + (X * X));
@@ -106,6 +100,11 @@ Vector2 operator-(Vector2 A, Vector2 B)
 {
 	Vector2 Subtract(A.X - B.X, A.Y - B.Y);
 	return Subtract;
+}
+
+Vector2 operator*(Vector2 A, Vector2 B)
+{
+	return Vector2(A.X * B.X, A.Y * B.Y);
 }
 
 Vector2 operator*(Vector2 A, float fMultiplier)
@@ -191,7 +190,7 @@ Vector2 getNormal(Vector2 &A, Vector2& B)
 
 float dotProduct(Vector2 A, Vector2 B)
 {
-	return (A.Y * B.Y) + (A.X * B.X);
+	return -((A.Y * B.Y) + (A.X * B.X));
 }
 
 float hypotenuse(Vector2& A, Vector2& B)
@@ -211,8 +210,14 @@ float lerp(float a, float b, float t)
 }
 
 Vector2 lerp(Vector2 a, Vector2 b, float t)
-{
+{  
 	return Vector2(lerp(a.X, b.X, t), lerp(a.Y, b.Y, t));
 }
 
+Vector2 reflect(Vector2 a, Vector2 n)
+{
+	//	n = n.normalize();
+	Vector2 reflect = n * (2 * dotProduct(a, n)) + a;
+	return reflect;
+}
 #endif

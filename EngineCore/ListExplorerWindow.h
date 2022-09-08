@@ -11,7 +11,7 @@ class ListExplorerWindow : public UIWindow
 			void onStateChange()
 			{
 				//	open/close child window if activated
-				addEvent(new GuiEvent(this));
+				//	addEvent(new GuiEvent(this, m_nState));
 
 				//	update state of entity
 				if (m_pUIState)

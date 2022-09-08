@@ -126,12 +126,25 @@ class GuiEvent : public _Event
 {
 private:
 	BaseNode* m_pComponent;
+	BaseNode* m_pBaseNode;
+	int m_nState;
 
 public:
-	GuiEvent(BaseNode* pComponent) :
+	GuiEvent(BaseNode* pComponent, int state) :
+		m_nState(state),
 		m_pComponent(pComponent),
+		m_pBaseNode(pComponent),
 		_Event(GUI_EVENT) {};
 
+	int getState()
+	{
+		return m_nState;
+	}
+
+	BaseNode *getBaseNode()
+	{
+		return m_pBaseNode;
+	}
 	template <typename T>
 	T *getComponent()
 	{
@@ -177,6 +190,7 @@ public:
 		m_pParent(pParent),
 		m_pCommand(pCommand),
 		_Event(COMMAND_EVENT) {};
+
 
 	BaseNode* getParent() { return m_pParent; }
 	_Command *getCommand() { return m_pCommand; }

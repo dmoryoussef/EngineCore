@@ -11,11 +11,15 @@ private:
 	BaseNode* Player2;
 
 	BaseNode* entities;
+	Transform3D* pCameraTransform;
+
+
 
 public:
 	TestState() :
 		Player1(NULL),
-		Player2(NULL) {};
+		Player2(NULL),
+		pCameraTransform(NULL) {};
 
 	class Lifespan : public _EntityComponent
 	{
@@ -48,7 +52,7 @@ public:
 
 			BaseNode* pTemp = new BaseNode();
 			pTemp->add(new Transform2D(pos, {0, 0}, { 0.1, 0.1 }));
-			pTemp->addChild(new Physics(direction));
+			pTemp->addChild(new Velocity(direction));
 			pTemp->addChild(new Render(1));
 			pTemp->addChild(new Lifespan());
 			entities->add(pTemp);
@@ -58,11 +62,14 @@ public:
 	void start(BaseNode* pData, BaseNode *pSystems, BaseNode *pGUI)
 	{
 		entities = pData;
-
-		CameraViewWindow* pCameraWindow = new CameraViewWindow(100, 100, 0, 0);
-		pData->add(pCameraWindow->getCamera());
+		int height = pGUI->cast<_UIComponent>()->getHeight();
+		int width = pGUI->cast<_UIComponent>()->getWidth();
+		CameraViewWindow* pCameraWindow = new CameraViewWindow(width, height, 0, 0);
+		BaseNode* pCamera = pCameraWindow->getCamera();
+		pCameraTransform = pCamera->getChild<Transform3D>();
+		pData->add(pCamera);
 		pGUI->addAtEnd(pCameraWindow);
-		pGUI->addAtEnd(new ListExplorerWindow(pData));
+		//pGUI->addAtEnd(new ListExplorerWindow(pData));
 		
 
 		Player1 = pSystems->getChild<EntityFactory>()->createPlayer(0);
@@ -72,10 +79,7 @@ public:
 		pData->add(Player2);
 	}
 
-	void render(OutputBuffer* pEngineBuffer)
-	{
-
-	}
+	
 
 	void update(BaseNode *pData, float fDeltaTime)
 	{

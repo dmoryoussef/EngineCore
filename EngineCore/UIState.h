@@ -43,7 +43,7 @@ public:
 			}
 			
 			m_nCurrentState = nNewState;
-			addEvent(new GuiEvent(this));
+			addEvent(new GuiEvent(this, nNewState));
 		}
 	}
 

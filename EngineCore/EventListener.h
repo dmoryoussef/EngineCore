@@ -10,7 +10,6 @@ public:
 	{
 		m_eType = eType;
 	};
-	~_Event() {};
 
 	template <typename T> T* get()
 	{

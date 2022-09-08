@@ -518,8 +518,7 @@ private:
 				}
 		}
 
-		//	find doors
-		
+		//	find doorsp
 	}
 
 	void onEvent(_Event *pEvent)

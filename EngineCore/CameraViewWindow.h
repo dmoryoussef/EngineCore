@@ -156,7 +156,7 @@ private:
 
 		//	render ecs on top, not called by baseRender...change???
 		EntityRenderSystem ecsRenderer;
-		ecsRenderer.render(pBaseNode, &renderer, vCurrentCameraPosition, vWorldMin, vWorldMax);
+		ecsRenderer.render(pBaseNode, &renderer, vWorldMin, vWorldMax);
 
 		if (pSelectionSquare)
 		{

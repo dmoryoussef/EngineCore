@@ -12,20 +12,29 @@ public:
 	{
 		while (m_pEntityList->isIterating())
 		{
-			Transform2D* pTransform = m_pEntityList->getCurrent()->getChild<Transform2D>();
-			Physics* pPhysics = m_pEntityList->getCurrent()->getChild<Physics>();
-			if (pTransform && pPhysics)
+			BaseNode* pEntity = m_pEntityList->getCurrent();
+
+			vector<Accelerate*> AccelChildren = pEntity->getChildren<Accelerate>();
+			Vector2 vTotal;
+			for (auto accel : AccelChildren)
+				vTotal = vTotal + accel->getForce();
+
+			Transform2D* pTransform = pEntity->getChild<Transform2D>();
+			Velocity* pVelocity = pEntity->getChild<Velocity>();
+
+			if (pTransform && pVelocity)
 			{
-				Vector2 vVelocity = pPhysics->getVelocity();
-				vVelocity = vVelocity * 0.95;
-				if (vVelocity.magnitude() < 0.0001)
+				Vector2 vVelocity = pVelocity->getVelocity();
+				vVelocity = vVelocity + vTotal;
+					
+				vVelocity = vVelocity * 0.98;
+				if (vVelocity.magnitude() < 0.001)
 					vVelocity = { 0, 0 };
 
+				pVelocity->setVelocity(vVelocity);
+
 				Vector2 vPosition = pTransform->getPosition();
-
-
 				pTransform->setPosition(vPosition + (vVelocity * fDeltaTime));
-				pPhysics->setVelocity(vVelocity);
 			}
 		}
 	}

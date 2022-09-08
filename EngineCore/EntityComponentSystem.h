@@ -5,17 +5,21 @@
 #include "Render.h"
 #include "ShootAction.h"
 #include "ControllerWidget.h"
-#include "UserController.h"
 #include "MouseInteraction.h"
 #include "Actor.h"
 #include "Collider.h"
 #include "CollisionResponse.h"
 #include "UIState.h"
 
-#include "Behavior.h"
 
 #include "Damage.h"
 #include "Health.h"
+
+#include "UserController.h"
+
+//	behavior tree?
+#include "Behavior.h"
+//	#include "AIController.h"
 
 
 

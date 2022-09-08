@@ -60,7 +60,7 @@ protected:
 	{
 		Render2D renderer(this);
 		EntityRenderSystem ecsRenderer;
-		ecsRenderer.render(pBaseNode, &renderer, Vector3(0, 0, 5), Vector2(0, 0), Vector2(getWidth(), getHeight()));
+		ecsRenderer.render(pBaseNode, &renderer, Vector2(0, 0), Vector2(getWidth(), getHeight()));
 		
 
 		set("Mouse: " + vCurrentMousePosition.toString(), getWidth() - 20, 2, FG_WHITE);

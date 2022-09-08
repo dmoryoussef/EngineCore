@@ -270,6 +270,9 @@
     <ClInclude Include="LivePolyEditor.h">
       <Filter>Source Files\StateManager\States</Filter>
     </ClInclude>
+    <ClInclude Include="Vector2Demo.h">
+      <Filter>Source Files\StateManager\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

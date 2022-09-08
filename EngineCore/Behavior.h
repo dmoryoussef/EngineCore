@@ -7,10 +7,10 @@ private:
 
 	void onCommandEvent(CommandEvent* pEvent)
 	{
-		if (ActionCommand* pCommand = pEvent->getCommand()->get<ActionCommand>())
-		{
-			vTarget = pCommand->getTarget();
-		}
+		//if (ActionCommand* pCommand = pEvent->getCommand()->get<ActionCommand>())
+		//{
+		//	vTarget = pCommand->getTarget();
+		//}
 
 	}
 

@@ -7,11 +7,12 @@
 #include "BezierDemo.h"
 #include "RogueLikeDemo.h"
 #include "LivePolyEditor.h"
+#include "Vector2Demo.h"
 
 void main()
 {
 	Engine *pEngine = new Engine();
-	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new LivePolyEditor());
+	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new Vector2Demo());
 	pEngine->run();
 	delete pEngine;
 }

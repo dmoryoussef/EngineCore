@@ -161,6 +161,24 @@ public:
 		m_pParent->addChild(pSibling);
 	}
 
+	template <typename Node> vector<Node*> getChildren()
+	{
+
+		vector<Node*> all;
+		for (BaseNode* pCurrent = m_pStart; pCurrent != NULL; pCurrent = pCurrent->getNext())
+		{
+			if (typeid(*pCurrent) == typeid(Node))
+				all.push_back(static_cast<Node*>(pCurrent));
+			else
+				while (isIterating())
+				{
+					vector<Node*> children = getCurrent()->getChildren<Node>();
+					all.insert(all.end(), children.begin(), children.end());
+				}
+		}
+		return all;
+	}
+
 	template <typename Node> Node* getChild()
 	{
 		for (BaseNode* pCurrent = m_pStart; pCurrent != NULL; pCurrent = pCurrent->getNext())

@@ -4,32 +4,31 @@ public:
 	EntityRenderSystem() :
 		BaseNode() {}
 
-	void render(BaseNode *pEntities, Render2D *pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
+	void render(BaseNode* pEntities, Render2D* pRenderer, Vector2 vWorldMin, Vector2 vWorldMax)
 	{
 		while (pEntities->isIterating())
 		{
 			Transform2D* pTransform = pEntities->getCurrent()->getChild<Transform2D>();
 			Render* pRender = pEntities->getCurrent()->getChild<Render>();
-			
+
 
 			if (pTransform && pRender)
 			{
 				Vector2 vPosition = pTransform->getPosition();
 				Vector2 vScale = pTransform->getScale();
 				Vector2 vRotation = pTransform->getRotation();
-				
-				if (vPosition.X > vWorldMin.X && 
-					vPosition.X < vWorldMax.X && 
-					vPosition.Y > vWorldMin.Y && 
+
+				if (vPosition.X > vWorldMin.X &&
+					vPosition.X < vWorldMax.X &&
+					vPosition.Y > vWorldMin.Y &&
 					vPosition.Y < vWorldMax.Y)
 				{
-					float fCameraScale = vCameraPosition.Z;
 
 					Polygon2D polygon = pRender->getPolygon();
 
 					polygon.transform(vScale, vRotation.getAngle(), vPosition);
 
-					polygon.transform({ fCameraScale, fCameraScale }, 0, vCameraPosition.toVec2());
+					//polygon.transform({ fCameraScale, fCameraScale }, 0, vCameraPosition.toVec2());
 
 					Pixel color = { PIXEL_SOLID, FG_WHITE };
 
@@ -38,13 +37,13 @@ public:
 						switch (pUIState->getState())
 						{
 							case MOUSE_OVER: color = { PIXEL_SOLID, FG_LIGHTBLUE };
-								break;
-							
+										   break;
+
 							case LEFT_PRESSED: color = { PIXEL_SOLID, FG_DARKBLUE };
-								break;
+											 break;
 
 							case LEFT_RELEASED: color = { PIXEL_SOLID, FG_LIGHTBLUE };
-								break;
+											  break;
 						}
 					}
 
@@ -59,20 +58,20 @@ public:
 
 
 					// draw forward direction
-					Vector2 vTransformedPos = vPosition * fCameraScale;
-					vTransformedPos = vTransformedPos + vCameraPosition.toVec2();
-					pRenderer->DrawLine(vTransformedPos, polygon.getVerticies()[0], color);
+					pRenderer->DrawLine(vPosition, polygon.getVerticies()[0], color);
+
+					vector<string> EntityData;
+
+					if (Transform2D* pTransform = pEntities->getCurrent()->getChild<Transform2D>())
+						EntityData.push_back(pTransform->getPosition().toString());
 
 					if (Health* pHealth = pEntities->getCurrent()->getChild<Health>())
-					{
-						Vector2 vHealthPosition = vPosition + Vector2(0, 1.3);
-						vHealthPosition = vHealthPosition * fCameraScale;
-						vHealthPosition = vHealthPosition + vCameraPosition.toVec2();
-						pRenderer->DrawString(thingToString(pHealth->getHealth()), vHealthPosition.X, vHealthPosition.Y);
-					}
-					//// draw circle
-					//vPosition = vPosition + vCameraPosition.toVec2();
-					//pRenderer->DrawCircle(vPosition.X, vPosition.Y, 5 * fCameraScale, color);
+						EntityData.push_back(thingToString(pHealth->getHealth()));
+
+					Vector2 pos(1.5, -0.5);
+					pos = pos + vPosition;
+					pRenderer->DrawString(EntityData, pos.X, pos.Y);
+
 				}
 			}
 
