@@ -147,7 +147,7 @@
     <ClInclude Include="BuildingMap.h" />
     <ClInclude Include="BuildingTest.h" />
     <ClInclude Include="BuildingTile.h" />
-    <ClInclude Include="Collider.h" />
+    <ClInclude Include="Collider2D.h" />
     <ClInclude Include="CollisionDetectionSystem.h" />
     <ClInclude Include="CollisionResponse.h" />
     <ClInclude Include="CommandSystem.h" />

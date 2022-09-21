@@ -20,14 +20,12 @@ private:
 						Vector2 rotation = transform->getRotation();
 						Vector2 forward = transform->getForward();
 						Vector2 position = transform->getPosition() + (forward * 1.1);
-
-						// move to entity factory??
 						//	spawn entity event
 						BaseNode* pEntity = new BaseNode("Projectile");
 						pEntity->addChild(new Render(2));
 						pEntity->addChild(new Transform2D(position, rotation, { 0.1, 0.1 }));
 						pEntity->addChild(new Velocity(forward * 0.05));
-						pEntity->addChild(new Collider());
+						pEntity->addChild(new Collider2D());
 						pEntity->addChild(new OutOfBoundsCollision());
 						pEntity->addChild(new Damage(25));
 						m_pEntityList->add(pEntity);
@@ -87,13 +85,15 @@ public:
 	{
 		string s = "PLAYER ";
 		s = s.append(thingToString<int>(playerId + 1));
+		Polygon2D shape; 
+		shape.createPoly(3);
 		BaseNode* pEntity = new BaseNode(s);
-		pEntity->addChild(new Render(3));
+		pEntity->addChild(new Render(shape));
 		pEntity->addChild(new Transform2D({ float(random(1, 10)), float(random(1, 10))}, {0, 0}, {1, 1}));
 		pEntity->addChild(new Velocity());
 		pEntity->addChild(new UserController(playerId));
 		pEntity->addChild(new ShootAction(100000, 200.0));
-		pEntity->addChild(new Collider());
+		pEntity->addChild(new Collider2D(shape));
 		pEntity->addChild(new UIState()); 
 		pEntity->addChild(new Health(100));
 		pEntity->addChild(new Accelerate(10.0));

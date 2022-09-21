@@ -204,7 +204,7 @@
     <ClInclude Include="Actor.h">
       <Filter>Source Files\EntityComponentSystem\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Collider.h">
+    <ClInclude Include="Collider2D.h">
       <Filter>Source Files\EntityComponentSystem\Components</Filter>
     </ClInclude>
     <ClInclude Include="ListExplorerWindow.h">

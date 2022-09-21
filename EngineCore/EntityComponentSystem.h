@@ -7,7 +7,7 @@
 #include "ControllerWidget.h"
 #include "MouseInteraction.h"
 #include "Actor.h"
-#include "Collider.h"
+#include "Collider2D.h"
 #include "CollisionResponse.h"
 #include "UIState.h"
 

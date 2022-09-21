@@ -3,6 +3,44 @@ class CollisionDetectionSystem : public BaseNode, EventListener
 private:
 	BaseNode* m_pEntityList;
 
+
+	float seperatingAxisCollisionVectorsOverlap(vector<Vector2> polyA, vector<Vector2> polyB)
+	{
+		float overlap = INFINITY;
+
+		for (int a = 0; a < polyA.size(); a++)
+		{
+			int b = (a + 1) % polyA.size();
+
+			// edge normal
+			Vector2 axisProj = getNormal(polyA[a], polyA[b]).normalize();
+
+			// Work out min and max 1D points for r1
+			float min_r1 = INFINITY;
+			float max_r1 = -INFINITY;
+			for (int p = 0; p < polyA.size(); p++)
+			{
+				float dp = dotProduct(polyA[p], axisProj);
+				min_r1 = min(min_r1, dp);
+				max_r1 = max(max_r1, dp);
+			}
+
+			// Work out min and max 1D points for r2
+			float min_r2 = INFINITY;
+			float max_r2 = -INFINITY;
+			for (int p = 0; p < polyB.size(); p++)
+			{
+				float dp = dotProduct(polyB[p], axisProj);
+				min_r2 = min(min_r2, dp);
+				max_r2 = max(max_r2, dp);
+			}
+
+			overlap = min(min(max_r1, max_r2) - max(min_r1, min_r2), overlap);
+		}
+			
+		return overlap;
+	}
+
 	bool isSeperatingAxisCollisionVectors(vector<Vector2> polyA, vector<Vector2> polyB)
 	{
 		for (int a = 0; a < polyA.size(); a++)
@@ -23,7 +61,8 @@ private:
 			}
 
 			// Work out min and max 1D points for r2
-			float min_r2 = INFINITY, max_r2 = -INFINITY;
+			float min_r2 = INFINITY;
+			float max_r2 = -INFINITY;
 			for (int p = 0; p < polyB.size(); p++)
 			{
 				float dp = dotProduct(polyB[p], axisProj);
@@ -34,11 +73,13 @@ private:
 			if (!(max_r2 >= min_r1 && max_r1 >= min_r2))
 				return false;
 		}
+
+		return true;
 	}
+
 
 	bool isSeperatingAxisCollision(Polygon2D A, Polygon2D B)
 	{
-
 		vector<Vector2> polyA = A.getVerticies();
 		vector<Vector2> polyB = B.getVerticies();
 
@@ -47,8 +88,6 @@ private:
 
 		if (!isSeperatingAxisCollisionVectors(polyB, polyA))
 			return false;
-
-
 
 		return true;
 	}
@@ -62,6 +101,7 @@ private:
 			{
 				Vector2 vMousePosition = pEvent->get<MouseWorldEvent>()->getWorldPosition();
 				MouseState mouseState = pEvent->get<MouseWorldEvent>()->getState();
+
 				vector<Vector2> mousePosition;
 				mousePosition.push_back(vMousePosition);
 
@@ -69,7 +109,7 @@ private:
 				{
 					BaseNode* pEntityA = m_pEntityList->getCurrent();
 					if (UIState *pUIState = pEntityA->getChild<UIState>())
-						if (Collider* pColliderA = pEntityA->getChild<Collider>())
+						if (Collider2D* pColliderA = pEntityA->getChild<Collider2D>())
 							if (Render* pRenderA = pEntityA->getChild<Render>())
 								if (Transform2D* pTransformA = pEntityA->getChild<Transform2D>())
 								{
@@ -103,7 +143,7 @@ public:
 	{
 		while (m_pEntityList->isIterating())
 		{
-			if (Collider* pCollider = m_pEntityList->getCurrent()->getChild<Collider>())
+			if (Collider2D* pCollider = m_pEntityList->getCurrent()->getChild<Collider2D>())
 			{
 				pCollider->setColliding(false);
 			}
@@ -119,7 +159,7 @@ public:
 		while (m_pEntityList->isIterating())
 		{
 			BaseNode* pEntityA = m_pEntityList->getCurrent();
-			if (Collider *pColliderA = pEntityA->getChild<Collider>())
+			if (Collider2D *pColliderA = pEntityA->getChild<Collider2D>())
 				if (Render* pRenderA = pEntityA->getChild<Render>())
 					if (Transform2D* pTransformA = pEntityA->getChild<Transform2D>())
 					{
@@ -141,7 +181,7 @@ public:
 						BaseNode* pEntityB = pEntityA->getNext();
 						while (pEntityB)
 						{
-							if (Collider* pColliderB = pEntityB->getChild<Collider>())
+							if (Collider2D* pColliderB = pEntityB->getChild<Collider2D>())
 								if (Render* pRenderB = pEntityB->getChild<Render>())
 									if (Transform2D* pTransformB = pEntityB->getChild<Transform2D>())
 									{

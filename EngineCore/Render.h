@@ -10,6 +10,10 @@ public:
 		setPoly(sides);
 	};
 
+	Render(Polygon2D shape) :
+		polygon(shape),
+		_EntityComponent("Render") {};
+
 	Polygon2D getPolygon() { return polygon; }
 
 	void setPoly(int sides)

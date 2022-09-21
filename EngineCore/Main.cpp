@@ -12,7 +12,7 @@
 void main()
 {
 	Engine *pEngine = new Engine();
-	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new Vector2Demo());
+	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new TestState());
 	pEngine->run();
 	delete pEngine;
 }

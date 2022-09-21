@@ -48,7 +48,7 @@ public:
 					}
 
 					//	override with entity collision color
-					if (Collider* pCollider = pEntities->getCurrent()->getChild<Collider>())
+					if (Collider2D* pCollider = pEntities->getCurrent()->getChild<Collider2D>())
 						if (pCollider->isColliding())
 							color = { PIXEL_SOLID, FG_DARKRED };
 
