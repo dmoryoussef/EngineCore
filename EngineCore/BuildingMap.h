@@ -282,6 +282,11 @@ private:
 	vector<Building*> Buildings;
 	Building* pSelected;
 
+
+	Vector2 rayStart;
+	Vector2 rayEnd;
+	Vector2 vIntersection;
+
 	bool isOverlapping(Vector2 vMin, Vector2 vMax)
 	{
 		for (auto b : Buildings)
@@ -444,10 +449,22 @@ private:
 		}
 	}
 
-	void onMouseWorldEvent(_Event* pEvent) 
+	void onMouseWorldEvent(MouseWorldEvent* pEvent) 
 	{
-		
+		rayEnd = pEvent->getWorldPosition();
+		if (pEvent->getState().bRightButtonDown)
+		{
+			vIntersection = doRayCast(rayStart, rayEnd);
+		}
 
+		if (pEvent->getState().bLeftButtonDown)
+		{
+			Vector2 pos = pEvent->getWorldPosition();
+			if (BuildingTile* pTile = getWorldTile(pos.X, pos.Y))
+			{
+				pTile->setValue(1.0);
+			}
+		}
 	}
 
 	bool isInList(BuildingTile* tile, vector<BuildingTile*> list)
@@ -529,7 +546,7 @@ private:
 		{
 			case GUI_EVENT:				onGUIEvent(pEvent);
 				break;
-			case MOUSEWORLD_EVENT:		onMouseWorldEvent(pEvent);
+			case MOUSEWORLD_EVENT:		onMouseWorldEvent(pEvent->get<MouseWorldEvent>());
 				break;
 			case SELECTIONSQUARE_EVENT: onSelectionSquareEvent(pEvent);
 				break;
@@ -547,6 +564,9 @@ public:
 	BuildingMap(float width = 100, float height = 100) :
 		nCurrentBuildMode(1),
 		pSelected(NULL),
+		rayStart(15, 15),
+		rayEnd(0, 0),
+		vIntersection(0, 0),
 		_TileMap({ width, height }, "BUILDING_MAP") 
 	{
 		setPosition(5, 5);
@@ -642,6 +662,9 @@ public:
 		}
 		pRenderer->DrawNum<int>(Buildings.size(), 2, pRenderer->getSize().Y - 4, FG_WHITE);
 
+		pRenderer->DrawLine(rayStart, rayEnd, { PIXEL_SOLID, FG_DARKRED });
+		pRenderer->DrawCircle(rayStart.X, rayStart.Y, 1, { PIXEL_SOLID, FG_LIGHTRED });
+		pRenderer->DrawCircle(vIntersection.X, vIntersection.Y, 1, { PIXEL_SOLID, FG_YELLOW });
 	}
 
 };

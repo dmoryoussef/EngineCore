@@ -15,14 +15,14 @@ private:
 			case MOUSEWORLD_EVENT:
 			{
 				MouseWorldEvent* pMouseEvent = pEvent->get<MouseWorldEvent>();
-
+				m_bReleased = !pMouseEvent->getState().bLeftButtonDown;
 				vStop = pMouseEvent->getWorldPosition();
 
 				if (!m_bDrawQuad && m_bDrawLine)
-					addEvent(new SelectionLineEvent(vStart, vStop, !pMouseEvent->getState().bLeftButtonDown));
+					addEvent(new SelectionLineEvent(vStart, vStop, m_bReleased));
 
 				if (m_bDrawQuad)
-					addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, !pMouseEvent->getState().bLeftButtonDown));
+					addEvent(new SelectionSquareEvent(Min(), Max(), vStart, vStop, m_bReleased));
 
 				break;
 			}
@@ -57,7 +57,7 @@ private:
 
 public:
 	SelectionSquare(Vector2 start, bool drawLine = true, bool drawQuad = true) :
-		m_bReleased(true),
+		m_bReleased(false),
 		vStart(start),
 		vStop(start),
 		m_bDrawQuad(drawQuad),

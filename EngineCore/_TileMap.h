@@ -17,6 +17,7 @@ protected:
 	int m_nTotalGroups;
 
 	TileType* m_pMouseOverTile;
+	bool m_bMouseOver;
 
 	void setBoarders()
 	{
@@ -92,6 +93,7 @@ protected:
 				if (WorldPosition.Y >= Position.Y && WorldPosition.Y < Size.Y + Position.Y && 
 					WorldPosition.X >= Position.X && WorldPosition.X < Size.X + Position.X)
 				{
+					m_bMouseOver = true;
 					if (TileType* pTile = getWorldTile(WorldPosition.X, WorldPosition.Y))
 					{
 						if (m_pMouseOverTile != pTile)
@@ -114,6 +116,7 @@ protected:
 				}
 				else
 				{
+					m_bMouseOver = false;
 					if (m_pMouseOverTile != NULL)
 					{
 						//	mouse no longer over tilemap at all
@@ -127,7 +130,6 @@ protected:
 			break;
 		}
 	}
-
 
 	void createBoarderMap()
 	{
@@ -154,7 +156,6 @@ protected:
 		for (int nY = vTileMin.Y; nY < vTileMax.Y; nY++)
 			for (int nX = vTileMin.X; nX < vTileMax.X; nX++)
 			{
-				float fScaledTileSize = fTileSize * vCameraPosition.Z;
 
 				Vector2 Min = Vector2(nX, nY) + Position;
 				Vector2 Max = Min + Vector2(fTileSize, fTileSize);
@@ -185,6 +186,16 @@ protected:
 		}
 
 		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 3, FG_WHITE);
+
+		if (m_bMouseOver)
+		{
+			pRenderer->DrawQuad(Position.X, Position.Y, (Position + Size).X, (Position + Size).Y, {PIXEL_SOLID, FG_LIGHTBLUE});
+			//pRenderer->DrawLine(Position, { Position.X + Size.X, Position.Y }, { PIXEL_SOLID, FG_LIGHTBLUE });
+			//pRenderer->DrawLine(Position, { Position.X, Position.Y + Size.Y }, { PIXEL_SOLID, FG_LIGHTBLUE });
+			//pRenderer->DrawLine({ Position.X, Position.Y + Size.Y }, Position + Size, { PIXEL_SOLID, FG_LIGHTBLUE });
+			//pRenderer->DrawLine({ Position.X + Size.X, Position.Y }, Position + Size, { PIXEL_SOLID, FG_LIGHTBLUE });
+		}
+
 	}
 
 public:
@@ -194,6 +205,7 @@ public:
 		Size(size),
 		Position({ 0, 0 }),
 		m_nTotalGroups(0),
+		m_bMouseOver(false),
 		BaseNode(strName)
 	{
 		registerListener(MOUSEWORLD_EVENT);
@@ -203,6 +215,70 @@ public:
 	~_TileMap()
 	{
 		delete m_pTileMap;
+	}
+
+	Vector2 doRayCast(Vector2 start, Vector2 end)
+	{
+		https://www.youtube.com/watch?v=NbSee-XM7WA
+		Vector2 vRayDir = (end - start).normalize();
+		Vector2 vRayStepSize = { sqrt(1 + (vRayDir.Y / vRayDir.X) * (vRayDir.Y / vRayDir.X)), sqrt(1 + (vRayDir.X / vRayDir.Y) * (vRayDir.X / vRayDir.Y)) };
+
+		int startX = (int)start.X;
+		int startY = (int)start.Y;
+		Vector2 vTileTestPos(startX, startY);
+
+		Vector2 vRayLength1D;
+		Vector2 vStep;
+
+		if (vRayDir.X < 0)
+		{
+			vStep.X = -1;
+			vRayLength1D.X = (start.X - vTileTestPos.X) * vRayStepSize.X;
+		}
+		else
+		{
+			vStep.X = 1;
+			vRayLength1D.X = ((vTileTestPos.X + 1) - start.X) * vRayStepSize.X;
+		}
+
+		if (vRayDir.Y < 0)
+		{
+			vStep.Y = -1;
+			vRayLength1D.Y = (start.Y - vTileTestPos.Y) * vRayStepSize.Y;
+		}
+		else
+		{
+			vStep.Y = 1;
+			vRayLength1D.Y = ((vTileTestPos.Y + 1) - start.Y) * vRayStepSize.Y;
+		}
+
+		float fMaxDistance = distance(start, end);
+		float fDistance = 0.0f;
+		while (fDistance < fMaxDistance)
+		{
+			if (vRayLength1D.X < vRayLength1D.Y)
+			{
+				vTileTestPos.X += vStep.X;
+				fDistance = vRayLength1D.X;
+				vRayLength1D.X += vRayStepSize.X;
+			}
+			else
+			{
+				vTileTestPos.Y += vStep.Y;
+				fDistance = vRayLength1D.Y;
+				vRayLength1D.Y += vRayStepSize.Y;
+			}
+
+			if (TileType* pTile = getWorldTile(vTileTestPos.X, vTileTestPos.Y))
+			{
+				if (pTile->isBlocking())
+				{
+					return start + vRayDir * fDistance;
+				}
+			}
+		}
+
+		return end;
 	}
 
 	void setPosition(int x, int y)

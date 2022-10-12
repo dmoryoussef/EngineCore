@@ -7,6 +7,8 @@ private:
 	float fMaxZoom;
 	bool m_bCameraPanning;
 
+	bool m_bSelectionSquareKeyTriggerPressed;
+
 	void handleWorldPosition(MouseState mouseState)
 	{
 		Vector3 vCamera = m_pCamera->getChild<Transform3D>()->getPosition();
@@ -94,51 +96,62 @@ private:
 
 	SelectionSquare* pSelectionSquare = NULL;
 
+	void onMouseWorldEvent(MouseWorldEvent* pEvent)
+	{
+		if (pEvent->getState().bLeftButtonDown && m_bSelectionSquareKeyTriggerPressed)
+		{
+			if (!pSelectionSquare)
+			{
+				pSelectionSquare = new SelectionSquare(pEvent->getWorldPosition());
+			}
+		}
+				
+		if (pSelectionSquare)
+		{
+			if (pSelectionSquare->isReleased())
+			{
+				delete pSelectionSquare;
+				pSelectionSquare = NULL;
+			}
+		}	
+	}
+
+	void onMouseEvent(MouseEvent* pEvent)
+	{
+		//	UI related events will need this
+		//	drag: area, event listener
+		//	close: area, event listener, 'x'
+		//	resize window, etc
+		MouseState mouseState = pEvent->getState();
+		vCurrentMousePosition = mouseState.Position;
+
+		if (m_bMouseOver)
+		{
+			handleWorldPosition(mouseState);
+		}
+		handleCameraMove(mouseState);
+	}
+
+	void onKeyboardEvent(KeyboardEvent* pEvent)
+	{
+		if (pEvent->getKey() == 's')
+		{
+			m_bSelectionSquareKeyTriggerPressed = pEvent->isKeyDown();
+		}
+	}
+
 	void onEvent(_Event* pEvent)
 	{
 		_UIComponent::onEvent(pEvent);
 
 		switch (pEvent->m_eType)
 		{
-			case MOUSEWORLD_EVENT:
-			{
-				if (pEvent->get<MouseWorldEvent>()->getState().bLeftButtonDown)
-				{
-					if (!pSelectionSquare)
-					{
-						//	pSelectionSquare = new SelectionSquare(pEvent->get<MouseWorldEvent>()->getWorldPosition());
-					}
-				}
-				
-				if (pSelectionSquare)
-				{
-					if (!pSelectionSquare->isReleased())
-					{
-						delete pSelectionSquare;
-						pSelectionSquare = NULL;
-					}
-				}
-				
+			case MOUSEWORLD_EVENT: onMouseWorldEvent(pEvent->get<MouseWorldEvent>());
 				break;
-			}
-
-			case CONSOLE_MOUSE_EVENT:
-			{
-				// convert to component??
-				//	drag: area, event listener
-				//	close: area, event listener, 'x'
-				//	resize window, etc
-				MouseState mouseState = pEvent->get<MouseEvent>()->getState();
-				vCurrentMousePosition = mouseState.Position;
-
-				if (m_bMouseOver)
-				{
-					handleWorldPosition(mouseState);
-				}
-				handleCameraMove(mouseState);
-
+			case CONSOLE_MOUSE_EVENT: onMouseEvent(pEvent->get<MouseEvent>());
 				break;
-			}
+			case KEYBOARD_EVENT: onKeyboardEvent(pEvent->get<KeyboardEvent>());
+				break;
 		}
 	}
 
@@ -174,6 +187,7 @@ public:
 		fMinZoom(0.1),
 		fMaxZoom(15.0),
 	    m_bCameraPanning(false),
+		m_bSelectionSquareKeyTriggerPressed(false),
 		WorldViewWindow(nWidth, nHeight, nPosX, nPosY)
 	{
 		m_fScreenScale = 5;
@@ -181,6 +195,7 @@ public:
 		m_pCamera->add(new Transform3D({ 0, 0, m_fScreenScale }, { 0, 0, 0 }, { 0, 0, 0 }));
 
 		registerListener(MOUSEWORLD_EVENT);
+		registerListener(KEYBOARD_EVENT);
 	}
 
 	BaseNode *getCamera()

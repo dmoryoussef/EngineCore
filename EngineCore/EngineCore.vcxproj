@@ -190,6 +190,7 @@
     <ClInclude Include="ShootAction.h" />
     <ClInclude Include="SingleSelectButtonComponent.h" />
     <ClInclude Include="TestState.h" />
+    <ClInclude Include="TileLightingDemo.h" />
     <ClInclude Include="TileMapSystem.h" />
     <ClInclude Include="Transform2D.h" />
     <ClInclude Include="Transform3D.h" />

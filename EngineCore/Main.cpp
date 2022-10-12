@@ -8,11 +8,12 @@
 #include "RogueLikeDemo.h"
 #include "LivePolyEditor.h"
 #include "Vector2Demo.h"
+#include "TileLightingDemo.h"
 
 void main()
 {
 	Engine *pEngine = new Engine();
-	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new TestState());
+	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new TileLightingDemo());
 	pEngine->run();
 	delete pEngine;
 }

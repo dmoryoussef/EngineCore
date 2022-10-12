@@ -555,7 +555,7 @@ public:
 		}
 	}
 
-	void DrawQuad(float minX, float minY, float maxX, float maxY, Pixel pixel)
+	void DrawQuad(float minX, float minY, float maxX, float maxY, Pixel pixel, bool outside = false)
 	{
 		//	scale
 		float fMinX = vCameraTransform.X + minX * vCameraTransform.Z;
@@ -574,14 +574,26 @@ public:
 			fMaxY = nHeight;
 
 		//	inner?
-		fMaxX--;
-		fMaxY--;
+		//fMaxX--;
+		//fMaxY--;
 
 		//	or outer?
-		fMinX--;
-		fMinY--;
-		fMaxX++;
-		fMaxY++;
+		//fMinX--;
+		//fMinY--;
+		//fMaxX++;
+		//fMaxY++;
+
+		if (outside)
+		{
+			fMinX--;
+			fMinY--;
+
+		}
+		else
+		{
+			fMaxX--;
+			fMaxY--;
+		}
 
 		// render
 		for (int nY = fMinY; nY <= (int)fMaxY; nY++)
@@ -660,14 +672,19 @@ public:
 
 
 	void DrawCircle(float x, float y, int radius, Pixel p, short mask = 0xFF)
-	{ // Thanks to IanM-Matrix1 #PR121
+	{ 
+		// Thanks to IanM-Matrix1 #PR121
 
+		//	scale up to camera
 		x = vCameraTransform.X + x * vCameraTransform.Z;
 		y = vCameraTransform.Y + y * vCameraTransform.Z;
+		radius = radius * vCameraTransform.Z;
 
+		//	verify valid radius
 		if (radius < 0 || x < -radius || y < -radius || x - nWidth > radius || y - nHeight > radius)
 			return;
 
+		//	draw
 		if (radius > 0)
 		{
 			int x0 = 0;

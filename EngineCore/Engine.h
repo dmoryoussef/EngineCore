@@ -33,6 +33,17 @@ int random(int min, int max)
 	return rand() % ((max + 1) - min);
 }
 
+float clamp(float value, float min, float max)
+{
+	if (value > max)
+		value = max;
+	if (value < min)
+		value = min;
+
+	return value;  
+}
+
+
 #include "Vector2.h"
 #include "Vector3.h"
 

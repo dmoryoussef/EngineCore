@@ -17,6 +17,11 @@ public:
 
 	bool isMouseOver() { return m_bMouseOver; }
 	void setMouseOver(bool mouseOver) { m_bMouseOver = mouseOver; }
+
+	virtual bool rayTest()
+	{
+		return false;
+	}
 };
 
 template <typename TileType> class _Tile2D :
@@ -29,6 +34,8 @@ protected:
 	_Tile2D* m_pEast;
 	_Tile2D* m_pWest;
 
+	bool m_bBlocking;
+	
 	float m_fValue;
 	float m_fMin;
 	float m_fMax;
@@ -73,6 +80,7 @@ public:
 		BaseTile(sType) {};
 
 
+
 	void initTile(Vector2 Position, _Tile2D* pNorth, _Tile2D* pSouth, _Tile2D* pEast, _Tile2D* pWest)
 	{
 		m_Position = Position;
@@ -80,6 +88,8 @@ public:
 		m_pSouth = pSouth;
 		m_pEast = pEast;
 		m_pWest = pWest;
+
+		m_bBlocking = false;
 
 		sEdges.reset();
 	}
@@ -123,6 +133,16 @@ public:
 	TileType* getSouth() { return static_cast<TileType*>(m_pSouth); }
 	TileType* getEast() { return static_cast<TileType*>(m_pEast); }
 	TileType* getWest() { return static_cast<TileType*>(m_pWest); }
+
+	void setBlocking(bool blocking)
+	{
+		m_bBlocking = blocking;
+	}
+
+	bool isBlocking()
+	{
+		return m_bBlocking;
+	}
 
 };
 
