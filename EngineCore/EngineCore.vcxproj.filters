@@ -16,9 +16,6 @@
     <Filter Include="Source Files\EngineCore">
       <UniqueIdentifier>{0bc96c9f-b5ac-4705-97b8-74b3416e797b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\BaseObject">
-      <UniqueIdentifier>{0655b3d8-8cd4-4bc0-aeaa-9fb1507684d4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\EventSystem">
       <UniqueIdentifier>{0009e393-ac96-44af-9daa-4e1ef26cd9b4}</UniqueIdentifier>
     </Filter>
@@ -64,16 +61,25 @@
     <Filter Include="Source Files\GUI\Windows">
       <UniqueIdentifier>{d6f962ac-a0a9-4e46-a377-859140b1c4e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\EntityComponentSystem\BehaviorTree">
+      <UniqueIdentifier>{1e81a3ea-d39e-4e43-9146-95c07ced9eb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Data">
+      <UniqueIdentifier>{8fae1382-b9d8-43a2-9b31-717e6c4c4b7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Data\BaseObject">
+      <UniqueIdentifier>{0655b3d8-8cd4-4bc0-aeaa-9fb1507684d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
       <Filter>Source Files\EngineCore</Filter>
     </ClInclude>
     <ClInclude Include="NodeCore.h">
-      <Filter>Source Files\BaseObject</Filter>
+      <Filter>Source Files\Data\BaseObject</Filter>
     </ClInclude>
     <ClInclude Include="BaseNode.h">
-      <Filter>Source Files\BaseObject</Filter>
+      <Filter>Source Files\Data\BaseObject</Filter>
     </ClInclude>
     <ClInclude Include="EventListener.h">
       <Filter>Source Files\EventSystem</Filter>
@@ -278,6 +284,24 @@
     </ClInclude>
     <ClInclude Include="WorldViewWindow.h">
       <Filter>Source Files\GUI\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="LightTile.h">
+      <Filter>Source Files\TileMapSystem\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="LightMap.h">
+      <Filter>Source Files\TileMapSystem\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviorNode.h">
+      <Filter>Source Files\EntityComponentSystem\BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviorTreeDemo.h">
+      <Filter>Source Files\StateManager\States</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTree.h">
+      <Filter>Source Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTreeDemo.h">
+      <Filter>Source Files\StateManager\States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

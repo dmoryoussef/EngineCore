@@ -43,7 +43,6 @@ float clamp(float value, float min, float max)
 	return value;  
 }
 
-
 #include "Vector2.h"
 #include "Vector3.h"
 
@@ -62,6 +61,7 @@ float clamp(float value, float min, float max)
 
 #include "Render2D.h"
 
+#include "DataTree.h"
 
 #include "NodeCore.h"
 #include "BaseNode.h"

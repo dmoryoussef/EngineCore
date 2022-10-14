@@ -142,6 +142,7 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="BaseNode.h" />
     <ClInclude Include="Behavior.h" />
+    <ClInclude Include="BehaviorTreeDemo.h" />
     <ClInclude Include="Bezier.h" />
     <ClInclude Include="BezierDemo.h" />
     <ClInclude Include="BuildingMap.h" />
@@ -153,6 +154,8 @@
     <ClInclude Include="CommandSystem.h" />
     <ClInclude Include="ControllerWidget.h" />
     <ClInclude Include="BezierCurveTestWindow.h" />
+    <ClInclude Include="DataTree.h" />
+    <ClInclude Include="DataTreeDemo.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Damage.h" />
     <ClInclude Include="EntityComponentSystem.h" />
@@ -162,8 +165,11 @@
     <ClInclude Include="2DMatrix.h" />
     <ClInclude Include="ControllerInput.h" />
     <ClInclude Include="GUI.h" />
+    <ClInclude Include="BehaviorNode.h" />
     <ClInclude Include="Health.h" />
     <ClInclude Include="IsoTileMapTest.h" />
+    <ClInclude Include="LightMap.h" />
+    <ClInclude Include="LightTile.h" />
     <ClInclude Include="ListExplorerWindow.h" />
     <ClInclude Include="LivePolyEditor.h" />
     <ClInclude Include="MouseInteraction.h" />

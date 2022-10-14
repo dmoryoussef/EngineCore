@@ -9,11 +9,13 @@
 #include "LivePolyEditor.h"
 #include "Vector2Demo.h"
 #include "TileLightingDemo.h"
+#include "BehaviorTreeDemo.h"
+#include "DataTreeDemo.h"
 
 void main()
 {
 	Engine *pEngine = new Engine();
-	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new TileLightingDemo());
+	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new DataTreeDemo());
 	pEngine->run();
 	delete pEngine;
 }

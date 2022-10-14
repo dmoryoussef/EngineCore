@@ -44,7 +44,6 @@ protected:
 	int nHeight;
 	int nWidth;
 
-	Vector3 vCameraTransform;
 
 public:
 	Render2D(OutputBuffer *pBuffer) :
@@ -59,6 +58,7 @@ public:
 		nHeight(pBuffer->getHeight()),
 		nWidth(pBuffer->getWidth()) {};
 
+	Vector3 vCameraTransform;
 	Vector2 getSize()
 	{
 		return Vector2(nWidth, nHeight);

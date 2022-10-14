@@ -189,11 +189,11 @@ protected:
 
 		if (m_bMouseOver)
 		{
-			pRenderer->DrawQuad(Position.X, Position.Y, (Position + Size).X, (Position + Size).Y, {PIXEL_SOLID, FG_LIGHTBLUE});
-			//pRenderer->DrawLine(Position, { Position.X + Size.X, Position.Y }, { PIXEL_SOLID, FG_LIGHTBLUE });
-			//pRenderer->DrawLine(Position, { Position.X, Position.Y + Size.Y }, { PIXEL_SOLID, FG_LIGHTBLUE });
-			//pRenderer->DrawLine({ Position.X, Position.Y + Size.Y }, Position + Size, { PIXEL_SOLID, FG_LIGHTBLUE });
-			//pRenderer->DrawLine({ Position.X + Size.X, Position.Y }, Position + Size, { PIXEL_SOLID, FG_LIGHTBLUE });
+			//pRenderer->DrawQuad(Position.X, Position.Y, (Position + Size).X, (Position + Size).Y, {PIXEL_SOLID, FG_LIGHTBLUE});
+			pRenderer->DrawLine(Position, { Position.X + Size.X, Position.Y }, { PIXEL_SOLID, FG_LIGHTBLUE });
+			pRenderer->DrawLine(Position, { Position.X, Position.Y + Size.Y }, { PIXEL_SOLID, FG_LIGHTBLUE });
+			pRenderer->DrawLine({ Position.X, Position.Y + Size.Y }, Position + Size, { PIXEL_SOLID, FG_LIGHTBLUE });
+			pRenderer->DrawLine({ Position.X + Size.X, Position.Y }, Position + Size, { PIXEL_SOLID, FG_LIGHTBLUE });
 		}
 
 	}

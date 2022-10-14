@@ -185,7 +185,7 @@ public:
 	CameraViewWindow(int nWidth, int nHeight, int nPosX, int nPosY) :
 		m_bCameraZoomable(true),
 		fMinZoom(0.1),
-		fMaxZoom(15.0),
+		fMaxZoom(25.0),
 	    m_bCameraPanning(false),
 		m_bSelectionSquareKeyTriggerPressed(false),
 		WorldViewWindow(nWidth, nHeight, nPosX, nPosY)
