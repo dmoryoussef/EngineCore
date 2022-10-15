@@ -297,6 +297,10 @@ private:
 public:
 	UserController(int id) :
 		m_nControllerID(id),
+		 bUp(false),
+		 bDown(false),
+		 bLeft(false),
+		 bRight(false),
 		_EntityComponent("USER_CONTROLLER")
 	{
 		registerListener(GAMEPAD_EVENT);

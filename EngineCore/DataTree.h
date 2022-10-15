@@ -65,15 +65,15 @@ public:
 
 	void render(Render2D* renderer, float x, float y)
 	{
-		float buffer = 1.1;
+		float buffer = 0.1;
 		Vector2 vSize(1.0, 0.5);
 		Vector2 vMin(x, y);
 		Vector2 vMax = vMin + vSize;
 
-		renderNode(renderer, vMin, vMax, vSize);
-		
 		float lineStartX = vMax.X - ((vMax - vMin).X / 2);
 		float lineStartY = vMax.Y;
+		
+		renderNode(renderer, vMin, vMax, vSize);
 
 		//	calc x pos for children
 		float childX = x; 
@@ -84,7 +84,7 @@ public:
 		if (getChildren().size() > 1)
 		{
 			int totalLeafNodes = getTotalLeafNodes(0, this);
-			leafOffset = (((float)totalLeafNodes / 2.0) - 0.5);
+			leafOffset = (((float)totalLeafNodes - 1.0) * 0.5);
 		}
 		childX = childX - leafOffset;
 
@@ -95,7 +95,8 @@ public:
 			renderer->DrawLine({ lineStartX, lineStartY }, { lineEndX, lineEndY }, { PIXEL_SOLID, FG_LIGHTBLUE });
 			
 			c->render(renderer, childX, childY);
-			childX = childX + leafOffset;
+
+			childX = childX + vSize.X + (c->getChildren().size() * vSize.X);
 		}
 	}
 };

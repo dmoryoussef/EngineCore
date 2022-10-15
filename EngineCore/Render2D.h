@@ -190,6 +190,54 @@ public:
 			offsetY++;
 		}
 	}
+
+	void DrawWrappedString(vector<string> text, float x, float y, float width)
+	{
+		width = width * vCameraTransform.Z;
+		
+		if (text.size() > width)
+		{
+			//	break up into chunks the size of width
+			vector<string> textChunks;
+			
+			int index = 0;
+			while (text.size() > index)
+			{
+				// string temp = text.substr(index, width);
+				//textChunks.push_back(temp);
+				index = index + width;
+			}
+			DrawString(textChunks, x, y);
+		}
+		else
+		{
+			DrawString(text, x, y);
+		}
+	}
+
+	void DrawWrappedString(string text, float x, float y, float width)
+	{
+		width = width * vCameraTransform.Z;
+		
+		if (text.size() > width)
+		{
+			//	break up into chunks the size of width
+			vector<string> textChunks;
+			int index = 0;
+			while (text.size() > index)
+			{
+				string temp = text.substr(index, width);
+				textChunks.push_back(temp);
+				index = index + width;
+			}
+			DrawString(textChunks, x, y);
+		}
+		else
+		{
+			DrawString(text, x, y);
+		}
+	}
+
 	void DrawLine(Vector2 start, Vector2 end, Pixel pixel)
 	{
 		Vector2 Start = vCameraTransform.toVec2() + start * vCameraTransform.Z;

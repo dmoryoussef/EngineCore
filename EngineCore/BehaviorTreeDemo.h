@@ -34,7 +34,7 @@ public:
 		return "Failure cant really happen here";
 	}
 
-	void execute()
+	void execute(float fDeltaTime)
 	{
 		if (m_bMousePressed)
 			m_nState = SUCCESS;
@@ -66,7 +66,7 @@ public:
 		registerListener(KEYBOARD_EVENT);
 	}
 
-	void execute()
+	void execute(float fDeltaTime)
 	{
 		if (m_bKeyPressed)
 			m_nState = SUCCESS;
@@ -84,41 +84,124 @@ public:
 	}
 };
 
+class MoveBehaviorNode : public LeafNode
+{
+private:
+	Vector2 vTargetLocation;
+	BaseNode* pEntity;
+
+	string description()
+	{
+		if (m_nState == RUNNING)
+			return "Moving to " + vTargetLocation.toString() + ".";
+
+		if (m_nState == SUCCESS)
+			return "Arrived at location.";
+
+		return "Target location not reachable.";	//	failure
+	}
+
+public:
+	MoveBehaviorNode(BaseNode* entity) :
+		pEntity(entity) {};
+
+	void setTarget(Vector2 target)
+	{
+		vTargetLocation = target;
+	}
+
+	void execute(float fDeltaTime)
+	{
+		//	get current location
+		if (Transform2D* pTransform = pEntity->getChild<Transform2D>())
+		{
+			//	move to target action
+			//		accellerate force?
+			//		move directly?
+
+			if (Accelerate* accel = pEntity->getChild<Accelerate>())
+			{
+				Vector2 pos = pTransform->getPosition();
+				float fDistance = distance(vTargetLocation, pos);
+				float speed = 0.0001 * fDeltaTime;
+				if (fDistance > 1.0)
+				{
+					accel->setForce((vTargetLocation - pos).normalize() * speed);
+				}
+				else
+				{
+					speed = 0;
+					accel->setForce((vTargetLocation - pos).normalize() * speed);
+
+					m_nState = SUCCESS;
+				}
+			}
+		}
+	}
+};
+
 class BehaviorTreeDemo : public GameState
 {
 private:
-	BehaviorTree bt;
+	BehaviorNode* bt;
+	Transform3D* pCameraTransform;
+
+	BaseNode* pEntity;
 
 public:
-	BehaviorTreeDemo() {};
+	BehaviorTreeDemo() :
+		bt(NULL),
+		pEntity(NULL),
+		pCameraTransform(NULL) {};
+
+	BehaviorNode* buildBehaviorTree()
+	{
+		/*BehaviorNode* nodeA = new SequenceNode();
+		nodeA->addChild(new MouseBehaviorNode());
+		nodeA->addChild(new KeyBehaviorNode());
+		nodeA->addChild(new MouseBehaviorNode());
+
+		BehaviorNode* nodeB = new SequenceNode();
+		nodeB->addChild(new MouseBehaviorNode());
+		nodeB->addChild(new KeyBehaviorNode());
+		nodeB->addChild(new MouseBehaviorNode());*/
+
+		BehaviorNode* node = new SequenceNode();
+		/*node->addChild(nodeA);
+		node->addChild(nodeB);*/
+
+		MoveBehaviorNode* move = new MoveBehaviorNode(pEntity);
+		move->setTarget({ 15, 15 });
+		node->addChild(move);
+
+		return node;
+	}
 
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI)
 	{
-		SequenceNode* sq1 = new SequenceNode("SQ1");
-		sq1->addChild(new MouseBehaviorNode());
-		sq1->addChild(new KeyBehaviorNode());
+		int height = pGUI->cast<_UIComponent>()->getHeight();
+		int width = pGUI->cast<_UIComponent>()->getWidth();
+		CameraViewWindow* pCameraWindow = new CameraViewWindow(width, height, 0, 0);
+		BaseNode* pCamera = pCameraWindow->getCamera();
+		pCameraTransform = pCamera->getChild<Transform3D>();
+		pData->add(pCamera);
+		pGUI->addAtEnd(pCameraWindow);
 
-		SequenceNode* sq2 = new SequenceNode("SQ2");
-		sq2->addChild(new KeyBehaviorNode());
-		sq2->addChild(new MouseBehaviorNode());
-
-		SequenceNode* sq3 = new SequenceNode("SQ3");
-		sq3->addChild(sq1);
-		sq3->addChild(sq2);
-
-		bt.root = sq3; 
-			
+		pEntity = pSystems->getChild<EntityFactory>()->createPlayer(0);
+		pData->add(pEntity);
+		
+		bt = buildBehaviorTree();
 	}
 
 	void update(BaseNode* pData, float fDeltaTime)
 	{
-		bt.update();
+		bt->update(fDeltaTime);
 	}
 
 	void render(OutputBuffer* pEngineBuffer)
 	{
-		Render2D render(pEngineBuffer);
+		Render2D renderer(pEngineBuffer, pCameraTransform->getPosition());
 		
-		bt.root->render(&render, 5, 1);
+		bt->render(&renderer, 25, 1);
 	}
 };

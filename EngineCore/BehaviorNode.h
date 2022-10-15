@@ -10,8 +10,6 @@ class BehaviorNode : public DataTreeNode<BehaviorNode>
 protected:
 	string name;
 	int m_nState;
-	//BehaviorNode* parent;
-	//vector<BehaviorNode*> children;
 
 public:
 	BehaviorNode(string n = "name") :
@@ -47,37 +45,38 @@ public:
 	{
 		return name + ": " + stateToString() + description();
 	}
-	virtual void run() {}
-	virtual void execute() {}
+	virtual void update(float fDeltaTime) {}
+	virtual void execute(float fDeltaTime) {}
 	virtual string description() { return "Error: function not implemented."; }
 
 	void renderNode(Render2D* renderer, Vector2 vMin, Vector2 vMax, Vector2 vSize)
 	{
-		renderer->DrawQuad(vMin.X, vMin.Y, vMax.X, vMax.Y, { PIXEL_SOLID, FG_WHITE });
+		int color = FG_WHITE;
+		switch (m_nState)
+		{
+			case RUNNING: color = FG_YELLOW;
+				break;
+			case SUCCESS: color = FG_LIGHTGREEN;
+				break;
+			case FAILURE: color = FG_LIGHTRED;
+				break;
+		}
+		renderer->DrawQuad(vMin.X, vMin.Y, vMax.X, vMax.Y, { PIXEL_SOLID, color });
 		if (renderer->vCameraTransform.Z > 15)
 		{
 			vector<string> nodeData;
 			nodeData.push_back(name);
 			nodeData.push_back(stateToString());
 			nodeData.push_back(description());
-			renderer->DrawString(nodeData, (vMin + (vSize / 8)).X, (vMin + (vSize / 5)).Y);
+			renderer->DrawString(nodeData, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y);
+			// renderer->DrawWrappedString(description(), (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y, vSize.X * 0.8);
 		}
 		else
 		{
-			renderer->DrawString(name, (vMin + (vSize / 8)).X, (vMin + (vSize / 5)).Y);
+			renderer->DrawString(name, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y);
 		}
 	}
 
-	//void render(Render2D *renderer, int x, int y)
-	//{
-	//	x = x + 2;
-	//	renderer->DrawString(toString(), x, y);
-	//	for (BehaviorNode* n : children)
-	//	{
-	//		y++;
-	//		n->render(renderer, x, y);
-	//	}
-	//}
 };
 
 class DecoratorNode : public BehaviorNode
@@ -85,9 +84,9 @@ class DecoratorNode : public BehaviorNode
 protected:
 	BehaviorNode* child;
 
-	void run()
+	void update(float fDeltaTime)
 	{
-		child->run();
+		child->update(fDeltaTime);
 	}
 	//	inverter
 	//	succeeder
@@ -112,7 +111,6 @@ public:
 		BehaviorNode(n) {};
 };
 
-
 class SequenceNode : public CompositeNode
 {
 public:
@@ -122,7 +120,7 @@ public:
 		m_nCurrentIt(0),
 		CompositeNode(n) {};
 	
-	void run()
+	void update(float fDeltaTime)
 	{
 		if (m_nState == RUNNING)
 		{
@@ -136,7 +134,7 @@ public:
 				switch (current->getState())
 				{
 					case RUNNING: 
-						current->run();
+						current->update(fDeltaTime);
 						break;
 					case FAILURE:
 						//	if child fails, this node fails also.
@@ -162,7 +160,7 @@ public:
 		
 	string description()
 	{
-		return "Handling child " + thingToString<int>(m_nCurrentIt + 1) + " of " + thingToString<int>(m_vChildren.size()) + ": ";
+		return "Handling child " + thingToString<int>(m_nCurrentIt + 1) + " of " + thingToString<int>(m_vChildren.size());
 	}
 };
 
@@ -172,11 +170,11 @@ public:
 	SelectorNode(string n = "SelectorNode") :
 		CompositeNode(n) {};
 
-	void run()
+	void update(float fDeltaTime)
 	{
 		for (BehaviorNode* n : getChildren())
 		{
-			n->run();
+			n->update(fDeltaTime);
 		}
 		//	for each node
 		//		try nodes in order
@@ -193,13 +191,13 @@ public:
 	LeafNode(string n = "Leaf") :
 		BehaviorNode(n) {};
 
-	void run()
+	void update(float fDeltaTime)
 	{
 		switch (m_nState)
 		{
 			case RUNNING:
 				//	do specific thing
-				execute();
+				execute(fDeltaTime);
 				break;
 			case FAILURE:
 				//	notify parent of failure
@@ -210,29 +208,9 @@ public:
 		}
 	}
 
-	void execute()
+	void execute(float fDeltaTime)
 	{
 		//	to be overridden 
 	}
 
-
-};
-
-class BehaviorTree
-{
-private:
-
-public:
-	BehaviorTree() {};
-
-	BehaviorNode* root;
-	void run()
-	{
-		root->run();
-	}
-
-	void update()
-	{
-		run();
-	}
 };
