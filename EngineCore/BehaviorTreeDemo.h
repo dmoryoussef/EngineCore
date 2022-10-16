@@ -202,6 +202,6 @@ public:
 	{
 		Render2D renderer(pEngineBuffer, pCameraTransform->getPosition());
 		
-		bt->render(&renderer, 25, 1);
+		bt->render(&renderer, 15, 1);
 	}
 };
