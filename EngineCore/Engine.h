@@ -11,6 +11,7 @@ using namespace std;
 #include <string.h>
 #include <map>
 #include <vector>
+#include <stack>
 #include <iostream>
 #include <fstream>
 #include <sstream>

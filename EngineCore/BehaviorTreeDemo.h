@@ -25,6 +25,9 @@ public:
 
 	string description()
 	{
+		if (m_nState == IDLE)
+			return "Idle.";
+
 		if (m_nState == RUNNING)
 			return "Waiting for left mouse button to be pressed.";
 		
@@ -34,10 +37,10 @@ public:
 		return "Failure cant really happen here";
 	}
 
-	void execute(float fDeltaTime)
+	int execute(float fDeltaTime)
 	{
 		if (m_bMousePressed)
-			m_nState = SUCCESS;
+			return SUCCESS;
 	}
 };
 
@@ -66,7 +69,7 @@ public:
 		registerListener(KEYBOARD_EVENT);
 	}
 
-	void execute(float fDeltaTime)
+	int execute(float fDeltaTime)
 	{
 		if (m_bKeyPressed)
 			m_nState = SUCCESS;
@@ -84,16 +87,18 @@ public:
 	}
 };
 
-class MoveBehaviorNode : public LeafNode
+class MoveBehaviorNode : public LeafNode, public EventListener
 {
 private:
 	Vector2 vTargetLocation;
 	BaseNode* pEntity;
 
+	vector<Vector2> vPath;
+
 	string description()
 	{
 		if (m_nState == RUNNING)
-			return "Moving to " + vTargetLocation.toString() + ".";
+			return "Moving to " + vPath[0].toString() + ".";
 
 		if (m_nState == SUCCESS)
 			return "Arrived at location.";
@@ -101,42 +106,89 @@ private:
 		return "Target location not reachable.";	//	failure
 	}
 
+	void onMouseWorldEvent(MouseWorldEvent* pEvent)
+	{
+		if (pEvent->getState().bRightButtonDown)
+			addPath(pEvent->getWorldPosition());
+	}
+
+	void onEvent(_Event* pEvent)
+	{
+		switch (pEvent->m_eType)
+		{
+			case MOUSEWORLD_EVENT: onMouseWorldEvent(pEvent->get<MouseWorldEvent>());
+				break;
+		}
+	}
+
 public:
 	MoveBehaviorNode(BaseNode* entity) :
-		pEntity(entity) {};
+		pEntity(entity) 
+	{
+		registerListener(MOUSEWORLD_EVENT);
+	};
+
+	void setPath(vector<Vector2> path)
+	{
+		vPath = path;
+	}
+
+	void addPath(Vector2 node)
+	{
+		vPath.push_back(node);
+	}
 
 	void setTarget(Vector2 target)
 	{
 		vTargetLocation = target;
 	}
 
-	void execute(float fDeltaTime)
+	int execute(float fDeltaTime)
 	{
-		//	get current location
+		if (pEntity == NULL)
+		{
+			return FAILURE;
+		}
+
 		if (Transform2D* pTransform = pEntity->getChild<Transform2D>())
 		{
-			//	move to target action
-			//		accellerate force?
-			//		move directly?
-
 			if (Accelerate* accel = pEntity->getChild<Accelerate>())
 			{
-				Vector2 pos = pTransform->getPosition();
-				float fDistance = distance(vTargetLocation, pos);
-				float speed = 0.0001 * fDeltaTime;
-				if (fDistance > 1.0)
+				if (vPath.size() > 0)
 				{
-					accel->setForce((vTargetLocation - pos).normalize() * speed);
+					Vector2 target = vPath[0];
+					Vector2 pos = pTransform->getPosition();
+
+					float fDistance = distance(target, pos);
+					float speed = 0.00001 * fDeltaTime;
+					Vector2 direction = (target - pos).normalize();
+					if (fDistance > 1.0)
+					{
+						Vector2 force = direction * speed;
+						pTransform->setRotation(direction);
+						accel->setForce(force);
+						return RUNNING;
+					}
+					else
+					{
+						vPath.erase(vPath.begin());
+						if (vPath.size() == 0)
+						{
+							Vector2 force = direction * 0;
+							pTransform->setRotation(direction);
+							accel->setForce(force);
+							return SUCCESS;
+						}
+						return RUNNING;
+					}
 				}
 				else
-				{
-					speed = 0;
-					accel->setForce((vTargetLocation - pos).normalize() * speed);
-
-					m_nState = SUCCESS;
-				}
+					return SUCCESS;
 			}
-		}
+		}	
+
+		//	no movement components (transform, accel)
+		return FAILURE;
 	}
 };
 
@@ -170,9 +222,19 @@ public:
 		/*node->addChild(nodeA);
 		node->addChild(nodeB);*/
 
-		MoveBehaviorNode* move = new MoveBehaviorNode(pEntity);
-		move->setTarget({ 15, 15 });
-		node->addChild(move);
+		node->addChild(new MouseBehaviorNode());
+		
+		MoveBehaviorNode* moveA = new MoveBehaviorNode(pEntity);
+		moveA->addPath({ 15, 15 });
+		moveA->addPath({ 25, 15 });
+		node->addChild(moveA);
+
+
+		MoveBehaviorNode* moveB = new MoveBehaviorNode(pEntity);
+		moveB->addPath({ 15, 25 });
+		moveB->addPath({ 15, 15 });
+		node->addChild(moveB);
+		node->setState(RUNNING);
 
 		return node;
 	}
@@ -202,6 +264,6 @@ public:
 	{
 		Render2D renderer(pEngineBuffer, pCameraTransform->getPosition());
 		
-		bt->render(&renderer, 15, 1);
+		bt->render(&renderer, 25, 5);
 	}
 };

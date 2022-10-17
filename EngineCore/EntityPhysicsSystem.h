@@ -27,8 +27,8 @@ public:
 				Vector2 vVelocity = pVelocity->getVelocity();
 				vVelocity = vVelocity + vTotal;
 					
-				vVelocity = vVelocity * 0.98;
-				if (vVelocity.magnitude() < 0.001)
+				vVelocity = vVelocity * 0.985;
+				if (vVelocity.magnitude() < 0.00001)
 					vVelocity = { 0, 0 };
 
 				pVelocity->setVelocity(vVelocity);

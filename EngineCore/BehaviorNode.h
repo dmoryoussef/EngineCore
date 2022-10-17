@@ -1,5 +1,6 @@
 enum BehaviorNodeState
 {
+	IDLE,
 	RUNNING,
 	FAILURE,
 	SUCCESS
@@ -14,7 +15,7 @@ protected:
 public:
 	BehaviorNode(string n = "name") :
 		name(n),
-		m_nState(RUNNING) {};
+		m_nState(IDLE) {};
 
 	string getName()
 	{
@@ -25,11 +26,17 @@ public:
 	{
 		return m_nState;
 	}
-
+	void setState(int state)
+	{
+		m_nState = state;
+	}
 	string stateToString()
 	{
 		switch (m_nState)
 		{
+			case IDLE: 
+				return "IDLE";
+				break;
 			case RUNNING:
 				return "RUNNING";
 				break;
@@ -45,8 +52,8 @@ public:
 	{
 		return name + ": " + stateToString() + description();
 	}
-	virtual void update(float fDeltaTime) {}
-	virtual void execute(float fDeltaTime) {}
+	virtual int update(float fDeltaTime) { return 0; }
+	virtual int execute(float fDeltaTime) { return 0; }
 	virtual string description() { return "Error: function not implemented."; }
 
 	void renderNode(Render2D* renderer, Vector2 vMin, Vector2 vMax, Vector2 vSize)
@@ -62,7 +69,7 @@ public:
 				break;
 		}
 		renderer->DrawQuad(vMin.X, vMin.Y, vMax.X, vMax.Y, { PIXEL_SOLID, color });
-		if (renderer->vCameraTransform.Z > 15)
+		//if (renderer->vCameraTransform.Z > 15)
 		{
 			vector<string> nodeData;
 			nodeData.push_back(name);
@@ -71,12 +78,23 @@ public:
 			renderer->DrawString(nodeData, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y);
 			// renderer->DrawWrappedString(description(), (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y, vSize.X * 0.8);
 		}
-		else
+	/*	else
 		{
 			renderer->DrawString(name, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y);
+		}*/
+	}
+	
+	virtual void reset(){}
+
+	void resetChildren()
+	{
+		m_nState = RUNNING;
+		reset();
+		for (auto c : m_vChildren)
+		{
+			c->resetChildren();
 		}
 	}
-
 };
 
 class DecoratorNode : public BehaviorNode
@@ -84,7 +102,7 @@ class DecoratorNode : public BehaviorNode
 protected:
 	BehaviorNode* child;
 
-	void update(float fDeltaTime)
+	int update(float fDeltaTime)
 	{
 		child->update(fDeltaTime);
 	}
@@ -102,25 +120,28 @@ public:
 
 class CompositeNode : public BehaviorNode
 {
+	//	Node types that have more than one child will derive from this
 protected:
 	BehaviorNode* current;
-
+	int m_nCurrentIt;
 public:
 	CompositeNode(string n) :
+		m_nCurrentIt(0),
 		current(NULL),
 		BehaviorNode(n) {};
 };
 
 class SequenceNode : public CompositeNode
 {
+	//	Attempts all children in order
+	//	if any child fails this node will automatically fail
+
 public:
-	int m_nCurrentIt;
 public:
 	SequenceNode(string n = "SequenceNode") :
-		m_nCurrentIt(0),
 		CompositeNode(n) {};
 	
-	void update(float fDeltaTime)
+	int update(float fDeltaTime)
 	{
 		if (m_nState == RUNNING)
 		{
@@ -133,6 +154,9 @@ public:
 			{
 				switch (current->getState())
 				{
+					case IDLE:
+						current->setState(RUNNING);
+						break;
 					case RUNNING: 
 						current->update(fDeltaTime);
 						break;
@@ -149,39 +173,83 @@ public:
 							current = getChildren()[m_nCurrentIt];
 						}
 						else
-						//	else: all children have succeeded
-						m_nState = SUCCESS;
+							//	else: all children have succeeded
+							m_nState = SUCCESS;
 						break;
 				}
 					
 			}
 		}
+
+		return m_nState;
 	}
 		
 	string description()
 	{
+		if (m_nState == SUCCESS)
+			return "Finished handling all children.";
+
+		if (m_nState == FAILURE)
+			return "Child " + thingToString<int>(m_nCurrentIt + 1) + " failed.";
+
 		return "Handling child " + thingToString<int>(m_nCurrentIt + 1) + " of " + thingToString<int>(m_vChildren.size());
 	}
 };
 
 class SelectorNode : public CompositeNode
 {
+	//	Alternative to Sequence node
+	//	Attempts all children in order
+	//	if any child node fails, tries the next child
+	//	this node only fails if all children node fails
+
 public:
 	SelectorNode(string n = "SelectorNode") :
 		CompositeNode(n) {};
 
-	void update(float fDeltaTime)
+	int update(float fDeltaTime)
 	{
-		for (BehaviorNode* n : getChildren())
+		if (m_nState == RUNNING)
 		{
-			n->update(fDeltaTime);
+			if (current == NULL)
+			{
+				//	how to handle no children??
+				//	auto fail or auto success??
+				if (m_nCurrentIt == 0)
+					current = getChildren()[m_nCurrentIt];
+			}
+			else
+			{
+				switch (current->getState())
+				{
+					case IDLE:
+						current->setState(RUNNING);
+						break;
+					case RUNNING:
+						current->update(fDeltaTime);
+						break;
+					case FAILURE:
+						//	current failed:
+						//	try next child
+						if (m_nCurrentIt < m_vChildren.size() - 1)
+						{
+							m_nCurrentIt++;
+							current = getChildren()[m_nCurrentIt];
+						}
+						else
+							//	all children failed
+							m_nState = FAILURE;
+						break;
+					case SUCCESS:
+						//	any one child succeeded
+						m_nState = SUCCESS;
+						break;
+				}
+
+			}
 		}
-		//	for each node
-		//		try nodes in order
-		//			if SUCCESS -> return SUCCESS
-		//			if FAILURE -> try next node
-		//				if no more nodes -> return FAILURE
-		//
+
+		return m_nState;
 	}
 };
 
@@ -191,13 +259,13 @@ public:
 	LeafNode(string n = "Leaf") :
 		BehaviorNode(n) {};
 
-	void update(float fDeltaTime)
+	int update(float fDeltaTime)
 	{
 		switch (m_nState)
 		{
 			case RUNNING:
 				//	do specific thing
-				execute(fDeltaTime);
+				m_nState = execute(fDeltaTime);
 				break;
 			case FAILURE:
 				//	notify parent of failure
@@ -206,11 +274,8 @@ public:
 				//	notify parent of success
 				break;
 		}
-	}
 
-	void execute(float fDeltaTime)
-	{
-		//	to be overridden 
+		return m_nState;
 	}
 
 };

@@ -66,7 +66,7 @@ public:
 	void render(Render2D* renderer, float x, float y)
 	{
 		float buffer = 0.1;
-		Vector2 vSize(1.0, 0.5);
+		Vector2 vSize(2.0, 1.0);
 		Vector2 vMin(x, y);
 		Vector2 vMax = vMin + vSize;
 
@@ -77,14 +77,14 @@ public:
 
 		//	calc x pos for children
 		float childX = x; 
-		float childY = y + 1;
+		float childY = y + vSize.Y + 1;
 		float offsetX = 0;
 
 		float leafOffset = 0;
 		if (getChildren().size() > 1)
 		{
 			int totalLeafNodes = getTotalLeafNodes(0, this);
-			leafOffset = (((float)totalLeafNodes - 1.0) * 0.5);
+			leafOffset = (((float)totalLeafNodes - 1.0) * vSize.X * 0.5);
 		}
 		childX = childX - leafOffset;
 
