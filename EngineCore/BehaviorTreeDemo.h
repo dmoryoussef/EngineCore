@@ -41,6 +41,9 @@ public:
 	{
 		if (m_bMousePressed)
 			return SUCCESS;
+
+		
+		return RUNNING;
 	}
 };
 
@@ -73,6 +76,7 @@ public:
 	{
 		if (m_bKeyPressed)
 			m_nState = SUCCESS;
+
 	}
 
 	string description()
@@ -165,7 +169,7 @@ public:
 					if (fDistance > 1.0)
 					{
 						Vector2 force = direction * speed;
-						pTransform->setRotation(direction);
+						pTransform->setRotation({-direction.X, direction.Y});
 						accel->setForce(force);
 						return RUNNING;
 					}
@@ -175,7 +179,7 @@ public:
 						if (vPath.size() == 0)
 						{
 							Vector2 force = direction * 0;
-							pTransform->setRotation(direction);
+							pTransform->setRotation({ -direction.X, direction.Y });
 							accel->setForce(force);
 							return SUCCESS;
 						}
@@ -219,11 +223,10 @@ public:
 		nodeB->addChild(new MouseBehaviorNode());*/
 
 		BehaviorNode* node = new SequenceNode();
-		/*node->addChild(nodeA);
-		node->addChild(nodeB);*/
 
 		node->addChild(new MouseBehaviorNode());
 		
+
 		MoveBehaviorNode* moveA = new MoveBehaviorNode(pEntity);
 		moveA->addPath({ 15, 15 });
 		moveA->addPath({ 25, 15 });
@@ -234,6 +237,7 @@ public:
 		moveB->addPath({ 15, 25 });
 		moveB->addPath({ 15, 15 });
 		node->addChild(moveB);
+
 		node->setState(RUNNING);
 
 		return node;

@@ -52,8 +52,8 @@ public:
 	{
 		return name + ": " + stateToString() + description();
 	}
-	virtual int update(float fDeltaTime) { return 0; }
-	virtual int execute(float fDeltaTime) { return 0; }
+	virtual int update(float fDeltaTime) { return m_nState; }
+	virtual int execute(float fDeltaTime) { return m_nState; }
 	virtual string description() { return "Error: function not implemented."; }
 
 	void renderNode(Render2D* renderer, Vector2 vMin, Vector2 vMax, Vector2 vSize)
@@ -88,7 +88,7 @@ public:
 
 	void resetChildren()
 	{
-		m_nState = RUNNING;
+		m_nState = IDLE;
 		reset();
 		for (auto c : m_vChildren)
 		{
@@ -136,7 +136,6 @@ class SequenceNode : public CompositeNode
 	//	Attempts all children in order
 	//	if any child fails this node will automatically fail
 
-public:
 public:
 	SequenceNode(string n = "SequenceNode") :
 		CompositeNode(n) {};
@@ -186,6 +185,9 @@ public:
 		
 	string description()
 	{
+		if (m_nState == IDLE)
+			return "Waiting to run.";
+
 		if (m_nState == SUCCESS)
 			return "Finished handling all children.";
 
