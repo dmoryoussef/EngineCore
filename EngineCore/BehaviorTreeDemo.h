@@ -3,15 +3,23 @@ class MouseBehaviorNode : public LeafNode, EventListener
 private:
 	bool m_bMousePressed;
 
-	void onMouseEvent(MouseEvent* pEvent)
+	void onMouseEvent(MouseWorldEvent* pEvent)
 	{
-		m_bMousePressed = pEvent->getState().bLeftButtonDown;
+		if (m_nState == RUNNING)
+		{
+			m_bMousePressed = pEvent->getState().bRightButtonDown;
+			if (m_bMousePressed)
+			{
+				Vector2 position = pEvent->getWorldPosition();
+				Blackboard->vPath.push_back(position);
+			}
+		}
 	}
 	void onEvent(_Event* pEvent)
 	{
 		switch (pEvent->m_eType)
 		{
-			case CONSOLE_MOUSE_EVENT: onMouseEvent(pEvent->get<MouseEvent>());
+			case MOUSEWORLD_EVENT: onMouseEvent(pEvent->get<MouseWorldEvent>());
 				break;
 		}
 	}
@@ -20,7 +28,12 @@ public:
 	MouseBehaviorNode() : 
 		LeafNode("MouseBehaviorLeaf")
 	{
-		registerListener(CONSOLE_MOUSE_EVENT);
+		registerListener(MOUSEWORLD_EVENT);
+	}
+
+	void reset()
+	{
+		m_bMousePressed = false;
 	}
 
 	string description()
@@ -96,14 +109,15 @@ class MoveBehaviorNode : public LeafNode, public EventListener
 private:
 	BaseNode* pEntity;
 
-	vector<Vector2> vPath;
-
 	string description()
 	{
 		switch (m_nState)
 		{
 			case RUNNING : 
-				return "Moving to " + vPath[0].toString() + ".";
+				if (Blackboard->vPath.size() > 0)
+					return "Moving to " + Blackboard->vPath[0].toString() + ".";
+				else
+					return "No path.";
 				break;
 			case SUCCESS : 
 				return "Arrived at location.";
@@ -154,12 +168,12 @@ public:
 
 	void setPath(vector<Vector2> path)
 	{
-		vPath = path;
+		Blackboard->vPath = path;
 	}
 
 	void addToPath(Vector2 node)
 	{
-		vPath.push_back(node);
+		Blackboard->vPath.push_back(node);
 	}
 
 	int execute(float fDeltaTime)
@@ -173,13 +187,13 @@ public:
 		{
 			if (Accelerate* accel = pEntity->getChild<Accelerate>())
 			{
-				if (vPath.size() > 0)
+				if (Blackboard->vPath.size() > 0)
 				{
-					Vector2 target = vPath[0];
+					Vector2 target = Blackboard->vPath[0];
 					Vector2 pos = pTransform->getPosition();
 
 					float fDistance = distance(target, pos);
-					float speed = 0.00001 * fDeltaTime;
+					float speed = 0.00005 * fDeltaTime;
 					Vector2 direction = (target - pos).normalize();
 					if (fDistance > 1.0)
 					{
@@ -190,8 +204,8 @@ public:
 					}
 					else
 					{
-						vPath.erase(vPath.begin());
-						if (vPath.size() == 0)
+						Blackboard->vPath.erase(Blackboard->vPath.begin());
+						if (Blackboard->vPath.size() == 0)
 						{
 							Vector2 force = direction * 0;
 							pTransform->setRotation({ -direction.X, direction.Y });
@@ -214,12 +228,51 @@ public:
 	{
 		if (m_nState == RUNNING)
 		{
-			for (Vector2 v : vPath)
+			if (Blackboard->vPath.size() > 0)
 			{
-				renderer->DrawCircle(v.X, v.Y, 0.2, { PIXEL_SOLID, FG_LIGHTBLUE });
+				for (Vector2 v : Blackboard->vPath)
+				{
+					renderer->DrawCircle(v.X, v.Y, 0.2, { PIXEL_SOLID, FG_LIGHTBLUE });
+				}
+				renderer->DrawCircle(Blackboard->vPath[0].X, Blackboard->vPath[0].Y, 0.5, {PIXEL_SOLID, FG_LIGHTGREEN});
 			}
-			renderer->DrawCircle(vPath[0].X, vPath[0].Y, 0.5, {PIXEL_SOLID, FG_LIGHTGREEN});
 		}
+	}
+};
+
+class RepeatDecorator : public DecoratorNode
+{
+public:
+	RepeatDecorator(string n = "Decorator", BehaviorTreeBlackboard* blackboard = NULL) :
+		DecoratorNode(n, blackboard) {};
+
+	int update(float fDeltaTime)
+	{
+		if (m_nState == RUNNING)
+		{
+			if (!child)
+			{
+				if (m_vChildren.size() > 0)
+					child = m_vChildren[0];
+			}
+
+			switch (child->getState())
+			{
+				case IDLE:
+					child->setState(RUNNING);
+					break;
+				case RUNNING:
+					child->update(fDeltaTime);
+					break;
+				case FAILURE:
+					child->setState(IDLE);
+					break;
+				case SUCCESS:
+					child->setState(IDLE);
+			}
+		}
+
+		return m_nState;
 	}
 };
 
@@ -239,23 +292,19 @@ public:
 
 	BehaviorNode* buildDemoBehaviorTree()
 	{
+		RepeatDecorator* base = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard());
+		base->setState(RUNNING);
+
 		BehaviorNode* node = new SequenceNode();
+		base->addChild(node);
 
 		node->addChild(new MouseBehaviorNode());
 		
 		MoveBehaviorNode* moveA = new MoveBehaviorNode(pEntity);
-		moveA->addToPath({ 15, 15 });
 		node->addChild(moveA);
 
 
-		MoveBehaviorNode* moveB = new MoveBehaviorNode(pEntity);
-		moveB->addToPath({ 15, 25 });
-		moveB->addToPath({ 15, 15 });
-		node->addChild(moveB);
-
-		node->setState(RUNNING);
-
-		return node;
+		return base;
 	}
 
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI)

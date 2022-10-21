@@ -6,16 +6,35 @@ enum BehaviorNodeState
 	SUCCESS
 };
 
+struct BehaviorTreeBlackboard
+{
+	//	shared data for behavior tree nodes
+	//	may be generalized later
+	//	hashmap possibly with string::data
+
+	vector<Vector2> vPath;
+	BaseNode* pTarget;
+};
+
 class BehaviorNode : public DataTreeNode<BehaviorNode>
 {
 protected:
 	string name;
 	int m_nState;
 
+	BehaviorTreeBlackboard* Blackboard;
+
 public:
-	BehaviorNode(string n = "name") :
+	BehaviorNode(string n = "name", BehaviorTreeBlackboard* blackboard = NULL) :
 		name(n),
+		Blackboard(blackboard),
 		m_nState(IDLE) {};
+
+	void addChild(BehaviorNode* node)
+	{
+		node->Blackboard = Blackboard;
+		m_vChildren.push_back(node);
+	}
 
 	string getName()
 	{
@@ -97,25 +116,28 @@ public:
 	
 	virtual void reset(){}
 
-	void resetChildren()
+	void resetChildren(int state = IDLE)
 	{
 		reset();
 		for (auto c : m_vChildren)
 		{
-			c->setState(IDLE);
+			c->setState(state);
 			c->resetChildren();
 		}
 	}
 };
+
+//BehaviorTreeBlackboard BehaviorNode::Blackboard;
 
 class DecoratorNode : public BehaviorNode
 {
 protected:
 	BehaviorNode* child;
 
+
 	int update(float fDeltaTime)
 	{
-		child->update(fDeltaTime);
+		return child->update(fDeltaTime);
 	}
 	//	inverter
 	//	succeeder
@@ -124,8 +146,8 @@ protected:
 	//
 
 public:
-	DecoratorNode(string n = "Decorator") :
-		BehaviorNode(n) {};
+	DecoratorNode(string n = "Decorator", BehaviorTreeBlackboard* blackboard = NULL) :
+		BehaviorNode(n, blackboard) {};
 
 };
 
@@ -136,10 +158,10 @@ protected:
 	BehaviorNode* current;
 	int m_nCurrentIt;
 public:
-	CompositeNode(string n) :
+	CompositeNode(string n, BehaviorTreeBlackboard* blackboard = NULL) :
 		m_nCurrentIt(0),
 		current(NULL),
-		BehaviorNode(n) {};
+		BehaviorNode(n, blackboard) {};
 };
 
 class SequenceNode : public CompositeNode
@@ -148,8 +170,8 @@ class SequenceNode : public CompositeNode
 	//	if any child fails this node will automatically fail
 
 public:
-	SequenceNode(string n = "SequenceNode") :
-		CompositeNode(n) {};
+	SequenceNode(string n = "SequenceNode", BehaviorTreeBlackboard* blackboard = NULL) :
+		CompositeNode(n, blackboard) {};
 	
 	int update(float fDeltaTime)
 	{
@@ -197,7 +219,13 @@ public:
 
 		return m_nState;
 	}
-		
+	
+	void reset()
+	{
+		current = NULL;
+		m_nCurrentIt = 0;
+	}
+
 	string description()
 	{
 		if (m_nState == IDLE)
@@ -215,13 +243,16 @@ public:
 
 class SelectorNode : public CompositeNode
 {
+	//	AKA "Fallback Node"
+	//	falls-back to next node if current one fails
+	// 
 	//	Alternative to Sequence node
 	//	Attempts all children in order
 	//	if any child node fails, tries the next child
 	//	this node only fails if all children node fails
 
 public:
-	SelectorNode(string n = "SelectorNode") :
+	SelectorNode(string n = "SelectorNode", BehaviorTreeBlackboard* blackboard = NULL) :
 		CompositeNode(n) {};
 
 	int update(float fDeltaTime)
@@ -273,8 +304,8 @@ public:
 class LeafNode : public BehaviorNode
 {
 public:
-	LeafNode(string n = "Leaf") :
-		BehaviorNode(n) {};
+	LeafNode(string n = "Leaf", BehaviorTreeBlackboard* blackboard = NULL) :
+		BehaviorNode(n, blackboard) {};
 
 	int update(float fDeltaTime)
 	{
