@@ -86,12 +86,16 @@ public:
 
 	void set(string str, int nX, int nY, int nColor)
 	{
-		if (nX >= 0 && nX < m_nWidth && nY >= 0 && nY < m_nHeight)
-		for (int nI = 0; nI < str.length(); nI++)
-		{
-			m_pBuffer[nX + nI + m_nWidth * nY].m_chChar = str[nI];
-			m_pBuffer[nX + nI + m_nWidth * nY].m_nColor = nColor;
-		}
+		if (nX >= 0 && nY >= 0 && nY < m_nHeight)
+			for (int nI = 0; nI < str.length(); nI++)
+			{
+				if (nX + nI < m_nWidth)
+				{
+					m_pBuffer[nX + nI + m_nWidth * nY].m_chChar = str[nI];
+					m_pBuffer[nX + nI + m_nWidth * nY].m_nColor = nColor;
+				}
+
+			}
 	}
 
 	void set(char ch, int nX, int nY, int nColor)

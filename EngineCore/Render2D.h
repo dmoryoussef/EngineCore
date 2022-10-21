@@ -719,7 +719,7 @@ public:
 	//virtual void draw(BaseNode* pGameData, BaseNode* pCamera) {}
 
 
-	void DrawCircle(float x, float y, int radius, Pixel p, short mask = 0xFF)
+	void DrawCircle(float x, float y, float radius, Pixel p, short mask = 0xFF)
 	{ 
 		// Thanks to IanM-Matrix1 #PR121
 
@@ -769,44 +769,45 @@ public:
 	//	FillCircle((int)pos.X, (int)pos.Y, radius, p);
 	//}
 
-	//void FillCircle(int x, int y, int radius, Pixel p)
-	//{ // Thanks to IanM-Matrix1 #PR121
-	//	if (radius < 0 || x < -radius || y < -radius || x - GetDrawTargetWidth() > radius || y - GetDrawTargetHeight() > radius)
-	//		return;
+	/*
+	void FillCircle(int x, int y, int radius, Pixel p)
+	{ // Thanks to IanM-Matrix1 #PR121
+		if (radius < 0 || x < -radius || y < -radius || x - GetDrawTargetWidth() > radius || y - GetDrawTargetHeight() > radius)
+			return;
+		if (radius > 0)
+		{
+			int x0 = 0;
+			int y0 = radius;
+			int d = 3 - 2 * radius;
 
-	//	if (radius > 0)
-	//	{
-	//		int x0 = 0;
-	//		int y0 = radius;
-	//		int d = 3 - 2 * radius;
+			auto drawline = [&](int sx, int ex, int y)
+			{
+				for (int x = sx; x <= ex; x++)
+					Draw(x, y, p);
+			};
 
-	//		auto drawline = [&](int sx, int ex, int y)
-	//		{
-	//			for (int x = sx; x <= ex; x++)
-	//				Draw(x, y, p);
-	//		};
+			while (y0 >= x0)
+			{
+				drawline(x - y0, x + y0, y - x0);
+				if (x0 > 0)	drawline(x - y0, x + y0, y + x0);
 
-	//		while (y0 >= x0)
-	//		{
-	//			drawline(x - y0, x + y0, y - x0);
-	//			if (x0 > 0)	drawline(x - y0, x + y0, y + x0);
-
-	//			if (d < 0)
-	//				d += 4 * x0++ + 6;
-	//			else
-	//			{
-	//				if (x0 != y0)
-	//				{
-	//					drawline(x - x0, x + x0, y - y0);
-	//					drawline(x - x0, x + x0, y + y0);
-	//				}
-	//				d += 4 * (x0++ - y0--) + 10;
-	//			}
-	//		}
-	//	}
-	//	else
-	//		Draw(x, y, p);
-	//}
+				if (d < 0)
+					d += 4 * x0++ + 6;
+				else
+				{
+					if (x0 != y0)
+					{
+						drawline(x - x0, x + x0, y - y0);
+						drawline(x - x0, x + x0, y + y0);
+					}
+					d += 4 * (x0++ - y0--) + 10;
+				}
+			}
+		}
+		else
+			Draw(x, y, p);
+	}
+	*/
 
 
 };

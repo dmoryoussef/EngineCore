@@ -94,26 +94,43 @@ public:
 class MoveBehaviorNode : public LeafNode, public EventListener
 {
 private:
-	Vector2 vTargetLocation;
 	BaseNode* pEntity;
 
 	vector<Vector2> vPath;
 
 	string description()
 	{
-		if (m_nState == RUNNING)
-			return "Moving to " + vPath[0].toString() + ".";
-
-		if (m_nState == SUCCESS)
-			return "Arrived at location.";
-
-		return "Target location not reachable.";	//	failure
+		switch (m_nState)
+		{
+			case RUNNING : 
+				return "Moving to " + vPath[0].toString() + ".";
+				break;
+			case SUCCESS : 
+				return "Arrived at location.";
+				break;
+			case IDLE : 
+				return "Waiting to move";
+				break;
+			case FAILURE : 
+				return "Target location not reachable.";
+				break;
+		}
 	}
 
 	void onMouseWorldEvent(MouseWorldEvent* pEvent)
 	{
-		if (pEvent->getState().bRightButtonDown)
-			addPath(pEvent->getWorldPosition());
+		if (m_nState == RUNNING)
+		{
+			if (pEvent->getState().bRightButtonDown)
+				addToPath(pEvent->getWorldPosition());
+		}
+	}
+
+	void onKeyboardEvent(KeyboardEvent* pEvent)
+	{
+		if (m_nState == RUNNING)
+			if (pEvent->getKey() == 27)
+				m_nState = FAILURE;
 	}
 
 	void onEvent(_Event* pEvent)
@@ -121,6 +138,8 @@ private:
 		switch (pEvent->m_eType)
 		{
 			case MOUSEWORLD_EVENT: onMouseWorldEvent(pEvent->get<MouseWorldEvent>());
+				break;
+			case KEYBOARD_EVENT: onKeyboardEvent(pEvent->get<KeyboardEvent>());
 				break;
 		}
 	}
@@ -130,6 +149,7 @@ public:
 		pEntity(entity) 
 	{
 		registerListener(MOUSEWORLD_EVENT);
+		registerListener(KEYBOARD_EVENT);
 	};
 
 	void setPath(vector<Vector2> path)
@@ -137,14 +157,9 @@ public:
 		vPath = path;
 	}
 
-	void addPath(Vector2 node)
+	void addToPath(Vector2 node)
 	{
 		vPath.push_back(node);
-	}
-
-	void setTarget(Vector2 target)
-	{
-		vTargetLocation = target;
 	}
 
 	int execute(float fDeltaTime)
@@ -194,6 +209,18 @@ public:
 		//	no movement components (transform, accel)
 		return FAILURE;
 	}
+
+	void renderNodeData(Render2D *renderer)
+	{
+		if (m_nState == RUNNING)
+		{
+			for (Vector2 v : vPath)
+			{
+				renderer->DrawCircle(v.X, v.Y, 0.2, { PIXEL_SOLID, FG_LIGHTBLUE });
+			}
+			renderer->DrawCircle(vPath[0].X, vPath[0].Y, 0.5, {PIXEL_SOLID, FG_LIGHTGREEN});
+		}
+	}
 };
 
 class BehaviorTreeDemo : public GameState
@@ -210,32 +237,20 @@ public:
 		pEntity(NULL),
 		pCameraTransform(NULL) {};
 
-	BehaviorNode* buildBehaviorTree()
+	BehaviorNode* buildDemoBehaviorTree()
 	{
-		/*BehaviorNode* nodeA = new SequenceNode();
-		nodeA->addChild(new MouseBehaviorNode());
-		nodeA->addChild(new KeyBehaviorNode());
-		nodeA->addChild(new MouseBehaviorNode());
-
-		BehaviorNode* nodeB = new SequenceNode();
-		nodeB->addChild(new MouseBehaviorNode());
-		nodeB->addChild(new KeyBehaviorNode());
-		nodeB->addChild(new MouseBehaviorNode());*/
-
 		BehaviorNode* node = new SequenceNode();
 
 		node->addChild(new MouseBehaviorNode());
 		
-
 		MoveBehaviorNode* moveA = new MoveBehaviorNode(pEntity);
-		moveA->addPath({ 15, 15 });
-		moveA->addPath({ 25, 15 });
+		moveA->addToPath({ 15, 15 });
 		node->addChild(moveA);
 
 
 		MoveBehaviorNode* moveB = new MoveBehaviorNode(pEntity);
-		moveB->addPath({ 15, 25 });
-		moveB->addPath({ 15, 15 });
+		moveB->addToPath({ 15, 25 });
+		moveB->addToPath({ 15, 15 });
 		node->addChild(moveB);
 
 		node->setState(RUNNING);
@@ -256,7 +271,7 @@ public:
 		pEntity = pSystems->getChild<EntityFactory>()->createPlayer(0);
 		pData->add(pEntity);
 		
-		bt = buildBehaviorTree();
+		bt = buildDemoBehaviorTree();
 	}
 
 	void update(BaseNode* pData, float fDeltaTime)

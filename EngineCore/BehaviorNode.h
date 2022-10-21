@@ -52,12 +52,20 @@ public:
 	{
 		return name + ": " + stateToString() + description();
 	}
+
+	/*virtual void render(Render2D* renderer, int x, int y)
+	{
+		DataTreeNode::render(renderer, x, y);
+	}*/
 	virtual int update(float fDeltaTime) { return m_nState; }
 	virtual int execute(float fDeltaTime) { return m_nState; }
 	virtual string description() { return "Error: function not implemented."; }
 
-	void renderNode(Render2D* renderer, Vector2 vMin, Vector2 vMax, Vector2 vSize)
+	virtual void renderNodeData(Render2D* renderer) {}
+	virtual void renderNode(Render2D* renderer, Vector2 vMin, Vector2 vMax, Vector2 vSize)
 	{
+		//	special implementation of renderNode that changes color based on node state
+
 		int color = FG_WHITE;
 		switch (m_nState)
 		{
@@ -82,16 +90,19 @@ public:
 		{
 			renderer->DrawString(name, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y);
 		}*/
+
+		//	also add this overridable function to render more specific node info
+		renderNodeData(renderer);
 	}
 	
 	virtual void reset(){}
 
 	void resetChildren()
 	{
-		m_nState = IDLE;
 		reset();
 		for (auto c : m_vChildren)
 		{
+			c->setState(IDLE);
 			c->resetChildren();
 		}
 	}
@@ -162,6 +173,7 @@ public:
 					case FAILURE:
 						//	if child fails, this node fails also.
 						m_nState = FAILURE;
+						resetChildren();
 						break;
 					case SUCCESS:
 						//	if child succeeds check next child
@@ -172,8 +184,11 @@ public:
 							current = getChildren()[m_nCurrentIt];
 						}
 						else
+						{
 							//	else: all children have succeeded
 							m_nState = SUCCESS;
+							resetChildren();
+						}
 						break;
 				}
 					
