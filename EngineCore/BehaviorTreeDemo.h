@@ -108,6 +108,8 @@ class MoveBehaviorNode : public LeafNode, public EventListener
 {
 private:
 	BaseNode* pEntity;
+	bool bMouseUp;
+	bool bMouseDown;
 
 	string description()
 	{
@@ -136,7 +138,20 @@ private:
 		if (m_nState == RUNNING)
 		{
 			if (pEvent->getState().bRightButtonDown)
+				bMouseDown = true;
+			else
+				if (bMouseDown)
+				{
+					bMouseUp = true;
+					bMouseDown = false;
+				}
+
+			if (bMouseUp)
+			{
 				addToPath(pEvent->getWorldPosition());
+				bMouseUp = false;
+			}
+
 		}
 	}
 
@@ -160,11 +175,20 @@ private:
 
 public:
 	MoveBehaviorNode(BaseNode* entity) :
+		bMouseUp(false),
+		bMouseDown(false),
 		pEntity(entity) 
 	{
 		registerListener(MOUSEWORLD_EVENT);
 		registerListener(KEYBOARD_EVENT);
 	};
+
+	void reset()
+	{
+		bMouseDown = false;
+		bMouseUp = false;
+		Blackboard->vPath.clear();
+	}
 
 	void setPath(vector<Vector2> path)
 	{
@@ -193,7 +217,7 @@ public:
 					Vector2 pos = pTransform->getPosition();
 
 					float fDistance = distance(target, pos);
-					float speed = 0.00005 * fDeltaTime;
+					float speed = 0.0001 * fDeltaTime;
 					Vector2 direction = (target - pos).normalize();
 					if (fDistance > 1.0)
 					{
@@ -242,34 +266,63 @@ public:
 
 class RepeatDecorator : public DecoratorNode
 {
+private:
+	bool m_bRepeat;
+
 public:
 	RepeatDecorator(string n = "Decorator", BehaviorTreeBlackboard* blackboard = NULL) :
+		m_bRepeat(true),
 		DecoratorNode(n, blackboard) {};
+
+	virtual bool repeat()
+	{
+		return m_bRepeat;
+	}
+
+	string description()
+	{
+		switch (m_nState)
+		{
+			case SUCCESS : return "Repeat condition met.";
+				break;
+			case FAILURE: return "Repeat condition not met.";
+				break;
+			case RUNNING: return "Repeating until  defined condition met.";
+				break;
+			default : return "Waiting to run.";
+				break;
+		}
+	}
 
 	int update(float fDeltaTime)
 	{
 		if (m_nState == RUNNING)
 		{
-			if (!child)
+			if (repeat())
 			{
-				if (m_vChildren.size() > 0)
-					child = m_vChildren[0];
-			}
+				if (!child)
+				{
+					if (m_vChildren.size() > 0)
+						child = m_vChildren[0];
+				}
 
-			switch (child->getState())
-			{
-				case IDLE:
-					child->setState(RUNNING);
-					break;
-				case RUNNING:
-					child->update(fDeltaTime);
-					break;
-				case FAILURE:
-					child->setState(IDLE);
-					break;
-				case SUCCESS:
-					child->setState(IDLE);
+				switch (child->getState())
+				{
+					case IDLE:
+						child->setState(RUNNING);
+						break;
+					case RUNNING:
+						child->update(fDeltaTime);
+						break;
+					case FAILURE:
+						child->setState(IDLE);
+						break;
+					case SUCCESS:
+						child->setState(IDLE);
+				}
 			}
+			else
+				m_nState = SUCCESS;
 		}
 
 		return m_nState;

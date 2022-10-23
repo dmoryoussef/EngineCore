@@ -78,7 +78,7 @@ public:
 	}*/
 	virtual int update(float fDeltaTime) { return m_nState; }
 	virtual int execute(float fDeltaTime) { return m_nState; }
-	virtual string description() { return "Error: function not implemented."; }
+	virtual string description() { return "Error: description function not implemented."; }
 
 	virtual void renderNodeData(Render2D* renderer) {}
 	virtual void renderNode(Render2D* renderer, Vector2 vMin, Vector2 vMax, Vector2 vSize)
@@ -96,19 +96,19 @@ public:
 				break;
 		}
 		renderer->DrawQuad(vMin.X, vMin.Y, vMax.X, vMax.Y, { PIXEL_SOLID, color });
-		//if (renderer->vCameraTransform.Z > 15)
+		if (renderer->vCameraTransform.Z > 7)
 		{
 			vector<string> nodeData;
 			nodeData.push_back(name);
 			nodeData.push_back(stateToString());
 			nodeData.push_back(description());
 			renderer->DrawString(nodeData, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y);
-			// renderer->DrawWrappedString(description(), (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y, vSize.X * 0.8);
+			//	renderer->DrawWrappedString(nodeData, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y, vSize.X * 0.8);
 		}
-	/*	else
+	    else
 		{
-			renderer->DrawString(name, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y);
-		}*/
+			renderer->DrawString(name, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 2)).Y - (1.0 / renderer->vCameraTransform.Z));
+		}
 
 		//	also add this overridable function to render more specific node info
 		renderNodeData(renderer);

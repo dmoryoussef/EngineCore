@@ -19,3 +19,27 @@ void main()
 	pEngine->run();
 	delete pEngine;
 }
+
+//
+//	TO-DO list:
+// 
+//	Entity-TileMap collision and interaction
+//	Quad-Tree
+//	More Steering behaviors
+//	More AI behaviors
+//	Pathfinding
+//	Implement A*, breadth-first search, depth-first search
+//	Floodfill
+//	Roads/paths
+//	Tilemap chunk loading
+//	"Infinite" world generation
+//	
+//	Entities
+//		plants	
+//	Climate/Weather maps
+//	1D/2D Perlin noise
+//	Water
+//		lakes/ponds
+//		oceans
+//		rivers
+//	

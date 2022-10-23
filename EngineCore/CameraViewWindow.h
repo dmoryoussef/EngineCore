@@ -2,6 +2,8 @@ class CameraViewWindow : public WorldViewWindow
 {
 private:
 	BaseNode *m_pCamera;
+	float m_fDeltaTime;
+	float m_fTotalTime;
 	bool m_bCameraZoomable;
 	float fMinZoom;
 	float fMaxZoom;
@@ -176,13 +178,17 @@ private:
 			pSelectionSquare->render(&renderer, vCurrentCameraPosition);
 		}
 
-		set("Screen: " + vCurrentMousePosition.toString(), getWidth() - 25, 2, FG_WHITE);
-		set("World:  " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 25, 3, FG_WHITE);	
-		set("Zoom:   " + thingToString<float>(vCurrentCameraPosition.Z), getWidth() - 25, 4, FG_WHITE);
+		set(" Screen: " + vCurrentMousePosition.toString(), getWidth() - 25, 2, FG_WHITE);
+		set("  World: " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 25, 3, FG_WHITE);	
+		set("   Zoom: " + thingToString<float>(vCurrentCameraPosition.Z), getWidth() - 25, 4, FG_WHITE);
+		set("    FPS: " + thingToString<float>((1 / m_fDeltaTime ) * 1000.0), getWidth() - 25, 5, FG_WHITE);
+		set("Runtime: " + thingToString<float>(m_fTotalTime), getWidth() - 25, 6, FG_WHITE);
 	}
 
 public:
 	CameraViewWindow(int nWidth, int nHeight, int nPosX, int nPosY) :
+		m_fTotalTime(0.0),
+		m_fDeltaTime(0.0),
 		m_bCameraZoomable(true),
 		fMinZoom(0.1),
 		fMaxZoom(25.0),
@@ -196,6 +202,13 @@ public:
 
 		registerListener(MOUSEWORLD_EVENT);
 		registerListener(KEYBOARD_EVENT);
+	}
+
+	void update(float fDeltaTime)
+	{
+		m_fDeltaTime = fDeltaTime;
+		if (fDeltaTime < 10000)	// dt jumps high on load time
+			m_fTotalTime = m_fTotalTime + fDeltaTime / 1000;
 	}
 
 	BaseNode *getCamera()

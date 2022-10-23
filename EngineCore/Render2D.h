@@ -194,24 +194,30 @@ public:
 	void DrawWrappedString(vector<string> text, float x, float y, float width)
 	{
 		width = width * vCameraTransform.Z;
-		
-		if (text.size() > width)
+		for (auto s : text)
 		{
-			//	break up into chunks the size of width
-			vector<string> textChunks;
-			
-			int index = 0;
-			while (text.size() > index)
+			if (s.length() > width)
 			{
-				// string temp = text.substr(index, width);
-				//textChunks.push_back(temp);
-				index = index + width;
+				//	break up into chunks the size of width
+				vector<string> textChunks;
+				int index = 0;
+				while (s.length() > index)
+				{
+					string temp = s.substr(index, width);
+					textChunks.push_back(temp);
+					index = index + width;
+				}
+				for (auto sub : textChunks)
+				{
+					DrawString(sub, x, y);
+					y++;
+				}
 			}
-			DrawString(textChunks, x, y);
-		}
-		else
-		{
-			DrawString(text, x, y);
+			else
+			{
+				DrawString(text, x, y);
+				y++;
+			}
 		}
 	}
 
