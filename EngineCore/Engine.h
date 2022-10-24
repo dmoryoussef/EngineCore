@@ -52,7 +52,6 @@ float clamp(float value, float min, float max)
 #include "2DMatrix.h"
 #include "Polygon.h"
 
-
 //	CORE STUFF
 #include "EventListener.h"
 
@@ -78,7 +77,9 @@ float clamp(float value, float min, float max)
 #include "ConsoleInputBuffer.h"
 #include "ConsoleOutputBuffer.h"
 
+// these 2 use control nodes, events, etc:
 #include "Bezier.h"
+#include "LiveEditPoly2D.h"
 
 #include "EntityComponentSystem.h"
 #include "GUI.h"

@@ -11,11 +11,12 @@
 #include "TileLightingDemo.h"
 #include "BehaviorTreeDemo.h"
 #include "DataTreeDemo.h"
+#include "RectDemo.h"
 
 void main()
 {
 	Engine *pEngine = new Engine();
-	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new BehaviorTreeDemo());
+	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new RectDemo());
 	pEngine->run();
 	delete pEngine;
 }

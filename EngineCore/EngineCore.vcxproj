@@ -171,6 +171,7 @@
     <ClInclude Include="LightMap.h" />
     <ClInclude Include="LightTile.h" />
     <ClInclude Include="ListExplorerWindow.h" />
+    <ClInclude Include="LiveEditPoly2D.h" />
     <ClInclude Include="LivePolyEditor.h" />
     <ClInclude Include="MouseInteraction.h" />
     <ClInclude Include="OutputBuffer.h" />
@@ -189,6 +190,7 @@
     <ClInclude Include="PathfindingTile.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Polygon.h" />
+    <ClInclude Include="RectDemo.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="Render2D.h" />
     <ClInclude Include="RogueLikeDemo.h" />
