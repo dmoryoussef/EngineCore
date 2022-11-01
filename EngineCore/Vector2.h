@@ -53,6 +53,17 @@ struct Vector2
 		//	default int, if you want float, call the above funtion and specify float
 		return "[" + thingToString<int>(X) + ", " + thingToString<int>(Y) + "]";
 	}
+
+	Vector2 limit(float max)
+	{
+		float current = magnitude();
+		if (current > max)
+		{
+			float limit = max / current;
+			return Vector2(X * limit, Y * limit) ;
+		}
+		return Vector2(X, Y);
+	}
 };
 
 //Vector2 Min(Vector2 A, Vector2 B)

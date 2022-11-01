@@ -348,14 +348,16 @@ public:
 		RepeatDecorator* base = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard());
 		base->setState(RUNNING);
 
-		BehaviorNode* node = new SequenceNode();
+		/*BehaviorNode* node = new SequenceNode();
 		base->addChild(node);
 
 		node->addChild(new MouseBehaviorNode());
 		
 		MoveBehaviorNode* moveA = new MoveBehaviorNode(pEntity);
-		node->addChild(moveA);
+		node->addChild(moveA);*/
 
+		SeekBehaviorNode* pSeek = new SeekBehaviorNode(pEntity);
+		base->addChild(pSeek);
 
 		return base;
 	}

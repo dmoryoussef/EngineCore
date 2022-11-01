@@ -16,7 +16,7 @@
 void main()
 {
 	Engine *pEngine = new Engine();
-	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new RectDemo());
+	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new BehaviorTreeDemo());
 	pEngine->run();
 	delete pEngine;
 }

@@ -29,4 +29,4 @@
 #include "CommandSystem.h"
 #include "CollisionDetectionSystem.h"
 
-#include "BehaviorNode.h"
+#include "BehaviorTree.h"
