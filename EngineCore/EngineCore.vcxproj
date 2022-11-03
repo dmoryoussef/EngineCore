@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
+    <ClInclude Include="AttackBehavior.h" />
     <ClInclude Include="BaseNode.h" />
     <ClInclude Include="Behavior.h" />
     <ClInclude Include="BehaviorTree.h" />

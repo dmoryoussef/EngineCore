@@ -168,10 +168,12 @@ public:
 			vCamera.Y + ((nY) * vCamera.Z) + fScaledTile);
 	}
 	
-	void DrawVector(Vector2 v, Vector2 p = { 0, 0}, Pixel pixel = {PIXEL_SOLID, FG_WHITE})
+	void DrawVector(Vector2 v, Vector2 p = { 0, 0 }, Pixel pixel = {PIXEL_SOLID, FG_WHITE})
 	{
+		//v = v * vCameraTransform.Z;
+		//p = p * vCameraTransform.Z;
 		DrawLine(p, v + p, pixel);
-		DrawCircle(v.X + p.X, v.Y + p.Y, 1.0, pixel);
+		//DrawCircle(v.X + p.X, v.Y + p.Y, 1.0, pixel);
 		//DrawTriangle()
 	}
 

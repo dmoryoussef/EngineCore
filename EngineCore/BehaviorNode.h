@@ -6,12 +6,32 @@ enum BehaviorNodeState
 	SUCCESS
 };
 
-struct BehaviorTreeBlackboard
+class BehaviorTreeBlackboard : public EventListener
 {
 	//	shared data for behavior tree nodes
 	//	may be generalized later
 	//	hashmap possibly with string::data
+private:
+	void onMouseWorldEvent(MouseWorldEvent* pEvent)
+	{
+		vTarget = pEvent->getWorldPosition();
+	}
 
+	void onEvent(_Event* pEvent)
+	{
+		switch (pEvent->m_eType)
+		{
+			case MOUSEWORLD_EVENT: onMouseWorldEvent(pEvent->get<MouseWorldEvent>());
+				break;
+		}
+	}
+public:
+	BehaviorTreeBlackboard() 
+	{
+		registerListener(MOUSEWORLD_EVENT);
+	}
+
+	Vector2 vTarget;
 	vector<Vector2> vPath;
 	BaseNode* pTarget;
 };

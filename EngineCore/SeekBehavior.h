@@ -1,32 +1,13 @@
-class SeekBehaviorNode : public LeafNode, EventListener
+class SeekBehaviorNode : public LeafNode
 {
 private:
 	BaseNode* m_pSelf;
 	Vector2 vTarget;
 
-	void onMouseWorldEvent(MouseWorldEvent* pEvent)
-	{
-		if (m_nState == RUNNING)
-		{
-			vTarget = pEvent->getWorldPosition();
-		}
-	}
-
-	void onEvent(_Event* pEvent)
-	{
-		switch (pEvent->m_eType)
-		{
-			case MOUSEWORLD_EVENT: onMouseWorldEvent(pEvent->get<MouseWorldEvent>());
-				break;
-		}
-	}
 
 public:
 	SeekBehaviorNode(BaseNode *pSelf) : 
-		m_pSelf(pSelf) 
-	{
-		registerListener(MOUSEWORLD_EVENT);
-	};
+		m_pSelf(pSelf) {};
 
 	string description()
 	{
@@ -52,6 +33,12 @@ public:
 
 	}
 
+	Vector2 vPosition;
+	Vector2 vDesiredDirection;
+	Vector2 vVelocity;
+	Vector2 vSteer;
+	Vector2 vAccel;
+
 	int execute(float fDeltaTime)
 	{
 		if (m_pSelf == NULL)
@@ -63,34 +50,51 @@ public:
 		{
 			if (Accelerate* accel = m_pSelf->getChild<Accelerate>())
 			{
-				Vector2 pos = pTransform->getPosition();
-				float fDistance = distance(vTarget, pos);
-				if (fDistance > 1.0)
+				if (Velocity* pVelocity = m_pSelf->getChild<Velocity>())
 				{
-					float speed = 0.005;
-					Vector2 vDesiredDirection = (vTarget - pos).normalize();
-					Vector2 vAccel = vDesiredDirection * speed;
-					if (Velocity* pVelocity = m_pSelf->getChild<Velocity>())
+					vTarget = Blackboard->vTarget;
+					vPosition = pTransform->getPosition();
+					float fDistance = distance(vTarget, vPosition);
+					if (fDistance > 1.0)
 					{
-						Vector2 vVelocity = pVelocity->getVelocity();
-						Vector2 vSteer = vDesiredDirection - vAccel;
-						float max = 0.0001;
-						vSteer = vSteer.limit(max);
-
-						//	mult by deltatime in physics or here?
-						accel->setForce(vSteer * fDeltaTime);
+						vDesiredDirection = (vTarget - vPosition).normalize();
+					
+						vVelocity = pVelocity->getVelocity();
+						float turnFactor = 0.1;
+						vSteer = (vDesiredDirection - vVelocity).normalize() * turnFactor;
 						
+						float fThrust = 0.009;
+						vAccel = vSteer * fThrust;
 
+						//accel->setForce(vAccel);
+						pVelocity->setVelocity(vVelocity + vAccel);
+						
 						// move to physics?
 						pTransform->setRotation({ -vVelocity.X, vVelocity.Y });
+					
+						return RUNNING;	//	not at target yet
 					}
-					return RUNNING;	//	not at target yet
+					return SUCCESS;	//	arrived at target
 				}
-				return SUCCESS;	//	arrived at target
+				return FAILURE; //	no velocity component
 			}
 			return FAILURE; //	no accel component
 		}
 		return FAILURE;	//	no transform component
 	}
+
+	//void renderNodeData(Render2D* renderer)
+	//{
+	//	if (m_nState == RUNNING)
+	//	{
+	//		renderer->DrawVector(vVelocity * 25, vPosition, {PIXEL_SOLID, FG_LIGHTGREEN});
+	//		//renderer->DrawString(thingToString<float>(vVelocity.magnitude()), 5, 4);
+	//		renderer->DrawVector(vDesiredDirection, vPosition, { PIXEL_SOLID, FG_LIGHTBLUE }); 
+	//		//renderer->DrawString(thingToString<float>(vDesiredDirection.magnitude()), 5, 5);
+	//		renderer->DrawVector(vSteer, vPosition, {PIXEL_SOLID, FG_LIGHTRED});
+
+	//		renderer->DrawString(thingToString<float>(vAccel.magnitude()), 5, 5);
+	//	}
+	//}
 
 };

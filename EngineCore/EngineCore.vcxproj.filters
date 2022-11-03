@@ -315,6 +315,9 @@
     <ClInclude Include="BehaviorTree.h">
       <Filter>Source Files\EntityComponentSystem\BehaviorTree</Filter>
     </ClInclude>
+    <ClInclude Include="AttackBehavior.h">
+      <Filter>Source Files\EntityComponentSystem\BehaviorTree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
