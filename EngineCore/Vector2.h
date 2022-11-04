@@ -64,6 +64,24 @@ struct Vector2
 		}
 		return Vector2(X, Y);
 	}
+
+	void floor(float min)
+	{
+		if (magnitude() < min)
+		{
+			X = X * 0;
+			Y = Y * 0;
+		}
+	}
+
+	void clamp(float min, float max)
+	{
+		if (magnitude() > max)
+			limit(max);
+
+		if (magnitude() < min)
+			limit(min);
+	}
 };
 
 //Vector2 Min(Vector2 A, Vector2 B)

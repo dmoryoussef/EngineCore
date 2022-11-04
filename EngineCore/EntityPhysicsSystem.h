@@ -35,8 +35,10 @@ public:
 				
 				//	add friction
 				vVelocity = vVelocity * 0.972;
-				if (vVelocity.magnitude() < 0.00001)
-					vVelocity = vVelocity * 0.0;
+
+				//	clamp to 0 if magnitude is less than
+				vVelocity.floor(0.00001);
+
 
 				//	set back
 				pVelocity->setVelocity(vVelocity);
