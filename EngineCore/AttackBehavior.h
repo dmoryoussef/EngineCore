@@ -1,13 +1,15 @@
-class AttackBehavior : public LeafNode
+class AttackBehavior : public LeafNode, EventListener
 {
 private:
+	BaseNode* m_pSelf;
 
 public:
-	AttackBehavior() {};
+	AttackBehavior(BaseNode *pSelf) : 
+		m_pSelf(pSelf) {};
 
 	void reset()
 	{
-
+		m_nState = IDLE;
 	}
 
 	string description()
@@ -32,10 +34,32 @@ public:
 	int execute(float fDeltaTime)
 	{
 		//	if target is alive
-		//	if in range
-		//	else 
-		//	return FAILURE
-		//	try to attack
-		//	return RUNNING;
+		//if (Blackboard->pTarget)
+		{
+			//	if in range
+			//	Vector2 vTarget = Blackboard->pTarget->getChild<Transform2D>()->getPosition();
+			Vector2 vTarget = Blackboard->vTarget;
+			Vector2 vPosition = m_pSelf->getChild<Transform2D>()->getPosition();
+			float fRange = distance(vPosition, vTarget);
+			if (fRange > 15.0)
+				return FAILURE;	// to far away
+
+			if (fRange < 15.0)
+			{
+				if (ShootAction* pShoot = m_pSelf->getChild<ShootAction>())
+				{
+					if (pShoot->canShoot())
+					{
+						addEvent(new CommandEvent(m_pSelf, new ActionCommand()));
+					}
+					return RUNNING;
+				}
+				return FAILURE;	//	no shoot component
+			}
+
+			if (fRange < 2.0)
+				return FAILURE;	//	too close
+		}
+		//return FAILURE;	//	no target
 	}
 };

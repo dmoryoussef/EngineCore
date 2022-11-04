@@ -87,7 +87,7 @@ float clamp(float value, float min, float max)
 
 #include "GameState.h"
 
-class Engine
+class Engine : public EventListener
 {
 protected:
 	bool m_bRunning;
@@ -122,6 +122,15 @@ protected:
 		PrevCounter = CurrCounter;
 
 		return fDelta;
+	}
+
+	void onEvent(_Event* pEvent)
+	{
+		if (pEvent->m_eType == KEYBOARD_EVENT)
+		{
+			if (pEvent->get<KeyboardEvent>()->isKeyDown(27))
+				m_bRunning = false;
+		}
 	}
 
 	void handleEvents() 
@@ -170,6 +179,8 @@ public:
 		LARGE_INTEGER Frequency;
 		QueryPerformanceFrequency(&Frequency);
 		nCountFreq = Frequency.QuadPart;
+
+		registerListener(KEYBOARD_EVENT);
 	}
 
 	~Engine() 

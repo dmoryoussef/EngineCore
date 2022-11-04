@@ -321,6 +321,42 @@ public:
 	}
 };
 
+class ParallelNode : public BehaviorNode
+{
+private:
+
+public:
+	ParallelNode(string n = "Parallel", BehaviorTreeBlackboard* blackboard = NULL) :
+		BehaviorNode(n, blackboard) {};
+
+	int update(float fDeltaTime)
+	{
+		switch (m_nState)
+		{
+			case RUNNING:
+				for (auto c : m_vChildren)
+				{
+					int current = c->update(fDeltaTime);
+					switch (current)
+					{
+						case FAILURE:
+							m_nState == FAILURE;
+							c->reset();
+							break;
+						case SUCCESS:
+							c->reset();
+							break;
+
+					} 
+						
+				}
+				break;
+		}
+
+		return m_nState;
+	}
+};
+
 class LeafNode : public BehaviorNode
 {
 public:
@@ -331,6 +367,9 @@ public:
 	{
 		switch (m_nState)
 		{
+			case IDLE:
+				m_nState = RUNNING;
+				break;
 			case RUNNING:
 				//	do specific thing
 				m_nState = execute(fDeltaTime);

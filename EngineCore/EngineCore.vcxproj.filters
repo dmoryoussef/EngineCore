@@ -70,6 +70,12 @@
     <Filter Include="Source Files\Data\BaseObject">
       <UniqueIdentifier>{0655b3d8-8cd4-4bc0-aeaa-9fb1507684d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\EntityComponentSystem\BehaviorTree\Behaviors">
+      <UniqueIdentifier>{0fc9afbe-0c70-4a35-9f97-5d70564dabbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EntityComponentSystem\BehaviorTree\NodeTypes">
+      <UniqueIdentifier>{c1abb08e-7822-43ff-986e-a14a7317ca7f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -291,9 +297,6 @@
     <ClInclude Include="LightMap.h">
       <Filter>Source Files\TileMapSystem\Maps</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviorNode.h">
-      <Filter>Source Files\EntityComponentSystem\BehaviorTree</Filter>
-    </ClInclude>
     <ClInclude Include="BehaviorTreeDemo.h">
       <Filter>Source Files\StateManager\States</Filter>
     </ClInclude>
@@ -309,14 +312,20 @@
     <ClInclude Include="LiveEditPoly2D.h">
       <Filter>Source Files\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="SeekBehavior.h">
-      <Filter>Source Files\EntityComponentSystem\BehaviorTree</Filter>
-    </ClInclude>
     <ClInclude Include="BehaviorTree.h">
       <Filter>Source Files\EntityComponentSystem\BehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="AttackBehavior.h">
-      <Filter>Source Files\EntityComponentSystem\BehaviorTree</Filter>
+      <Filter>Source Files\EntityComponentSystem\BehaviorTree\Behaviors</Filter>
+    </ClInclude>
+    <ClInclude Include="FleeBehavior.h">
+      <Filter>Source Files\EntityComponentSystem\BehaviorTree\Behaviors</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekBehavior.h">
+      <Filter>Source Files\EntityComponentSystem\BehaviorTree\Behaviors</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviorNode.h">
+      <Filter>Source Files\EntityComponentSystem\BehaviorTree\NodeTypes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

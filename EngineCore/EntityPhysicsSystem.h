@@ -14,22 +14,24 @@ public:
 		{
 			BaseNode* pEntity = m_pEntityList->getCurrent();
 
-			//vector<Accelerate*> AccelChildren = pEntity->getChildren<Accelerate>();
-			//Vector2 vTotal;
-			//for (auto accel : AccelChildren)
-			//	vTotal = vTotal + accel->getForce();
+			vector<Accelerate*> AccelChildren = pEntity->getChildren<Accelerate>();
+			Vector2 vTotal;
+			for (auto accel : AccelChildren)
+			{
+				vTotal = vTotal + accel->getForce();
+				//	accel->setForce({0, 0});
+			}
 
 			Accelerate* pAccel = pEntity->getChild<Accelerate>();
 			Transform2D* pTransform = pEntity->getChild<Transform2D>();
 			Velocity* pVelocity = pEntity->getChild<Velocity>();
 
-			if (pTransform && pVelocity && pAccel)
+			if (pTransform && pVelocity)
 			{
-				Vector2 vAccel = pAccel->getForce();
 				Vector2 vVelocity = pVelocity->getVelocity();
 
 				//	add acceleration forces
-				vVelocity = vVelocity + vAccel;
+				vVelocity = vVelocity + vTotal;
 				
 				//	add friction
 				vVelocity = vVelocity * 0.972;
@@ -42,6 +44,8 @@ public:
 				//	set new position
 				Vector2 vPosition = pTransform->getPosition();
 				vVelocity = vVelocity * fDeltaTime;
+
+				pTransform->setRotation({ -vVelocity.X, vVelocity.Y });
 				pTransform->setPosition(vPosition + vVelocity);
 			}
 		}

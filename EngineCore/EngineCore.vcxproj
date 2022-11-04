@@ -158,6 +158,7 @@
     <ClInclude Include="BezierCurveTestWindow.h" />
     <ClInclude Include="DataTree.h" />
     <ClInclude Include="DataTreeDemo.h" />
+    <ClInclude Include="FleeBehavior.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Damage.h" />
     <ClInclude Include="EntityComponentSystem.h" />

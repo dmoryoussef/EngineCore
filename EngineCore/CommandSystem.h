@@ -50,6 +50,7 @@ private:
 				Vector2 vNewVelocity = vVelocity + vAcceleration;
 				pPhysics->setVelocity(vNewVelocity);
 			}
+			delete pCommand;
 		}
 
 		if (pCommand->getType() == ROTATE)
@@ -60,8 +61,9 @@ private:
 				Vector2 vRotate = pCommand->get<RotateCommand>()->getVector();
 				pTransform->setRotation(vRotate);
 			}
-		}
 			delete pCommand;
+		}
+			
 
 	}
 

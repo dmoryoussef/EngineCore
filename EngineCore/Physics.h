@@ -13,11 +13,7 @@ public:
 		_EntityComponent("Thrust") {};
 
 	float getMax() { return m_fMax; }
-	float getCurrent() { return m_fCurrent; }
-	void setAccel(float accel)
-	{
-		m_fCurrent = accel;
-	}
+
 	Vector2 getForce()
 	{
 		return vForce;
@@ -58,8 +54,8 @@ public:
 
 	void setVelocity(Vector2 vVel) 
 	{ 
-		if (vVelocity.magnitude() < fMaxVelocity && 
-			vVel.magnitude() < fMaxVelocity)
+		//if (vVelocity.magnitude() < fMaxVelocity && 
+		//	vVel.magnitude() < fMaxVelocity)
 			vVelocity = vVel; 
 	}
 	Vector2 getVelocity() { return vVelocity; }

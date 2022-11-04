@@ -15,11 +15,10 @@ private:
 			{
 				if (ShootAction* pShoot = pParent->getChild<ShootAction>())
 				{
-					if (pShoot->canShoot())
-					{
+					
 						Vector2 rotation = transform->getRotation();
-						Vector2 forward = transform->getForward();
-						Vector2 position = transform->getPosition() + (forward * 1.1);
+						Vector2 forward = transform->getForward().normalize();
+						Vector2 position = transform->getPosition() + (forward * 1.5);
 						//	spawn entity event
 						BaseNode* pEntity = new BaseNode("Projectile");
 						pEntity->addChild(new Render(2));
@@ -27,10 +26,10 @@ private:
 						pEntity->addChild(new Velocity(forward * 0.05));
 						pEntity->addChild(new Collider2D());
 						pEntity->addChild(new OutOfBoundsCollision());
-						pEntity->addChild(new Damage(25));
+						//pEntity->addChild(new Damage(25));
 						m_pEntityList->add(pEntity);
 						addEvent(new NewBaseNodeEvent(pEntity));
-					}
+					 
 				}
 			}
 
@@ -96,7 +95,7 @@ public:
 		pEntity->addChild(new Collider2D(shape));
 		pEntity->addChild(new UIState()); 
 		pEntity->addChild(new Health(100));
-		pEntity->addChild(new Accelerate(10.0));
+		pEntity->addChild(new Accelerate(0.001));
 		
 		addEvent(new NewBaseNodeEvent(pEntity));
 

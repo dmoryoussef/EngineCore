@@ -113,6 +113,12 @@ Vector2 operator-(Vector2 A, Vector2 B)
 	return Subtract;
 }
 
+Vector2 operator-(Vector2 A)
+{
+	Vector2 Subtract(-A.X, -A.Y);
+	return Subtract;
+}
+
 Vector2 operator*(Vector2 A, Vector2 B)
 {
 	return Vector2(A.X * B.X, A.Y * B.Y);
