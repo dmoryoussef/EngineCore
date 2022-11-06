@@ -82,6 +82,30 @@ struct Vector2
 		if (magnitude() < min)
 			limit(min);
 	}
+
+	void add(Vector2 A)
+	{
+		X = X + A.X;
+		Y = Y + A.Y;
+	}
+
+	void sub(Vector2 A)
+	{
+		X = X - A.X;
+		Y = Y - A.Y;
+	}
+
+	void mult(float f)
+	{
+		X = X * f;
+		Y = Y * f;
+	}
+
+	void div(float f)
+	{
+		X = X / f;
+		Y = Y / f;
+	}
 };
 
 //Vector2 Min(Vector2 A, Vector2 B)

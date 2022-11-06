@@ -3,7 +3,6 @@ class SeekBehaviorNode : public LeafNode
 private:
 	BaseNode* m_pSelf;
 
-
 public:
 	SeekBehaviorNode(BaseNode *pSelf) : 
 		m_pSelf(pSelf) {};
