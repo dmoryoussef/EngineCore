@@ -26,14 +26,22 @@ private:
 		}
 	}
 public:
-	BehaviorTreeBlackboard() 
+	BehaviorTreeBlackboard(BaseNode *pSelf, BaseNode* entityList) :
+		m_pSelf(pSelf),
+		m_pTarget(NULL),
+		EntityList(entityList),
+		vTarget(),
+		vPath()
 	{
 		registerListener(MOUSEWORLD_EVENT);
 	}
 
 	Vector2 vTarget;
 	vector<Vector2> vPath;
-	BaseNode* pTarget;
+	BaseNode* m_pTarget;
+	BaseNode* m_pSelf;
+
+	BaseNode* EntityList;
 };
 
 class BehaviorNode : public DataTreeNode<BehaviorNode>
@@ -134,7 +142,10 @@ public:
 		renderNodeData(renderer);
 	}
 	
-	virtual void reset(){}
+	virtual void reset()
+	{
+		m_nState = IDLE;
+	}
 
 	void resetChildren(int state = IDLE)
 	{

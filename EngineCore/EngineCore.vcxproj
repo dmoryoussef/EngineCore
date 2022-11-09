@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -167,6 +167,7 @@
     <ClInclude Include="EntityRenderSystem.h" />
     <ClInclude Include="2DMatrix.h" />
     <ClInclude Include="ControllerInput.h" />
+    <ClInclude Include="GetTarget.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="BehaviorNode.h" />
     <ClInclude Include="Health.h" />
@@ -193,6 +194,7 @@
     <ClInclude Include="PathfindingTile.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Polygon.h" />
+    <ClInclude Include="PursuitBehavior.h" />
     <ClInclude Include="RectDemo.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="Render2D.h" />

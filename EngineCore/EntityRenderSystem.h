@@ -62,6 +62,8 @@ public:
 
 					vector<string> EntityData;
 
+					EntityData.push_back(pEntities->getCurrent()->getName());
+
 					if (Transform2D* pTransform = pEntities->getCurrent()->getChild<Transform2D>())
 						EntityData.push_back(pTransform->getPosition().toString());
 

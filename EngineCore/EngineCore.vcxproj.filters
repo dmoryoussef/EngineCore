@@ -327,6 +327,12 @@
     <ClInclude Include="BehaviorNode.h">
       <Filter>Source Files\EntityComponentSystem\BehaviorTree\NodeTypes</Filter>
     </ClInclude>
+    <ClInclude Include="PursuitBehavior.h">
+      <Filter>Source Files\EntityComponentSystem\BehaviorTree\Behaviors</Filter>
+    </ClInclude>
+    <ClInclude Include="GetTarget.h">
+      <Filter>Source Files\EntityComponentSystem\BehaviorTree\Behaviors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

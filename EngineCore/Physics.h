@@ -39,13 +39,13 @@ private:
 public:
 	Velocity(Vector2 velocity) :
 		vVelocity(velocity),
-		fMaxVelocity(0.02),
+		fMaxVelocity(1.0),
 		fMass(1.0),
 		_EntityComponent("Physics")	{};
 
 	Velocity() :
 		vVelocity({0, 0}),
-		fMaxVelocity(0.02),
+		fMaxVelocity(1.0),
 		fMass(1.0),
 		_EntityComponent("Physics")
 	{
@@ -54,9 +54,8 @@ public:
 
 	void setVelocity(Vector2 vVel) 
 	{ 
-		//if (vVelocity.magnitude() < fMaxVelocity && 
-		//	vVel.magnitude() < fMaxVelocity)
-			vVelocity = vVel; 
+		vVelocity = vVel; 
 	}
+
 	Vector2 getVelocity() { return vVelocity; }
 };

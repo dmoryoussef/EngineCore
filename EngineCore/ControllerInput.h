@@ -40,7 +40,7 @@ public:
 			{
 				if (controllerConnected[i] != true)
 				{
-					OutputDebugString("Controller is connected\n");
+					OutputDebugStringA("Controller is connected\n");
 					controllerConnected[i] = true;
 				}
 			}
@@ -48,7 +48,7 @@ public:
 			{
 				if (controllerConnected[i] == true)
 				{
-					OutputDebugString("Controller is not connected\n");
+					OutputDebugStringA("Controller is not connected\n");
 					controllerConnected[i] = false;
 				}
 			}

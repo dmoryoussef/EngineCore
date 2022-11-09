@@ -335,42 +335,40 @@ private:
 	BehaviorNode* bt;
 	Transform3D* pCameraTransform;
 
-	BaseNode* pEntity;
+	BaseNode* pEntityA;
+	BaseNode* pEntityB;
+
+	BehaviorNode* TreeA;
+	BehaviorNode* TreeB;
 
 public:
 	BehaviorTreeDemo() :
 		bt(NULL),
-		pEntity(NULL),
+		pEntityA(NULL),
+		pEntityB(NULL),
 		pCameraTransform(NULL) {};
 
-	BehaviorNode* buildDemoBehaviorTree()
-	{
-		RepeatDecorator* base = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard());
-		base->setState(RUNNING);
+	//void buildDemoBehaviorTree(BaseNode *entity)
+	//{
+	//	RepeatDecorator* base = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard(entity));
+	//	base->setState(RUNNING);
 
-		BehaviorNode* sequence = new SequenceNode();
-		base->addChild(sequence);
+	//	/*BehaviorNode* sequence = new SequenceNode();
+	//	base->addChild(sequence);*/
 
-		sequence->addChild(new SeekBehaviorNode(pEntity));
+	//	base->addChild(new PursuitBehaviorNode());
 
-		//BehaviorNode* parallel = new ParallelNode();
-		// sequence->addChild(parallel);
+	//	//BehaviorNode* parallel = new ParallelNode();
+	//	// sequence->addChild(parallel);
+	//	//	sequence->addChild(new FleeBehavior());
+	//	//node->addChild(new MouseBehaviorNode());
+	//	//MoveBehaviorNode* moveA = new MoveBehaviorNode(pEntity);
+	//	//node->addChild(moveA);
+	//	//	parallel->addChild(new SeekBehaviorNode(pEntity));
+	//	//	parallel->addChild(new AttackBehavior(pEntity));
 
-		sequence->addChild(new FleeBehavior(pEntity));
-
-		/*node->addChild(new MouseBehaviorNode());
-		
-		MoveBehaviorNode* moveA = new MoveBehaviorNode(pEntity);
-		node->addChild(moveA);*/
-
-		//	parallel->addChild(new SeekBehaviorNode(pEntity));
-
-		//	parallel->addChild(new AttackBehavior(pEntity));
-
-
-
-		return base;
-	}
+	//	entity->addChild(new Behavior(base));
+	//}
 
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI)
 	{
@@ -379,24 +377,44 @@ public:
 		CameraViewWindow* pCameraWindow = new CameraViewWindow(width, height, 0, 0);
 		BaseNode* pCamera = pCameraWindow->getCamera();
 		pCameraTransform = pCamera->getChild<Transform3D>();
-		pData->add(pCamera);
+		//pData->add(pCamera);
 		pGUI->addAtEnd(pCameraWindow);
 
-		pEntity = pSystems->getChild<EntityFactory>()->createPlayer(0);
-		pData->add(pEntity);
+		pEntityA = pSystems->getChild<EntityFactory>()->createPlayer(0);
+		pData->add(pEntityA);
+
+		pEntityB = pSystems->getChild<EntityFactory>()->createPlayer(1);
+		pData->add(pEntityB);
 		
-		bt = buildDemoBehaviorTree();
+		RepeatDecorator* baseA = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard(pEntityA, pData));
+		baseA->setState(RUNNING);
+		BehaviorNode* sequenceA = new SequenceNode();
+		baseA->addChild(sequenceA);
+		sequenceA->addChild(new GetTarget());
+		sequenceA->addChild(new PursuitBehaviorNode());
+		pEntityA->addChild(new Behavior(baseA));
+
+		RepeatDecorator* baseB = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard(pEntityB, pData));
+		baseB->setState(RUNNING);
+		BehaviorNode* sequenceB = new SequenceNode();
+		baseB->addChild(sequenceB);
+		sequenceB->addChild(new GetTarget());
+		sequenceB->addChild(new FleeBehavior());
+		pEntityB->addChild(new Behavior(baseB));
+
+		pEntityA->getChild<Transform2D>()->setPosition({ 40, 20 });
+
+		TreeA = baseA;
+		TreeB = baseB;
 	}
 
-	void update(BaseNode* pData, float fDeltaTime)
-	{
-		bt->update(fDeltaTime);
-	}
+	void update(BaseNode* pData, float fDeltaTime) {}
 
 	void render(OutputBuffer* pEngineBuffer)
 	{
 		Render2D renderer(pEngineBuffer, pCameraTransform->getPosition());
 		
-		bt->render(&renderer, 25, 5);
+		TreeA->render(&renderer, 5, 5);
+		TreeB->render(&renderer, 25, 5);
 	}
 };

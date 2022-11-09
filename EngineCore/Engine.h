@@ -44,6 +44,7 @@ float clamp(float value, float min, float max)
 	return value;  
 }
 
+//	Geometry
 #include "Vector2.h"
 #include "Vector3.h"
 
@@ -61,26 +62,27 @@ float clamp(float value, float min, float max)
 
 #include "Render2D.h"
 
-#include "DataTree.h"
-
 #include "NodeCore.h"
 #include "BaseNode.h"
 
 #include "_Command.h"
 #include "Events.h"	//	need a way to append this with user created events
 
+//	Input/Output
 #include "ControllerInput.h"
-
 #include "ConsoleWindow.h"
 #include "Win32Window.h"
 
 #include "ConsoleInputBuffer.h"
 #include "ConsoleOutputBuffer.h"
 
-// these 2 use control nodes, events, etc:
+// these use control nodes, events, output buffer, renderer etc:
+#include "DataTree.h"
 #include "Bezier.h"
 #include "LiveEditPoly2D.h"
+#include "BehaviorNode.h"
 
+//	Systems
 #include "EntityComponentSystem.h"
 #include "GUI.h"
 #include "TileMapSystem.h"
@@ -91,6 +93,7 @@ class Engine : public EventListener
 {
 protected:
 	bool m_bRunning;
+	float m_fGameSpeed;
 
 	uint64_t nCountFreq;
 	LARGE_INTEGER PrevCounter;
@@ -109,6 +112,8 @@ protected:
 	ControllerInput controllerInput;
 
 	StateManager  *m_pStateManager;
+
+	bool m_bPaused;
 
 	float getDeltaTime()
 	{
@@ -130,6 +135,20 @@ protected:
 		{
 			if (pEvent->get<KeyboardEvent>()->isKeyDown(27))
 				m_bRunning = false;
+
+			if (pEvent->get<KeyboardEvent>()->isKeyDown('p'))
+			{
+				if (m_bPaused)
+				{
+					m_bPaused = false;
+					m_fGameSpeed = 1.0;
+				}
+				else
+				{
+					m_bPaused = true;
+					m_fGameSpeed = 0.0;
+				}
+			}
 		}
 	}
 
@@ -162,6 +181,8 @@ protected:
 
 public:
 	Engine() :
+		m_bPaused(false),
+		m_fGameSpeed(1.0),
 		PrevCounter({ 0, 0 }),
 		events(),
 		controllerInput(),
@@ -240,11 +261,9 @@ public:
 
 	void run()
 	{
-		float fSpeed = 1.0f;
-
 		while (m_bRunning)
 		{
-			float fDeltaTime = getDeltaTime() * fSpeed;
+			float fDeltaTime = getDeltaTime() * m_fGameSpeed;
 			handleEvents();
 			update(fDeltaTime);
 			render();

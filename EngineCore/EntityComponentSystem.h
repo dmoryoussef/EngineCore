@@ -21,8 +21,6 @@
 #include "Behavior.h"
 //	#include "AIController.h"
 
-
-
 #include "EntityRenderSystem.h"
 #include "EntityPhysicsSystem.h"
 #include "EntityFactory.h"

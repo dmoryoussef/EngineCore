@@ -1,11 +1,9 @@
 class FleeBehavior : public LeafNode
 {
 private:
-	BaseNode* m_pSelf;
 
 public:
-	FleeBehavior(BaseNode *pSelf) :
-		m_pSelf(pSelf) {};
+	FleeBehavior(){};
 
 	int execute(float fDeltaTime)
 	{
@@ -16,35 +14,40 @@ public:
 		Vector2 vSteer;
 		Vector2 vAccel;
 
-		if (m_pSelf == NULL)
+		if (Blackboard->m_pSelf == NULL)
 		{
 			return FAILURE;
 		}
 
-		if (Transform2D* pTransform = m_pSelf->getChild<Transform2D>())
+		if (Transform2D* pTransform = Blackboard->m_pSelf->getChild<Transform2D>())
 		{
-			if (Accelerate* accel = m_pSelf->getChild<Accelerate>())
+			if (Accelerate* accel = Blackboard->m_pSelf->getChild<Accelerate>())
 			{
-				if (Velocity* pVelocity = m_pSelf->getChild<Velocity>())
+				if (Velocity* pVelocity = Blackboard->m_pSelf->getChild<Velocity>())
 				{
-					vTarget = Blackboard->vTarget;
-					vPosition = pTransform->getPosition();
-					float fDistance = distance(vTarget, vPosition);
-					if (fDistance < 25.0)
+					if (Transform2D* pTargetTransform = Blackboard->m_pTarget->getChild<Transform2D>())
 					{
-						vDesiredDirection = -(vTarget - vPosition).normalize();
+						vTarget = pTargetTransform->getPosition();
+						vPosition = pTransform->getPosition();
+						float fDistance = distance(vTarget, vPosition);
+						if (fDistance < 25.0)
+						{
+							vDesiredDirection = -(vTarget - vPosition).normalize();
+							//	needs a randomizing agent for "juking"?
 
-						vVelocity = pVelocity->getVelocity();
-						vSteer = (vDesiredDirection - vVelocity).normalize();
+							vVelocity = pVelocity->getVelocity();
+							vSteer = (vDesiredDirection - vVelocity).normalize();
 
-						float fThrust = accel->getMax();
-						vAccel = vSteer * fThrust;
+							float fThrust = accel->getMax();
+							vAccel = vSteer * fThrust;
 
-						accel->setForce(vAccel);
+							accel->setForce(vAccel);
 
-						return RUNNING;	//	not at target yet
+							return RUNNING;	//	not at target yet
+						}
+						return SUCCESS;	//	arrived at target
 					}
-					return SUCCESS;	//	arrived at target
+					return FAILURE; //	target has no transform component
 				}
 				return FAILURE; //	no velocity component
 			}

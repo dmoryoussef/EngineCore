@@ -36,7 +36,7 @@ MainWindowCallback(HWND Window,
 
 		case WM_DESTROY:
 		{
-			OutputDebugString("WM_DESTROY \n");
+			OutputDebugStringA("WM_DESTROY \n");
 		}
 		break;
 		/*case WM_CLOSE:
@@ -46,7 +46,7 @@ MainWindowCallback(HWND Window,
 		break;*/
 		case WM_ACTIVATEAPP:
 		{
-			OutputDebugString("WM_ACTIVATEAPP \n");
+			OutputDebugStringA("WM_ACTIVATEAPP \n");
 		}
 		break;
 		default:
@@ -133,7 +133,7 @@ public:
 
 		if (!RegisterClass(&WindowClass))
 		{
-			OutputDebugString("RegisterClass error");
+			OutputDebugStringA("RegisterClass error");
 		}
 		//	https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowexa
 		WindowHandle =
@@ -153,7 +153,7 @@ public:
 
 		if (!WindowHandle)
 		{
-			OutputDebugString("Window not created");
+			OutputDebugStringA("Window not created");
 		}
 	}
 

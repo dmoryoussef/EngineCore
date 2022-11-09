@@ -19,7 +19,7 @@ public:
 			for (auto accel : AccelChildren)
 			{
 				vTotal = vTotal + accel->getForce();
-				//	accel->setForce({0, 0});
+				accel->setForce({0, 0});
 			}
 
 			Accelerate* pAccel = pEntity->getChild<Accelerate>();

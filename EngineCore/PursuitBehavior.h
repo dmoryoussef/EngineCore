@@ -1,35 +1,12 @@
-class SeekBehaviorNode : public LeafNode
+class PursuitBehaviorNode : public LeafNode
 {
 private:
+	Vector2 vTargetPrev;
+	Vector2 vPursueVelocity;
 
 public:
-	SeekBehaviorNode() {};
-
-	string description()
-	{
-		switch (m_nState)
-		{
-			case RUNNING:
-				return "Seeking target.";
-				break;
-			case SUCCESS:
-				return "Arrived at target.";
-				break;
-			case IDLE:
-				return "Waiting to move";
-				break;
-			case FAILURE:
-				return "Target location not reachable.";
-				break;
-		}
-	}
-
-	Vector2 vTarget;
-	Vector2 vPosition;
-	Vector2 vDesiredDirection;
-	Vector2 vVelocity;
-	Vector2 vSteer;
-	Vector2 vAccel;
+	PursuitBehaviorNode() :
+		vTargetPrev() {}
 
 	int execute(float fDeltaTime)
 	{
@@ -44,28 +21,34 @@ public:
 			{
 				if (Velocity* pVelocity = Blackboard->m_pSelf->getChild<Velocity>())
 				{
-					vTarget = Blackboard->vTarget;
-					vPosition = pTransform->getPosition();
+					Vector2 vPosition = pTransform->getPosition();
+					Vector2 vTarget = Blackboard->m_pTarget->getChild<Transform2D>()->getPosition();
+
+					vPursueVelocity = (vTarget - vTargetPrev) * (fDeltaTime * 5);
+					Vector2 vNewTargetPosition = vTarget + vPursueVelocity;
+					
+					vTargetPrev = vTarget;
+
 					float fDistance = distance(vTarget, vPosition);
 					if (fDistance > 1.0)
 					{
 						//	vector with length total distance to target, normalized
-						vDesiredDirection = (vTarget - vPosition).normalize();	
-						
+						Vector2 vDesiredDirection = (vNewTargetPosition - vPosition).normalize();
+
 						//	scaled up to maximum speed
 						float maxSpeed = 1.0f;
 						vDesiredDirection.mult(maxSpeed);
 
 						//	steering force vector, normalized
-						vVelocity = pVelocity->getVelocity();
-						vSteer = (vDesiredDirection - vVelocity).normalize();
+						Vector2 vVelocity = pVelocity->getVelocity();
+						Vector2 vSteer = (vDesiredDirection - vVelocity).normalize();
 
 						//	accel force scaled to entity thrust
 						float fThrust = accel->getMax();
-						vAccel = vSteer * fThrust;
+						Vector2 vAccel = vSteer * fThrust;
 
 						accel->setForce(vAccel);
-					
+
 						//	TO DO:
 						//	convert to steering only affects rotation
 						//	when rotated to correct vector, accel at max
@@ -85,10 +68,6 @@ public:
 
 	void renderNodeData(Render2D* renderer)
 	{
-		if (m_nState == RUNNING)
-		{
-			//renderer->DrawCircle(vPosition.X, vPosition.Y, 15, {PIXEL_SOLID, FG_WHITE});
-		}
+		// renderer->DrawCircle(Blackboard->vTarget.X, Blackboard->vTarget.Y, 1.0, {PIXEL_SOLID, FG_WHITE});
 	}
-
 };
