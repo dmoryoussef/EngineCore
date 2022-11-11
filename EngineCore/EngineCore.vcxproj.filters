@@ -333,6 +333,9 @@
     <ClInclude Include="GetTarget.h">
       <Filter>Source Files\EntityComponentSystem\BehaviorTree\Behaviors</Filter>
     </ClInclude>
+    <ClInclude Include="Win32Demo.h">
+      <Filter>Source Files\StateManager\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

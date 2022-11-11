@@ -217,6 +217,7 @@
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector2Demo.h" />
     <ClInclude Include="Vector3.h" />
+    <ClInclude Include="Win32Demo.h" />
     <ClInclude Include="Win32Window.h" />
     <ClInclude Include="WorldViewWindow.h" />
     <ClInclude Include="UIButton.h" />

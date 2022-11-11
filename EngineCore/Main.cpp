@@ -12,11 +12,12 @@
 #include "BehaviorTreeDemo.h"
 #include "DataTreeDemo.h"
 #include "RectDemo.h"
+#include "Win32Demo.h"
 
 void main()
 {
 	Engine *pEngine = new Engine();
-	pEngine->start(new ConsoleWindow(300, 150, 4, 4), new BehaviorTreeDemo());
+	pEngine->start(new Win32Window(1080, 720, 4, 4), new Win32Demo());
 	pEngine->run();
 	delete pEngine;
 }

@@ -220,9 +220,32 @@ public:
 		return m_bRunning;
 	}
 
+	void start(GameState* pStartingState)
+	{
+		srand(0);
+
+		//	control window type (console or win32)
+		//	m_pWindow = pStartingState->getWindow();
+		m_pWindow->init();
+		m_pEngineBuffer = new OutputBuffer(m_pWindow->getWidth(), m_pWindow->getHeight());
+		m_pInputBuffer = new ConsoleInputBuffer();
+
+		m_pGUI = new _UIComponent(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
+		
+		controllerInput.loadXInput();
+
+		m_pSystems->addChild(new CollisionDetectionSystem(m_pData));
+		m_pSystems->addChild(new EntityPhysicsSystem(m_pData));
+		m_pSystems->addChild(new EntityFactory(m_pData));
+		m_pSystems->addChild(new EntityCommandSystem(m_pData));
+
+		m_pStateManager->setEngineBufferSize(m_pWindow->getWidth(), m_pWindow->getHeight());
+		m_pStateManager->setState(pStartingState);
+		m_pStateManager->start(m_pData, m_pSystems, m_pGUI);
+	}
+
 	void start(OutputWindow *sb, GameState *pStartingState)
 	{
-		//	seed random generator
 		srand(0);
 
 		m_pWindow = sb;
@@ -236,22 +259,6 @@ public:
 		m_pSystems->addChild(new EntityPhysicsSystem(m_pData));
 		m_pSystems->addChild(new EntityFactory(m_pData));
 		m_pSystems->addChild(new EntityCommandSystem(m_pData));
-
-		//	CustomWindow* pCustom = new CustomWindow(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
-		//	addGUI(pCustom);
-		//DefaultTileMap* mapA = new DefaultTileMap(8, 8);
-		//mapA->setPosition(2, 2);
-		//mapA->createCheckerMap();
-		//m_pData->add(mapA);
-		//DefaultTileMap* mapB = new DefaultTileMap(8, 8);
-		//mapB->setPosition(14, 16);
-		//mapB->createCheckerMap();
-		//m_pData->add(mapB);
-		//BaseNode *pControllerWidget = new BaseNode();
-		//pControllerWidget->add(new ControllerWidget());
-		//m_pData->add(pControllerWidget);
-		//	change to detect controller first?
-		// m_pData->add(new GameState(m_pEngineBuffer));
 
 		m_pStateManager->setEngineBufferSize(m_pWindow->getWidth(), m_pWindow->getHeight());
 		m_pStateManager->setState(pStartingState);

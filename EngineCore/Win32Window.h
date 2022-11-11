@@ -18,32 +18,32 @@ MainWindowCallback(HWND Window,
 			//	ResizeBuffer(nHeight, nWidth);
 		}
 		break;
-		/*case WM_PAINT:
+		case WM_PAINT:
 		{
-			PAINTSTRUCT Paint;
-			HDC DeviceContext = BeginPaint(Window, &Paint);
-			int X = Paint.rcPaint.left;
-			int Y = Paint.rcPaint.top;
-			int Width = Paint.rcPaint.right - Paint.rcPaint.left;
-			int Height = Paint.rcPaint.bottom - Paint.rcPaint.top;
+			//PAINTSTRUCT Paint;
+			//HDC DeviceContext = BeginPaint(Window, &Paint);
+			//int X = Paint.rcPaint.left;
+			//int Y = Paint.rcPaint.top;
+			//int Width = Paint.rcPaint.right - Paint.rcPaint.left;
+			//int Height = Paint.rcPaint.bottom - Paint.rcPaint.top;
 
-			RECT rec;
-			GetClientRect(Window, &rec);
-			UpdateWindow(DeviceContext, rec);
-			EndPaint(Window, &Paint);
+			//RECT rec;
+			//GetClientRect(Window, &rec);
+			//UpdateWindow(DeviceContext, rec);
+			//EndPaint(Window, &Paint);
 		}
-		break;*/
+		break;
 
 		case WM_DESTROY:
 		{
 			OutputDebugStringA("WM_DESTROY \n");
 		}
 		break;
-		/*case WM_CLOSE:
+		case WM_CLOSE:
 		{
 			OutputDebugString("WM_CLOSE \n");
 		}
-		break;*/
+		break;
 		case WM_ACTIVATEAPP:
 		{
 			OutputDebugStringA("WM_ACTIVATEAPP \n");
@@ -107,19 +107,6 @@ public:
 	{
 
 	}
-
-	void renderToBuffer(OutputBuffer* pBuffer)
-	{
-		for (int nY = 0; nY < pBuffer->getHeight(); ++nY)
-			for (int nX = 0; nX < pBuffer->getWidth(); ++nX)
-				if ((nY < m_nScreenHeight && nX < m_nScreenWidth) &&
-					(nY >= 0 && nX >= 0))
-				{
-					Pixel current = pBuffer->getPixel(nX, nY);
-					//	convert pixel to window screen buffer here
-				}
-	}
-
 	void init()
 	{
 		//	https://docs.microsoft.com/en-us/windows/win32/learnwin32/creating-a-window
@@ -142,10 +129,10 @@ public:
 				WindowClass.lpszClassName,
 				"Win32 Window",
 				WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-				CW_USEDEFAULT,
-				CW_USEDEFAULT,
-				CW_USEDEFAULT,
-				CW_USEDEFAULT,
+				500,	// screen position x
+				500,	// screen position y
+				m_nScreenWidth,
+				m_nScreenHeight,
 				0,
 				0,
 				hInstance,
@@ -155,6 +142,18 @@ public:
 		{
 			OutputDebugStringA("Window not created");
 		}
+	}
+
+	void renderToBuffer(OutputBuffer* pBuffer)
+	{
+		for (int nY = 0; nY < pBuffer->getHeight(); ++nY)
+			for (int nX = 0; nX < pBuffer->getWidth(); ++nX)
+				if ((nY < m_nScreenHeight && nX < m_nScreenWidth) &&
+					(nY >= 0 && nX >= 0))
+				{
+					Pixel current = pBuffer->getPixel(nX, nY);
+					//	convert pixel to window screen buffer here
+				}
 	}
 
 	void outputToWindow()
