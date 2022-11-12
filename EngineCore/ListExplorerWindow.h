@@ -147,12 +147,12 @@ class ListExplorerWindow : public UIWindow
 		}
 	}
 
-	void constructComponent(BaseNode *pBaseNode)
+	void constructComponent(BaseNode *pBaseNode, OutputBuffer *pBuffer)
 	{
 		if (m_pBaseNode)
 		{
 			if (m_pBaseNode->getTotal() == 0)
-				set(m_pBaseNode->toString(), 2, 2, FG_WHITE);
+				pBuffer->set(m_pBaseNode->toString(), 2, 2, FG_WHITE);
 		}
 	}
 
@@ -164,7 +164,7 @@ class ListExplorerWindow : public UIWindow
 		if (m_pBaseNode->getTotal() > nMinHeight - 3)
 			nMinHeight = m_pBaseNode->getTotal() + 3;
 
-		resize(m_nWidth, nMinHeight);
+		//resize(m_nWidth, nMinHeight);
 
 		clearList();
 

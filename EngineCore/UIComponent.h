@@ -20,12 +20,13 @@ enum GUI_ALIGNMENT
 
 class _UIComponent :
 	public EventListener,
-	public BaseNode,
-	public OutputBuffer
+	public BaseNode
 {
 protected:
 	Vector2 MaxSize;			//	any size greater than this - add scroll bar
 	Vector2 Position;
+	int m_nWidth;
+	int m_nHeight;
 	Vector2 EdgeBuffer;
 	string m_strText;			// window title, button name, textfield, etc
 	bool m_bMouseOver;
@@ -39,7 +40,7 @@ protected:
 	int m_nFGColor;
 
 	virtual void removeComponent(_UIComponent* pComponent) {}
-	virtual void constructComponent(BaseNode* pData) {}
+	virtual void constructComponent(BaseNode* pData, OutputBuffer* pBuffer) {}
 	virtual void onStateChange() {};
 
 	void onEvent(_Event* pEvent)
@@ -55,45 +56,45 @@ protected:
 		}
 	}
 
-	void drawBorder(int nFinalColor)
+	void drawBorder(OutputBuffer* pBuffer, int nFinalColor)
 	{
 		for (int nY = 0; nY < m_nHeight; nY++)
 			for (int nX = 0; nX < m_nWidth; nX++)
 			{
 				if (nY == 0 || nY == m_nHeight - 1)					//	top or bottom sides
-					set(205, nX, nY, nFinalColor);
+					pBuffer->set(205, nX, nY, nFinalColor);
 				if (nX == 0 || nX == m_nWidth - 1)					//	left or right sides
-					set(186, nX, nY, nFinalColor);
+					pBuffer->set(186, nX, nY, nFinalColor);
 
 				if (nY == 0 && nX == 0)								//	top left corner
-					set(201, nX, nY, nFinalColor);
+					pBuffer->set(201, nX, nY, nFinalColor);
 				if (nY == 0 && nX == m_nWidth - 1)					//	top right corner
-					set(187, nX, nY, nFinalColor);
+					pBuffer->set(187, nX, nY, nFinalColor);
 				if (nY == m_nHeight - 1 && nX == m_nWidth - 1)		//	bottom right corner
-					set(188, nX, nY, nFinalColor);
+					pBuffer->set(188, nX, nY, nFinalColor);
 				if (nY == m_nHeight - 1 && nX == 0)					//	bottom left corner
-					set(200, nX, nY, nFinalColor);
+					pBuffer->set(200, nX, nY, nFinalColor);
 			}
 	}
 
-	void drawThinBorder(int nFinalColor)
+	void drawThinBorder(OutputBuffer* pBuffer, int nFinalColor)
 	{
 		for (int nY = 0; nY < m_nHeight; nY++)
 			for (int nX = 0; nX < m_nWidth; nX++)
 			{
 				if (nY == 0 || nY == m_nHeight - 1)					//	top or bottom sides
-					set(196, nX, nY, nFinalColor);
+					pBuffer->set(196, nX, nY, nFinalColor);
 				if (nX == 0 || nX == m_nWidth - 1)					//	left or right sides
-					set(179, nX, nY, nFinalColor);
+					pBuffer->set(179, nX, nY, nFinalColor);
 
 				if (nY == 0 && nX == 0)								//	top left corner
-					set(218, nX, nY, nFinalColor);
+					pBuffer->set(218, nX, nY, nFinalColor);
 				if (nY == 0 && nX == m_nWidth - 1)					//	top right corner
-					set(191, nX, nY, nFinalColor);
+					pBuffer->set(191, nX, nY, nFinalColor);
 				if (nY == m_nHeight - 1 && nX == m_nWidth - 1)			//	bottom right corner
-					set(217, nX, nY, nFinalColor);
+					pBuffer->set(217, nX, nY, nFinalColor);
 				if (nY == m_nHeight - 1 && nX == 0)					//	bottom left corner
-					set(192, nX, nY, nFinalColor);
+					pBuffer->set(192, nX, nY, nFinalColor);
 			}
 	}
 
@@ -163,10 +164,9 @@ protected:
 					setState(DEFAULT);
 				break;
 		}
-
 	}
 
-	virtual void constructBase() {}
+	virtual void constructBase(OutputBuffer *pBuffer) {}
 
 public:
 	_UIComponent(int nWidth, int nHeight, int nPosX, int nPosY) :
@@ -180,7 +180,8 @@ public:
 		m_bToggle(true),
 		m_nBGColor(BG_BLACK),
 		m_nFGColor(FG_WHITE),
-		OutputBuffer(nWidth, nHeight)
+		m_nHeight(nHeight),
+		m_nWidth(nWidth)
 	{
 		setName("COMPONENT");
 		registerListener(CONSOLE_MOUSE_EVENT);
@@ -197,7 +198,8 @@ public:
 		m_bMouseOver(false),
 		m_bActive(false),
 		m_bToggle(true),
-		OutputBuffer(nWidth, nHeight)
+		m_nHeight(nHeight),
+		m_nWidth(nWidth)
 	{
 		registerListener(CONSOLE_MOUSE_EVENT);
 		registerListener(KEYBOARD_EVENT);
@@ -213,7 +215,8 @@ public:
 		m_bMouseOver(false),
 		m_bActive(false),
 		m_bToggle(true),
-		OutputBuffer(0, 0)
+		m_nHeight(0),
+		m_nWidth(0)
 	{
 		setName(strText);
 		registerListener(CONSOLE_MOUSE_EVENT);
@@ -233,7 +236,8 @@ public:
 		m_bMouseOver(false),
 		m_bActive(false),
 		m_bToggle(true),
-		OutputBuffer(0, 0)
+		m_nHeight(0),
+		m_nWidth(0)
 	{
 		setName("COMPONENT");
 		registerListener(CONSOLE_MOUSE_EVENT);
@@ -271,7 +275,6 @@ public:
 			pCurrent->setAlignment(pCurrent->getAlignment());
 		}
 	}
-
 	void setAlignment(int nAlignment)
 	{
 		m_nAlignment = nAlignment;
@@ -358,17 +361,17 @@ public:
 
 	void render(BaseNode* pData, OutputBuffer* pFrame)
 	{
-		clear(m_nBGColor);
+		//clear(m_nBGColor);
 
 		// specific to each component (game data to be diplayed)
-		constructComponent(pData);
+		constructComponent(pData, pFrame);
 
 		//	layer base on top (title, boarder, etc)
 		//	only called here
-		constructBase();
+		constructBase(pFrame);
 
 		//	set final look to main frame
-		pFrame->set(this, getMin().X, getMin().Y);
+		//pFrame->set(this, getMin().X, getMin().Y);
 
 		// Now do the same for each child component
 		for (_UIComponent* pChild = getStart<_UIComponent>(); pChild != NULL; pChild = pChild->getNext<_UIComponent>())
@@ -426,7 +429,7 @@ public:
 	Vector2 getMax()
 	{
 		Vector2 Position = getConsoleWindowPosition();
-		Vector2 FinalMax = Position + Size;
+		Vector2 FinalMax = Position + Vector2(m_nWidth, m_nHeight);
 		return  FinalMax;
 	}
 
@@ -482,13 +485,16 @@ public:
 		int height = 0;
 		while (isIterating())
 		{
-			if (width < getCurrent<_UIComponent>()->getWidth())
-				width = getCurrent<_UIComponent>()->getWidth();
+			if (width < getCurrent<_UIComponent>()->m_nHeight)
+				width = getCurrent<_UIComponent>()->m_nWidth;
 			
-			if (height < height + getCurrent<_UIComponent>()->getHeight())
-				height = height + getCurrent<_UIComponent>()->getHeight();
+			if (height < height + getCurrent<_UIComponent>()->m_nWidth)
+				height = height + getCurrent<_UIComponent>()->m_nHeight;
 		}
-		resize(width, height);
+		//resize(width, height);
 	}
+
+	int getHeight() { return m_nHeight; }
+	int getWidth() { return m_nWidth; }
 };
 

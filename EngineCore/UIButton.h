@@ -2,32 +2,32 @@ class UIButton :
 	public _UIComponent
 {
 protected:
-	void constructBase()
+	void constructBase(OutputBuffer *pBuffer)
 	{
-		int nCenterX = (Size.X / 2) - (m_strText.size() / 2);
-		int nCenterY = Size.Y / 2;
+		int nCenterX = (m_nWidth / 2) - (m_strText.size() / 2);
+		int nCenterY = m_nHeight / 2;
 
 		switch (m_nState)
 		{
 			case DEFAULT:
 				//setForegroundColor(FOREGROUND_DARKGREY);
 				//	setBackgroundColor(BACKGROUND_BLACK);
-				set(m_strText, nCenterY, nCenterX, m_nBGColor + FG_DARKGREY);
+				pBuffer->set(m_strText, nCenterY, nCenterX, m_nBGColor + FG_DARKGREY);
 				break;
 			case MOUSE_OVER:
 				//	setForegroundColor(FOREGROUND_BLACK);
 				//	setBackgroundColor(BACKGROUND_WHITE);
-				set(m_strText, nCenterY, nCenterX, BG_LIGHTGREY + FG_BLACK);
+				pBuffer->set(m_strText, nCenterY, nCenterX, BG_LIGHTGREY + FG_BLACK);
 				break;
 			case LEFT_PRESSED:
 				//	setForegroundColor(FOREGROUND_WHITE);
 				//	setBackgroundColor(BACKGROUND_BLACK);
-				set(m_strText, nCenterY, nCenterX, m_nBGColor + FG_WHITE);
+				pBuffer->set(m_strText, nCenterY, nCenterX, m_nBGColor + FG_WHITE);
 				break;
 			case LEFT_RELEASED:
 				//	setForegroundColor(FOREGROUND_BLACK);
 				//	setBackgroundColor(BACKGROUND_WHITE);
-				set(m_strText, nCenterY, nCenterX, BG_WHITE + FG_BLACK);
+				pBuffer->set(m_strText, nCenterY, nCenterX, BG_WHITE + FG_BLACK);
 				break;
 		}
 	}
@@ -76,5 +76,7 @@ public:
 	{
 		unregisterAll();
 	}
+
+
 
 };

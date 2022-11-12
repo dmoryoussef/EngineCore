@@ -171,6 +171,7 @@ protected:
 
 	void render() 
 	{	
+		m_pEngineBuffer->clear(BG_BLACK);
 		//	a) render the current state to engine buffer
 		m_pGUI->render(m_pData, m_pEngineBuffer);
 		m_pStateManager->render(m_pEngineBuffer);
@@ -257,7 +258,7 @@ public:
 		m_pEngineBuffer = ob;
 
 		//	gui needs buffers based on the output buffer
-		m_pGUI = new _UIComponent<ConsoleOutputBuffer>(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
+		m_pGUI = new _UIComponent(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
 
 		controllerInput.loadXInput();
 

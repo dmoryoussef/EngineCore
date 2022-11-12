@@ -88,7 +88,7 @@ protected:
 		}
 	}
 
-	void constructBase()
+	void constructBase(OutputBuffer *pBuffer)
 	{
 		int nForgroundColor = FG_DARKGREY;
 		if (m_bMouseOver)
@@ -96,15 +96,15 @@ protected:
 
 		int nFinalColor = m_nBGColor + nForgroundColor;
 
-		drawBorder(nFinalColor);
+		drawBorder(pBuffer, nFinalColor);
 
 		string strPosition = formatPosition();
 
 		if (m_bDisplayPosition)
-			set(strPosition, m_nWidth - (strPosition.size() + 1), 0, nFinalColor);
+			pBuffer->set(strPosition, m_nWidth - (strPosition.size() + 1), 0, nFinalColor);
 
 		if (m_bDisplayTitle)
-			set(formatTitle(m_strText), 1, 0, nFinalColor);
+			pBuffer->set(formatTitle(m_strText), 1, 0, nFinalColor);
 	}
 
 	
