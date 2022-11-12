@@ -1,5 +1,4 @@
-class ConsoleInputBuffer : 
-	public EventListener
+class ConsoleInputHandler : public PlatformInputHandler
 {
 private:
 	HANDLE m_hInputHandle;
@@ -9,7 +8,7 @@ private:
 	bool bKeyPressed[256];
 
 public:
-	ConsoleInputBuffer() :
+	ConsoleInputHandler() :
 		m_pInputBuffer(NULL),
 		m_nTotalEvents(0)
 	{
@@ -94,5 +93,9 @@ public:
 			}
 	}
 
-
+	void processInput()
+	{
+		getConsoleInput();
+		convertEvents();
+	}
 };

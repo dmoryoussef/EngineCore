@@ -16,10 +16,14 @@
 
 void main()
 {
-	Engine *pEngine = new Engine();
-	pEngine->start(new Win32Window(1080, 720, 4, 4), new Win32Demo());
-	pEngine->run();
-	delete pEngine;
+	Engine engine;
+	//engine.start(new Win32Window(1080, 720, 4, 4), 
+	//			 new Win32InputHandler(), 
+	//			 new Win32Demo());
+	engine.start(new ConsoleWindow(400, 200, 4, 4),
+		new ConsoleInputHandler(),
+		new BehaviorTreeDemo());
+	engine.run();
 }
 
 //

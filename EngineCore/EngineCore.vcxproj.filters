@@ -129,7 +129,7 @@
     <ClInclude Include="Render2D.h">
       <Filter>Source Files\EngineCore</Filter>
     </ClInclude>
-    <ClInclude Include="ConsoleInputBuffer.h">
+    <ClInclude Include="ConsoleInputHandler.h">
       <Filter>Source Files\EngineCore\Input</Filter>
     </ClInclude>
     <ClInclude Include="PathfindingMap.h">
@@ -336,10 +336,18 @@
     <ClInclude Include="Win32Demo.h">
       <Filter>Source Files\StateManager\States</Filter>
     </ClInclude>
+    <ClInclude Include="Win32InputHandler.h">
+      <Filter>Source Files\EngineCore\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PlatformInputHandler.h">
+      <Filter>Source Files\EngineCore\Input</Filter>
+    </None>
   </ItemGroup>
 </Project>

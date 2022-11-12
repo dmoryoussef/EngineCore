@@ -8,10 +8,15 @@ public:
 
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI)
 	{
-		cout << "test to console window.";
+		cout << "Starting game state. \n";
 	}
 
-	void update(BaseNode* pData, float fDeltaTime) {}
+	void update(BaseNode* pData, float fDeltaTime) 
+	{
+		//	process windows messages
+		//	Move to input handler
+
+	}
 
 	void render(OutputBuffer* pEngineBuffer)
 	{

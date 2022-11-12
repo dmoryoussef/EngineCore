@@ -20,7 +20,7 @@ enum GUI_ALIGNMENT
 class _UIComponent :
 	public EventListener,
 	public BaseNode,
-	public ConsoleOutputBuffer
+	public OutputBuffer
 {
 protected:
 	Vector2 MaxSize;			//	any size greater than this - add scroll bar
@@ -179,7 +179,7 @@ public:
 		m_bToggle(true),
 		m_nBGColor(BG_BLACK),
 		m_nFGColor(FG_WHITE),
-		ConsoleOutputBuffer(nWidth, nHeight)
+		OutputBuffer(nWidth, nHeight)
 	{
 		setName("COMPONENT");
 		registerListener(CONSOLE_MOUSE_EVENT);
@@ -196,7 +196,7 @@ public:
 		m_bMouseOver(false),
 		m_bActive(false),
 		m_bToggle(true),
-		ConsoleOutputBuffer(nWidth, nHeight)
+		OutputBuffer(nWidth, nHeight)
 	{
 		registerListener(CONSOLE_MOUSE_EVENT);
 		registerListener(KEYBOARD_EVENT);
@@ -212,7 +212,7 @@ public:
 		m_bMouseOver(false),
 		m_bActive(false),
 		m_bToggle(true),
-		ConsoleOutputBuffer(0, 0)
+		OutputBuffer(0, 0)
 	{
 		setName(strText);
 		registerListener(CONSOLE_MOUSE_EVENT);
@@ -232,7 +232,7 @@ public:
 		m_bMouseOver(false),
 		m_bActive(false),
 		m_bToggle(true),
-		ConsoleOutputBuffer(0, 0)
+		OutputBuffer(0, 0)
 	{
 		setName("COMPONENT");
 		registerListener(CONSOLE_MOUSE_EVENT);

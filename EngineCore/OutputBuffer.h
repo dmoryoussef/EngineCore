@@ -32,32 +32,12 @@ protected:
 	int m_nHeight;
 	Vector2 Size;
 
-	Pixel* m_pBuffer;
-
 public:
 	OutputBuffer(int width, int height) :
 		m_nWidth(width),
 		m_nHeight(height),
-		Size(width, height),
-		m_pBuffer(NULL)
-	{
-		m_pBuffer = new Pixel[m_nWidth * m_nHeight];
-	};
+		Size(width, height)	{};
 	
-	~OutputBuffer()
-	{
-		delete m_pBuffer;
-	}
-
-	void resize(int nWidth, int nHeight)
-	{
-		m_nWidth = nWidth;
-		m_nHeight = nHeight;
-		Size = { (float)nWidth, (float)nHeight };
-		delete m_pBuffer;
-		m_pBuffer = new Pixel[m_nWidth * m_nHeight];
-	}
-
 	Vector2 getSize()
 	{
 		return Size;
@@ -73,64 +53,24 @@ public:
 		return m_nHeight;
 	}
 
-	Pixel getPixel(int nX, int nY)
-	{
-		return m_pBuffer[nX + m_nWidth * nY];
-	}
+	virtual void resize(int nWidth, int nHeight) {}
 
-	void setPixel(int nX, int nY, int nColor)
-	{
-		m_pBuffer[nX + m_nWidth * nY].m_chChar = 219;
-		m_pBuffer[nX + m_nWidth * nY].m_nColor = nColor;
-	}
+	virtual Pixel getPixel(int nX, int nY) { return Pixel(); }
 
-	void set(string str, int nX, int nY, int nColor)
-	{
-		if (nX >= 0 && nY >= 0 && nY < m_nHeight)
-			for (int nI = 0; nI < str.length(); nI++)
-			{
-				if (nX + nI < m_nWidth)
-				{
-					m_pBuffer[nX + nI + m_nWidth * nY].m_chChar = str[nI];
-					m_pBuffer[nX + nI + m_nWidth * nY].m_nColor = nColor;
-				}
+	virtual void setPixel(int nX, int nY, int nColor) {}
 
-			}
-	}
+	//	set string to buffer
+	virtual void set(string str, int nX, int nY, int nColor) {}
 
-	void set(char ch, int nX, int nY, int nColor)
-	{
-		m_pBuffer[nX + m_nWidth * nY].m_chChar = ch;
-		m_pBuffer[nX + m_nWidth * nY].m_nColor = nColor;
-		
-	}
+	//	set single char to buffer
+	virtual void set(char ch, int nX, int nY, int nColor) {}
 
-	void set(Pixel pixel , int nX, int nY)
-	{
-		m_pBuffer[nX + m_nWidth * nY].set(pixel);
-	}
+	//	set pixel to buffer
+	virtual void set(Pixel pixel , int nX, int nY) {}
 
-	void set(OutputBuffer* pBuffer, int nPosX, int nPosY)
-	{
-		for (int nY = 0; nY < pBuffer->getHeight(); nY++)
-			for (int nX = 0; nX < pBuffer->getWidth(); nX++)
-			{
-				int nTotalY = nY + nPosY;
-				int nTotalX = nX + nPosX;
-				if ((nTotalY < m_nHeight && nTotalX < m_nWidth) &&			//	Protects from setting data outside the range of the frame
-					(nTotalY >= 0 && nTotalX >= 0))
-				{
-					set(pBuffer->getPixel(nX, nY), nTotalX, nTotalY);
-				}
-			}
-	}
+	//	set another buffer into this buffer
+	virtual void set(OutputBuffer* pBuffer, int nPosX, int nPosY) {}
 
-	void clear(int nBGColor)
-	{
-		for (int nY = 0; nY < m_nHeight; ++nY)
-			for (int nX = 0; nX < m_nWidth; ++nX)
-			{
-				m_pBuffer[nX + m_nWidth * nY].set(' ', nBGColor);
-			}
-	}
+	//	clear whole buffer to color
+	virtual void clear(int nBGColor) {}
 };

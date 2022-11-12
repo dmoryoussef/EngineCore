@@ -182,7 +182,7 @@
     <ClInclude Include="CameraViewWindow.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ConsoleOutputBuffer.h" />
-    <ClInclude Include="ConsoleInputBuffer.h" />
+    <ClInclude Include="ConsoleInputHandler.h" />
     <ClInclude Include="ConsoleWindow.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EventListener.h" />
@@ -218,6 +218,7 @@
     <ClInclude Include="Vector2Demo.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Win32Demo.h" />
+    <ClInclude Include="Win32InputHandler.h" />
     <ClInclude Include="Win32Window.h" />
     <ClInclude Include="WorldViewWindow.h" />
     <ClInclude Include="UIButton.h" />
@@ -228,6 +229,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PlatformInputHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
