@@ -20,9 +20,11 @@ void main()
 	//engine.start(new Win32Window(1080, 720, 4, 4), 
 	//			 new Win32InputHandler(), 
 	//			 new Win32Demo());
+
 	engine.start(new ConsoleWindow(400, 200, 4, 4),
-		new ConsoleInputHandler(),
-		new BehaviorTreeDemo());
+				 new ConsoleOutputBuffer(400, 200),
+				 new ConsoleInputHandler(),
+				 new BehaviorTreeDemo());
 	engine.run();
 }
 

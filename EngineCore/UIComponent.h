@@ -17,6 +17,7 @@ enum GUI_ALIGNMENT
 	ALIGN_OUTSIDE_RIGHT
 };
 
+
 class _UIComponent :
 	public EventListener,
 	public BaseNode,

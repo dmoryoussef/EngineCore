@@ -416,5 +416,6 @@ public:
 		
 		TreeA->render(&renderer, 5, 5);
 		TreeB->render(&renderer, 25, 5);
+
 	}
 };

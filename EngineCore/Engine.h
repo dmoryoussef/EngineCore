@@ -245,15 +245,20 @@ public:
 		//m_pStateManager->start(m_pData, m_pSystems, m_pGUI);
 	}
 
-	void start(OutputWindow* ow, PlatformInputHandler* ih, GameState *pStartingState)
+	void start(OutputWindow* ow, OutputBuffer *ob, PlatformInputHandler* ih, GameState *pStartingState)
 	{
 		srand(0);
 
 		m_pWindow = ow;
 		m_pWindow->init();
-		m_pEngineBuffer = new OutputBuffer(m_pWindow->getWidth(), m_pWindow->getHeight());
 		m_pInputHandler = ih;
-		m_pGUI = new _UIComponent(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
+
+		//	create a buffer based on the type from the output window
+		m_pEngineBuffer = ob;
+
+		//	gui needs buffers based on the output buffer
+		m_pGUI = new _UIComponent<ConsoleOutputBuffer>(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
+
 		controllerInput.loadXInput();
 
 		m_pSystems->addChild(new CollisionDetectionSystem(m_pData));
