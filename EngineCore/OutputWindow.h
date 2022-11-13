@@ -4,15 +4,10 @@ protected:
 	int m_nScreenHeight;
 	int m_nScreenWidth;
 
-	int m_nPixelHeight;
-	int m_nPixelWidth;
-
 public:
-	OutputWindow(int width, int height, int pwidth, int pheight) :
+	OutputWindow(int width, int height) :
 		m_nScreenWidth(width),
-		m_nScreenHeight(height),
-		m_nPixelHeight(pheight),
-		m_nPixelWidth(pwidth) {};
+		m_nScreenHeight(height) {};
 
 	int getHeight()
 	{

@@ -71,6 +71,7 @@ float clamp(float value, float min, float max)
 //	Input/Output
 #include "ControllerInput.h"
 #include "ConsoleWindow.h"
+#include "Win32Buffer.h"
 #include "Win32Window.h"
 #include "ConsoleOutputBuffer.h"
 
@@ -222,30 +223,6 @@ public:
 		return m_bRunning;
 	}
 
-	void start(GameState* pStartingState)
-	{
-		//srand(0);
-
-		////	control window type (console or win32)
-		////	m_pWindow = pStartingState->getWindow();
-		//m_pWindow->init();
-		//m_pEngineBuffer = new OutputBuffer(m_pWindow->getWidth(), m_pWindow->getHeight());
-		//m_pInputHandler = new ConsoleInputHandler();
-
-		//m_pGUI = new _UIComponent(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
-		//
-		//controllerInput.loadXInput();
-
-		//m_pSystems->addChild(new CollisionDetectionSystem(m_pData));
-		//m_pSystems->addChild(new EntityPhysicsSystem(m_pData));
-		//m_pSystems->addChild(new EntityFactory(m_pData));
-		//m_pSystems->addChild(new EntityCommandSystem(m_pData));
-
-		//m_pStateManager->setEngineBufferSize(m_pWindow->getWidth(), m_pWindow->getHeight());
-		//m_pStateManager->setState(pStartingState);
-		//m_pStateManager->start(m_pData, m_pSystems, m_pGUI);
-	}
-
 	void start(OutputWindow* ow, OutputBuffer *ob, PlatformInputHandler* ih, GameState *pStartingState)
 	{
 		srand(0);
@@ -253,11 +230,8 @@ public:
 		m_pWindow = ow;
 		m_pWindow->init();
 		m_pInputHandler = ih;
-
-		//	create a buffer based on the type from the output window
 		m_pEngineBuffer = ob;
 
-		//	gui needs buffers based on the output buffer
 		m_pGUI = new _UIComponent(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
 
 		controllerInput.loadXInput();

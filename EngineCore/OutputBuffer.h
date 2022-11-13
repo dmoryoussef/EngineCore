@@ -30,12 +30,18 @@ class OutputBuffer
 protected:
 	int m_nWidth;
 	int m_nHeight;
+
+	int m_nPixelWidth;
+	int m_nPixelHeight;
+
 	Vector2 Size;
 
 public:
-	OutputBuffer(int width, int height) :
+	OutputBuffer(int width, int height, int pixWidth, int pixHeight) :
 		m_nWidth(width),
 		m_nHeight(height),
+		m_nPixelWidth(pixWidth),
+		m_nPixelHeight(pixHeight),
 		Size(width, height)	{};
 	
 	Vector2 getSize()

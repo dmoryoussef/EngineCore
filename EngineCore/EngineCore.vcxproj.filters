@@ -339,6 +339,9 @@
     <ClInclude Include="Win32InputHandler.h">
       <Filter>Source Files\EngineCore\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Win32Buffer.h">
+      <Filter>Source Files\EngineCore\Output</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

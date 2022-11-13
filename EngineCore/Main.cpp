@@ -16,14 +16,16 @@
 void main()
 {
 	Engine engine;
-	//engine.start(new Win32Window(1080, 720, 4, 4), 
-	//			 new Win32InputHandler(), 
-	//			 new Win32Demo());
+	engine.start(new Win32Window(1080, 720), 
+				 new Win32Buffer(1080, 720, 4, 4),
+				 new Win32InputHandler(), 
+				 new Win32Demo());
 
-	engine.start(new ConsoleWindow(200, 100, 4, 4),
-				 new ConsoleOutputBuffer(200, 100),
-				 new ConsoleInputHandler(),
-				 new BehaviorTreeDemo());
+	//engine.start(new ConsoleWindow(200, 100),
+	//			 new ConsoleOutputBuffer(200, 100, 4, 4),
+	//			 new ConsoleInputHandler(),
+	//			 new BehaviorTreeDemo());
+
 	engine.run();
 }
 

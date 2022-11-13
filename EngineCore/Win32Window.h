@@ -1,36 +1,4 @@
-
-struct Win32Buffer
-{
-	BITMAPINFO Info;
-	void* pBuffer;
-	int nWidth;
-	int nHeight;
-	int nBytesPerPixel = 4;
-	HDC DeviceContext;
-	RECT WindowSize;
-} win32Buffer;
-
-void ResizeBuffer(int Height, int Width)
-{
-	//	https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createdibsection
-	if (win32Buffer.pBuffer)
-	{
-		VirtualFree(win32Buffer.pBuffer, 0, MEM_RELEASE);
-	}
-
-	win32Buffer.nWidth = Width;
-	win32Buffer.nHeight = Height;
-
-	win32Buffer.Info.bmiHeader.biSize = sizeof(win32Buffer.Info.bmiHeader);
-	win32Buffer.Info.bmiHeader.biWidth = win32Buffer.nWidth;
-	win32Buffer.Info.bmiHeader.biHeight = -win32Buffer.nHeight;
-	win32Buffer.Info.bmiHeader.biPlanes = 1;
-	win32Buffer.Info.bmiHeader.biBitCount = 32;
-	win32Buffer.Info.bmiHeader.biCompression = BI_RGB;
-
-	int nBitmapMemorySize = (win32Buffer.nWidth * win32Buffer.nHeight) * win32Buffer.nBytesPerPixel;
-	win32Buffer.pBuffer = VirtualAlloc(0, nBitmapMemorySize, MEM_COMMIT, PAGE_READWRITE);
-}
+//Win32Buffer *pWin32Buffer = new Win32Buffer(200, 100, 4, 4);
 
 LRESULT CALLBACK
 MainWindowCallback(HWND Window,
@@ -101,8 +69,8 @@ private:
 	HWND WindowHandle;
 
 public:
-	Win32Window(int width, int height, int pwidth, int pheight) :
-		OutputWindow(width, height, pwidth, pheight) {};
+	Win32Window(int width, int height) :
+		OutputWindow(width, height) {};
 
 	void init()
 	{
