@@ -32,10 +32,15 @@ protected:
 	int m_nHeight;
 	Vector2 Size;
 
+	int m_nPixelWidth;
+	int m_nPixelHeight;
+
 public:
-	OutputBuffer(int width, int height) :
+	OutputBuffer(int width, int height,int pixelWidth, int pixelHeight) :
 		m_nWidth(width),
 		m_nHeight(height),
+		m_nPixelWidth(pixelWidth),
+		m_nPixelHeight(pixelHeight),
 		Size(width, height)	{};
 	
 	Vector2 getSize()

@@ -108,9 +108,6 @@
     <ClInclude Include="OutputBuffer.h">
       <Filter>Source Files\EngineCore\Output</Filter>
     </ClInclude>
-    <ClInclude Include="Color.h">
-      <Filter>Source Files\EngineCore\Output</Filter>
-    </ClInclude>
     <ClInclude Include="ConsoleOutputBuffer.h">
       <Filter>Source Files\EngineCore\Output</Filter>
     </ClInclude>
@@ -338,6 +335,9 @@
     </ClInclude>
     <ClInclude Include="Win32InputHandler.h">
       <Filter>Source Files\EngineCore\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Source Files\EngineCore</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

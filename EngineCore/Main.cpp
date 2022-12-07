@@ -17,13 +17,11 @@
 void main()
 {
 	Engine engine;
-	//engine.start(new Win32Window(1080, 720, 4, 4), 
-	//			 new Win32InputHandler(), 
-	//			 new Win32Demo());
 
-	engine.start(new ConsoleWindow(400, 200, 4, 4),
-				 new ConsoleOutputBuffer(400, 200),
-				 new ConsoleInputHandler(),
+	//	window, buffer, inputhandler should all be packaged together
+	engine.start(new Win32Window(720, 480, 4, 4),
+				 &Win32OutputBuffer,	//	new Win32Buffer(720, 480, 4, 4),
+				 new Win32InputHandler(),
 				 new BehaviorTreeDemo());
 	engine.run();
 }
@@ -31,6 +29,7 @@ void main()
 //
 //	TO-DO list:
 // 
+//	Win32 *Everything*
 //	Entity-TileMap collision and interaction
 //	Quad-Tree
 //	More Steering behaviors

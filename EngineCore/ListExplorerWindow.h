@@ -147,12 +147,12 @@ class ListExplorerWindow : public UIWindow
 		}
 	}
 
-	void constructComponent(BaseNode *pBaseNode)
+	void constructComponent(BaseNode *pBaseNode, OutputBuffer *pBuffer)
 	{
 		if (m_pBaseNode)
 		{
 			if (m_pBaseNode->getTotal() == 0)
-				set(m_pBaseNode->toString(), 2, 2, FG_WHITE);
+				pBuffer->set(m_pBaseNode->toString(), 2, 2, FG_WHITE);
 		}
 	}
 

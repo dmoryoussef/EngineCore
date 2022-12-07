@@ -56,15 +56,15 @@ protected:
 		}
 	}
 
-	void constructComponent(BaseNode* pBaseNode)
+	void constructComponent(BaseNode* pBaseNode, OutputBuffer *pBuffer)
 	{
-		Render2D renderer(this);
+		Render2D renderer(pBuffer);
 		EntityRenderSystem ecsRenderer;
 		ecsRenderer.render(pBaseNode, &renderer, Vector2(0, 0), Vector2(getWidth(), getHeight()));
 		
 
-		set("Mouse: " + vCurrentMousePosition.toString(), getWidth() - 20, 2, FG_WHITE);
-		set("World: " + WorldPosition(vCurrentMousePosition, Vector2(0, 0), Position, m_fScreenScale).toString(), getWidth() - 20, 3, FG_WHITE);
+		pBuffer->set("Mouse: " + vCurrentMousePosition.toString(), getWidth() - 20, 2, FG_WHITE);
+		pBuffer->set("World: " + WorldPosition(vCurrentMousePosition, Vector2(0, 0), Position, m_fScreenScale).toString(), getWidth() - 20, 3, FG_WHITE);
 
 	}
 

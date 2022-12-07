@@ -49,6 +49,11 @@ public:
 			{
 				switch (m_pInputBuffer[nI].EventType)
 				{
+					case WINDOW_BUFFER_SIZE_EVENT:
+					{
+						m_pInputBuffer[nI].Event.WindowBufferSizeEvent;
+					}break;
+
 					case KEY_EVENT:
 					{
 						char chKey = m_pInputBuffer[nI].Event.KeyEvent.uChar.AsciiChar;
@@ -56,9 +61,8 @@ public:
 						bKeyPressed[chKey] = m_pInputBuffer[nI].Event.KeyEvent.bKeyDown;
 
 						addEvent(new KeyboardEvent(chKey, m_pInputBuffer[nI].Event.KeyEvent.bKeyDown));
-					}
-					break;
-
+					}break;
+					
 					case MOUSE_EVENT:
 					{
 						MouseState State;
@@ -87,8 +91,7 @@ public:
 						State.Position.X = m_pInputBuffer[nI].Event.MouseEvent.dwMousePosition.X;
 
 						addEvent(new MouseEvent(State));
-					}
-					break;
+					}break;
 				}
 			}
 	}

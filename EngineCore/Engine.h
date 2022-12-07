@@ -171,10 +171,11 @@ protected:
 
 	void render() 
 	{	
+		m_pEngineBuffer->clear(FG_BLACK);
 		//	a) render the current state to engine buffer
 		m_pGUI->render(m_pData, m_pEngineBuffer);
 		m_pStateManager->render(m_pEngineBuffer);
-		//	b) render engine buffer to window
+		//	b) render engine buffer to window buffer
 		m_pWindow->renderToBuffer(m_pEngineBuffer);
 		//	c) output buffer to window
 		m_pWindow->outputToWindow();
@@ -253,11 +254,10 @@ public:
 		m_pWindow->init();
 		m_pInputHandler = ih;
 
-		//	create a buffer based on the type from the output window
 		m_pEngineBuffer = ob;
 
 		//	gui needs buffers based on the output buffer
-		m_pGUI = new _UIComponent<ConsoleOutputBuffer>(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
+		m_pGUI = new _UIComponent(m_pEngineBuffer->getWidth(), m_pEngineBuffer->getHeight(), 0, 0);
 
 		controllerInput.loadXInput();
 

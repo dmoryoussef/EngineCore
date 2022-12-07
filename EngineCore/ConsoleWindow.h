@@ -19,25 +19,7 @@ public:
 	{
 		m_nScreenHeight = nHeight;
 		m_nScreenWidth = nWidth;
-		delete m_pBuffer;
-		m_pBuffer = new CHAR_INFO[m_nScreenHeight * m_nScreenWidth];
-	}
 
-	void renderToBuffer(OutputBuffer *pBuffer)
-	{
-		for (int nY = 0; nY < pBuffer->getHeight(); ++nY)
-			for (int nX = 0; nX < pBuffer->getWidth(); ++nX)
-				if ((nY < m_nScreenHeight && nX < m_nScreenWidth) &&			
-					(nY >= 0 && nX >= 0))
-				{
-					Pixel current = pBuffer->getPixel(nX, nY);
-					m_pBuffer[nX + m_nScreenWidth * nY].Char.AsciiChar = current.m_chChar;
-					m_pBuffer[nX + m_nScreenWidth * nY].Attributes = current.m_nColor;
-				}
-	}
-
-	void init()
-	{
 		//	set size of buffer position and size
 		//	https://docs.microsoft.com/en-us/windows/console/setconsolewindowinfo
 		SMALL_RECT m_rectWindow = { 0, 0, 1, 1 };
@@ -56,23 +38,6 @@ public:
 		if (!SetConsoleActiveScreenBuffer(WindowHandle))
 		{
 			OutputDebugStringA("SetConsoleActiveScreenBuffer \n");
-		}
-
-		// Set the font size now that the screen buffer has been assigned to the console
-		//	https://docs.microsoft.com/en-us/windows/console/console-font-infoex
-		CONSOLE_FONT_INFOEX cfi;
-		cfi.cbSize = sizeof(cfi);
-		cfi.nFont = 0;
-		cfi.dwFontSize.X = m_nPixelWidth;
-		cfi.dwFontSize.Y = m_nPixelHeight;
-		cfi.FontFamily = FF_DONTCARE;
-		cfi.FontWeight = FW_NORMAL;
-
-		//	https://docs.microsoft.com/en-us/windows/console/setcurrentconsolefontex
-		wcscpy_s(cfi.FaceName, L"Consolas");
-		//if (!SetCurrentConsoleFontEx(WindowHandle, false, &cfi))
-		{
-			OutputDebugStringA("SetCurrentConsoleFontEx \n");
 		}
 
 		// Get screen buffer info and check the maximum allowed window size. Return
@@ -98,11 +63,36 @@ public:
 			m_nScreenWidth = csbi.dwMaximumWindowSize.X;
 		}
 
+
 		// Set Physical Console Window Size
 		m_rectWindow = { 0, 0, (short)(m_nScreenWidth - 1), (short)(m_nScreenHeight - 1) };
 		if (!SetConsoleWindowInfo(WindowHandle, TRUE, &m_rectWindow))
 		{
 			OutputDebugStringA("Error: SetConsoleWindowInfo failed \n");
+		}
+
+		delete m_pBuffer;
+		m_pBuffer = new CHAR_INFO[m_nScreenHeight * m_nScreenWidth];
+	}
+
+
+	void init()
+	{
+		resizeBuffer(m_nScreenWidth, m_nScreenHeight);
+		// Set the font size now that the screen buffer has been assigned to the console
+		//	https://docs.microsoft.com/en-us/windows/console/console-font-infoex
+		CONSOLE_FONT_INFOEX cfi;
+		cfi.cbSize = sizeof(cfi);
+		cfi.nFont = 0;
+		cfi.dwFontSize.X = m_nPixelWidth;
+		cfi.dwFontSize.Y = m_nPixelHeight;
+		cfi.FontFamily = FF_DONTCARE;
+		cfi.FontWeight = FW_NORMAL;
+		//	https://docs.microsoft.com/en-us/windows/console/setcurrentconsolefontex
+		wcscpy_s(cfi.FaceName, L"Consolas");
+		//if (!SetCurrentConsoleFontEx(WindowHandle, false, &cfi))
+		{
+			OutputDebugStringA("SetCurrentConsoleFontEx \n");
 		}
 
 		// Set flags to allow mouse input		
@@ -113,16 +103,27 @@ public:
 			OutputDebugStringA("SetConsoleMode \n");
 		}
 
-		// Allocate memory for screen buffer
-		//	m_pBuffer = new CHAR_INFO[nWindowWidth * nWindowHeight];
-		resizeBuffer(m_nScreenWidth, m_nScreenHeight);
-		//	memset(m_pBuffer, 0, sizeof(CHAR_INFO) * nWindowWidth * nWindowHeight);
+
+		
 
 		//	https://docs.microsoft.com/en-us/windows/console/setconsolectrlhandler
 		//	SetConsoleCtrlHandler((PHANDLER_ROUTINE)CloseHandler, TRUE);
 
 		//	https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowpos?redirectedfrom=MSDN
 		SetWindowPos(GetConsoleWindow(), 0, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	}
+
+	void renderToBuffer(OutputBuffer* pBuffer)
+	{
+		for (int nY = 0; nY < pBuffer->getHeight(); ++nY)
+			for (int nX = 0; nX < pBuffer->getWidth(); ++nX)
+				if ((nY < m_nScreenHeight && nX < m_nScreenWidth) &&
+					(nY >= 0 && nX >= 0))
+				{
+					Pixel current = pBuffer->getPixel(nX, nY);
+					m_pBuffer[nX + m_nScreenWidth * nY].Char.AsciiChar = current.m_chChar;
+					m_pBuffer[nX + m_nScreenWidth * nY].Attributes = current.m_nColor;
+				}
 	}
 
 	void outputToWindow()

@@ -157,12 +157,12 @@ private:
 		}
 	}
 
-	void constructComponent(BaseNode* pBaseNode)
+	void constructComponent(BaseNode* pBaseNode, OutputBuffer *pBuffer)
 	{
 		Vector3 vCurrentCameraPosition = m_pCamera->getChild<Transform3D>()->getPosition();
-		Render2D renderer(this, vCurrentCameraPosition); 
+		Render2D renderer(pBuffer, vCurrentCameraPosition);
 		Vector2 vWorldMin = WorldPosition({ 0, 0 }, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
-		Vector2 vWorldMax = WorldPosition(Size + Position, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
+		Vector2 vWorldMax = WorldPosition(Vector2(m_nWidth, m_nHeight) + Position, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
 		
 		//	if a component is implementing render, call it here
 		//	good for debugging
@@ -178,11 +178,11 @@ private:
 			pSelectionSquare->render(&renderer, vCurrentCameraPosition);
 		}
 
-		set(" Screen: " + vCurrentMousePosition.toString(), getWidth() - 25, 2, FG_WHITE);
-		set("  World: " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 25, 3, FG_WHITE);	
-		set("   Zoom: " + thingToString<float>(vCurrentCameraPosition.Z), getWidth() - 25, 4, FG_WHITE);
-		set("    FPS: " + thingToString<float>((1 / m_fDeltaTime ) * 1000.0), getWidth() - 25, 5, FG_WHITE);
-		set("Runtime: " + thingToString<float>(m_fTotalTime), getWidth() - 25, 6, FG_WHITE);
+		pBuffer->set(" Screen: " + vCurrentMousePosition.toString(), getWidth() - 25, 2, FG_WHITE);
+		pBuffer->set("  World: " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 25, 3, FG_WHITE);
+		pBuffer->set("   Zoom: " + thingToString<float>(vCurrentCameraPosition.Z), getWidth() - 25, 4, FG_WHITE);
+		pBuffer->set("    FPS: " + thingToString<float>((1 / m_fDeltaTime ) * 1000.0), getWidth() - 25, 5, FG_WHITE);
+		pBuffer->set("Runtime: " + thingToString<float>(m_fTotalTime), getWidth() - 25, 6, FG_WHITE);
 	}
 
 public:

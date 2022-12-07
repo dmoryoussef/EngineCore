@@ -1,42 +1,100 @@
 
-struct Win32Buffer
+class Win32Buffer : public OutputBuffer
 {
-	BITMAPINFO Info;
-	void* pBuffer;
-	int nWidth;
-	int nHeight;
+private:
 	int nBytesPerPixel = 4;
-	HDC DeviceContext;
 	RECT WindowSize;
-} win32Buffer;
 
-void ResizeBuffer(int Height, int Width)
-{
-	//	https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createdibsection
-	if (win32Buffer.pBuffer)
+public:
+	Win32Buffer(int width, int height, int pwidth, int pheight) :
+		OutputBuffer(width, height, pwidth, pheight)
 	{
-		VirtualFree(win32Buffer.pBuffer, 0, MEM_RELEASE);
+		DeviceContext = CreateCompatibleDC(0);
+	}
+	void* pBuffer;
+	BITMAPINFO Info;
+	HDC DeviceContext;
+
+	void renderToBuffer(OutputBuffer* pBuffer)
+	{
+		for (int nY = 0; nY < pBuffer->getHeight(); ++nY)
+			for (int nX = 0; nX < pBuffer->getWidth(); ++nX)
+				if ((nY < m_nHeight && nX < m_nWidth) &&
+					(nY >= 0 && nX >= 0))
+				{
+					Pixel current = pBuffer->getPixel(nX, nY);
+					//	convert pixel to window screen buffer here
+				}
 	}
 
-	win32Buffer.nWidth = Width;
-	win32Buffer.nHeight = Height;
+	void resize(int width, int height)
+	{
+		//	https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createdibsection
+		if (pBuffer)
+		{
+			//	delete pBuffer;
+			VirtualFree(pBuffer, 0, MEM_RELEASE);
+		}
 
-	win32Buffer.Info.bmiHeader.biSize = sizeof(win32Buffer.Info.bmiHeader);
-	win32Buffer.Info.bmiHeader.biWidth = win32Buffer.nWidth;
-	win32Buffer.Info.bmiHeader.biHeight = -win32Buffer.nHeight;
-	win32Buffer.Info.bmiHeader.biPlanes = 1;
-	win32Buffer.Info.bmiHeader.biBitCount = 32;
-	win32Buffer.Info.bmiHeader.biCompression = BI_RGB;
+		m_nWidth = width;
+		m_nHeight = height;
 
-	int nBitmapMemorySize = (win32Buffer.nWidth * win32Buffer.nHeight) * win32Buffer.nBytesPerPixel;
-	win32Buffer.pBuffer = VirtualAlloc(0, nBitmapMemorySize, MEM_COMMIT, PAGE_READWRITE);
-}
+		Info.bmiHeader.biSize = sizeof(Info.bmiHeader);
+		Info.bmiHeader.biWidth = m_nWidth;
+		Info.bmiHeader.biHeight = -m_nHeight;
+		Info.bmiHeader.biPlanes = 1;
+		Info.bmiHeader.biBitCount = 32;
+		Info.bmiHeader.biCompression = BI_RGB;
+
+		int nBitmapMemorySize = (m_nWidth * m_nHeight) * nBytesPerPixel;
+		pBuffer = VirtualAlloc(0, nBitmapMemorySize, MEM_COMMIT, PAGE_READWRITE);
+
+		int pitch = m_nWidth * nBytesPerPixel;
+		uint8_t *row = (uint8_t*)pBuffer;
+		for (int y = 0; y < m_nHeight; ++y)
+		{
+			uint32_t* pixel = (uint32_t*)row;
+			for (int x = 0; x < m_nWidth; ++x)
+			{
+				//		   RR GG BB xx
+				//	Pixel: 00 00 00 00 
+	/*			*pixel = 255;
+				++pixel;
+
+				*pixel = 0;
+				++pixel;
+
+				*pixel = 0;
+				++pixel;
+
+				*pixel = 0;
+				++pixel;*/
+
+				uint8_t Blue = 0;
+				uint8_t Green = 255;
+				uint8_t Red = 0;
+
+				*pixel++ = (Red << 16 | Green << 8 | Blue);
+
+			}
+
+			row += pitch;
+		}
+
+
+	}
+
+};
+
+Win32Buffer Win32OutputBuffer(720, 480, 4, 4);
+
+
 
 LRESULT CALLBACK
 MainWindowCallback(HWND Window,
-	UINT Message,
-	WPARAM WParam,
-	LPARAM LParam)
+				   UINT Message,
+				   WPARAM WParam,
+				   LPARAM LParam)
 {
 	LRESULT Result = 0;
 	switch (Message)
@@ -44,29 +102,22 @@ MainWindowCallback(HWND Window,
 		case WM_SIZE:
 		{
 			cout << ("WM_SIZE \n");
-			
-			//	resizes output buffer to match window size
+
+			//	resize output buffer to match window size
 			RECT rec;
 			GetClientRect(Window, &rec);
 			int nWidth = rec.right - rec.left;
 			int nHeight = rec.bottom - rec.top;
-			//	ResizeBuffer(nHeight, nWidth);
+			Win32OutputBuffer.resize(nWidth, nHeight);
 		}
 		break;
 
 		case WM_PAINT:
 		{
-			//PAINTSTRUCT Paint;
-			//HDC DeviceContext = BeginPaint(Window, &Paint);
-			//int X = Paint.rcPaint.left;
-			//int Y = Paint.rcPaint.top;
-			//int Width = Paint.rcPaint.right - Paint.rcPaint.left;
-			//int Height = Paint.rcPaint.bottom - Paint.rcPaint.top;
-
-			//RECT rec;
-			//GetClientRect(Window, &rec);
-			//UpdateWindow(DeviceContext, rec);
-			//EndPaint(Window, &Paint);
+			PAINTSTRUCT Paint;
+			BeginPaint(Window, &Paint);
+			EndPaint(Window, &Paint);
+			cout << ("WM_PAINT \n");
 		}
 		break;
 
@@ -79,29 +130,32 @@ MainWindowCallback(HWND Window,
 		{
 			cout << ("WM_CLOSE \n");
 		} break;
-		
+
 		case WM_ACTIVATEAPP:
 		{
 			cout << ("WM_ACTIVATEAPP \n");
 		} break;
-		
+
 		default:
 		{
 			Result = DefWindowProc(Window, Message, WParam, LParam);
 		} break;
-		
-	}
 
+	}
 	return Result;
 }
+
+
 
 class Win32Window : public OutputWindow
 {
 private:
 	HWND WindowHandle;
+	//	Win32Buffer BackBuffer;
 
 public:
 	Win32Window(int width, int height, int pwidth, int pheight) :
+		//	BackBuffer(width, height, pwidth, pheight),
 		OutputWindow(width, height, pwidth, pheight) {};
 
 	void init()
@@ -142,28 +196,26 @@ public:
 	}
 
 	void renderToBuffer(OutputBuffer* pBuffer)
-	{
-		for (int nY = 0; nY < pBuffer->getHeight(); ++nY)
-			for (int nX = 0; nX < pBuffer->getWidth(); ++nX)
-				if ((nY < m_nScreenHeight && nX < m_nScreenWidth) &&
-					(nY >= 0 && nX >= 0))
-				{
-					Pixel current = pBuffer->getPixel(nX, nY);
-					//	convert pixel to window screen buffer here
-				}
-	}
+	{}
 
 	void outputToWindow()
 	{
 		//	https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-stretchdibits
-		//
-		//int nWindowHeight = WindowSize.bottom - WindowSize.top;
-		//int nWindowWidth = WindowSize.right - WindowSize.left;
-		/*StretchDIBits(DeviceContext,
+		RECT rec;
+		GetClientRect(WindowHandle, &rec);
+		int nWindowHeight = rec.bottom - rec.top;
+		int nWindowWidth = rec.right - rec.left;
+
+		Win32Buffer BackBuffer = Win32OutputBuffer;
+
+		HDC dc = GetDC(WindowHandle);
+		StretchDIBits(dc,
 			0, 0, nWindowWidth, nWindowHeight,
-			0, 0, nWidth, nHeight,
-			pBuffer,
-			&Info,
-			DIB_RGB_COLORS, SRCCOPY);*/
+			0, 0, BackBuffer.getWidth(), BackBuffer.getHeight(),
+			BackBuffer.pBuffer,
+			&BackBuffer.Info,
+			DIB_RGB_COLORS, SRCCOPY);
+
+		ReleaseDC(WindowHandle, dc);
 	}
 };
