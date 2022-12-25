@@ -19,10 +19,16 @@ void main()
 	Engine engine;
 
 	//	window, buffer, inputhandler should all be packaged together
-	engine.start(new Win32Window(720, 480, 4, 4),
-				 &Win32OutputBuffer,	//	new Win32Buffer(720, 480, 4, 4),
-				 new Win32InputHandler(),
-				 new BehaviorTreeDemo());
+
+	//engine.start(new Win32Window(720, 480, 1, 1),
+	//			 &Win32OutputBuffer,	//	new Win32Buffer(720, 480, 4, 4),
+	//			 new Win32InputHandler(),
+	//			 new Win32Demo());
+
+	engine.start(new ConsoleWindow(200, 150, 1, 1),
+		new ConsoleOutputBuffer(200, 150, 1, 1),
+		new ConsoleInputHandler(),
+		new BezierDemo());
 	engine.run();
 }
 

@@ -205,7 +205,7 @@ private:
 		{
 			if (pEvent->getKey() == 'W' || pEvent->getKey() == 'w')
 				bUp = pEvent->isKeyDown();
-
+			
 			if (pEvent->getKey() == 'S' || pEvent->getKey() == 's')
 				bDown = pEvent->isKeyDown();
 

@@ -18,6 +18,10 @@ struct Vector2
 		Y(sin(rad)),
 		X(cos(rad)) {};
 
+	Vector2 right()
+	{
+		return (-X, Y);
+	}
 	
 	float magnitude()
 	{
@@ -27,7 +31,10 @@ struct Vector2
 	Vector2 normalize()
 	{
 		float fMagnitude = magnitude();
-		return Vector2((X / fMagnitude), (Y / fMagnitude));
+		if (fMagnitude != 0)
+			return Vector2((X / fMagnitude), (Y / fMagnitude));
+		else
+			return (0, 0);
 	}
 
 	Vector2 trunc()

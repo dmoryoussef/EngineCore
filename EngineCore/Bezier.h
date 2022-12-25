@@ -1,4 +1,4 @@
-class BezierSegment : public EventListener
+class BezierCurve : public EventListener
 {
 private:
 	vector<Vector2> controlPoints;
@@ -82,7 +82,7 @@ private:
 
 
 public:
-	BezierSegment(Vector2 A, Vector2 B) :
+	BezierCurve(Vector2 A, Vector2 B) :
 		m_nActivePoint(-1),
 		m_fControlPointSize(0.5)
 	{
@@ -94,6 +94,8 @@ public:
 		registerListener(MOUSEWORLD_EVENT);
 	}
 
+
+
 	vector<Vector2> getPoints()
 	{
 		return controlPoints;
@@ -104,80 +106,105 @@ public:
 		controlPoints[i] = p;
 	}
 
-	void render(Render2D* renderer, Vector3 cameraPos)
+	void render(Render2D* renderer, float scale)
 	{
-		float fRadius = m_fControlPointSize * cameraPos.Z;
-		float resolution = 0.1 / cameraPos.Z;
+		float fRadius = m_fControlPointSize;
+		float resolution = 0.1 / scale;
 
 		//	draw lines between control points
 		for (int i = 0; i < controlPoints.size() - 1; i++)
 		{
-			Vector2 A = cameraPos.toVec2() + controlPoints[i] * cameraPos.Z;
-			Vector2 B = cameraPos.toVec2() + controlPoints[i + 1] * cameraPos.Z;
+			Vector2 A = controlPoints[i];
+			Vector2 B = controlPoints[i + 1];
 			renderer->DrawLine(A, B, { PIXEL_QUARTER, FG_WHITE });
 		}
 
 		//	draw curve
 		for (float t = 0; t < 1.0 - resolution; t = t + resolution)
 		{
-			Vector2 scaledPointA = cameraPos.toVec2() + lerpCubicP(t) * cameraPos.Z;
-			Vector2 scaledPointB = cameraPos.toVec2() + lerpCubicP(t + resolution) * cameraPos.Z;
+			Vector2 scaledPointA = lerpCubicP(t);
+			Vector2 scaledPointB = lerpCubicP(t + resolution);
 			renderer->DrawLine(scaledPointA, scaledPointB,  { PIXEL_SOLID, FG_LIGHTBLUE });
 		}
+		//	final segment
+		Vector2 scaledPointA = lerpCubicP(1 - resolution);
+		Vector2 scaledPointB = lerpCubicP(1);
+		renderer->DrawLine(scaledPointA, scaledPointB, { PIXEL_SOLID, FG_LIGHTBLUE });
+
 		
 		//	draw control points
 		for (int i = 0; i < controlPoints.size(); i++)
 		{
-			Vector2 position = cameraPos.toVec2() + controlPoints[i] * cameraPos.Z;
+			Vector2 position = controlPoints[i];
 
 			renderer->DrawCircle(position.X, position.Y, fRadius, { PIXEL_SOLID, FG_LIGHTRED });
 			if (i == 0 || i == 3)
 				renderer->DrawCircle(position.X, position.Y, fRadius, { PIXEL_SOLID, FG_YELLOW });
 
+			renderer->DrawString(position.toString(), position.X, position.Y + 1);
+
 		}
 		//	draw active point
 		if (m_nActivePoint >= 0)
 		{
-			Vector2 position = cameraPos.toVec2() + controlPoints[m_nActivePoint] * cameraPos.Z;
+			Vector2 position = controlPoints[m_nActivePoint];
 			renderer->DrawCircle(position.X, position.Y, fRadius, { PIXEL_SOLID, FG_LIGHTGREEN });
 		}
 	}
 
+	Vector2 ALTcubicP(float t)
+	{
+		//	finds the point at t not using lerp
+		Vector2 p0 = controlPoints[0] * pow(-t, 3) + (3 * t * t) - (3 * t) + 1;	//	-t^3 + 3t^2 - 3t + 1
+		Vector2 p1 = controlPoints[1] * (3 * pow(t, 3)) - (6 * t * t) + (3 * t);					//	3t^3 - 6t^2 + 3t
+		Vector2 p2 = controlPoints[2] * (-3 * pow(t, 3)) + (3 * t * t);					//	-3t^3 + 3t^2
+		Vector2 p3 = controlPoints[3] * pow(t, 3);									//	t^3
+		return p0 + p1 + p2 + p3;
+	}
+
+
+
 	Vector2 cubicP(float t)
 	{
 		//	finds the point at t not using lerp
-		Vector2 p0 = controlPoints[0] * pow((1 - t), 3);
-		Vector2 p1 = controlPoints[1] * 3 * pow((1 - t), 2) * t;
-		Vector2 p2 = controlPoints[2] * 3 * (1 - t) * pow(t, 2);
-		Vector2 p3 = controlPoints[3] * pow(t, 3);
+		Vector2 p0 = controlPoints[0] * pow((1 - t), 3);							//	(1 - t)^3
+		Vector2 p1 = controlPoints[1] * 3 * pow((1 - t), 2) * t;					//	3(1 - t)^2 * t
+		Vector2 p2 = controlPoints[2] * 3 * (1 - t) * pow(t, 2);					//	3(1 - t)^2
+		Vector2 p3 = controlPoints[3] * pow(t, 3);									//	t^3
 		return p0 + p1 + p2 + p3;
 	}
 
 	Vector2 tangentP(float t)
 	{
-		Vector2 p0 = controlPoints[0] * -3 * pow(1 - t, 2);
-		Vector2 p1 = controlPoints[1] * 3 * (pow(1 - t, 2) - (2 * t) * (1 - t));
-		Vector2 p2 = controlPoints[2] * 3 * (pow(-t, 2) + (1 - t) * (2 * t));
-		Vector2 p3 = controlPoints[3] * 3 * pow(t, 2);
+		//	derivative of the cubic formula to find the tangent (rate of change)
+		Vector2 p0 = controlPoints[0] * (-3 * pow(1 - t, 2));						//	-3(1-t)^2
+		Vector2 p1 = controlPoints[1] * (3 * t - 1) * (3 * t - 1);					//	3(t - 1) * (3t - 1)
+		Vector2 p2 = controlPoints[2] * (6 * t - 1);								//	6(t - 1)
+		Vector2 p3 = controlPoints[3] * (3 * pow(t, 2));							//	3t^2
 		return p0 + p1 + p2 + p3;
 	}
 };
 
-class BezierPath : public EventListener
+class BezierSpline : public EventListener
 {
 private:
-	vector<BezierSegment*> Segments;
+	vector<BezierCurve*> Segments;
 	vector<Vector2> Path;
 
 public:
-	BezierPath() {};
+	BezierSpline() {};
 
-	~BezierPath()
+	~BezierSpline()
 	{
 		for (auto b : Segments)
 		{
 			delete b;
 		}
+	}
+
+	BezierCurve *getSegment(int i)
+	{
+		return Segments[i];
 	}
 
 	void makePoints(float resolution)
@@ -194,16 +221,16 @@ public:
 
 	void addSegment(Vector2 A, Vector2 B)
 	{
-		BezierSegment *bs = new BezierSegment(A, B);
+		BezierCurve *bs = new BezierCurve(A, B);
 		Segments.push_back(bs);
 	}
 
-	void render(Render2D* renderer, Vector3 cameraPos)
+	void render(Render2D* renderer, float scale)
 	{
 		for (auto seg : Segments)
-			seg->render(renderer, cameraPos);
+			seg->render(renderer, scale);
 
-		int n = 0;
+		/*int n = 0;
 		for (int i = 0; i < Segments.size(); i++)
 		{
 			for (int j = 0; j < Segments[i]->getPoints().size() - 1; j++)
@@ -212,29 +239,30 @@ public:
 				renderer->DrawString(thingToString<int>(n), text.X, text.Y - 2);
 				n++;
 			}
-		}
+		}*/
 	
-		makePoints(0.1 / cameraPos.Z);
+		/*makePoints(0.1 / cameraPos.Z);
 		for (int i = 0; i < Path.size() - 1; i++)
 		{
 			Vector2 scaledPointA = cameraPos.toVec2() + Path[i] * cameraPos.Z;
 			Vector2 scaledPointB = cameraPos.toVec2() + Path[i + 1] * cameraPos.Z;
 			renderer->DrawLine(scaledPointA, scaledPointB, { PIXEL_SOLID, FG_LIGHTBLUE });
-		}
+		}*/
 
 
-		//	render tangents....very broken
-		for (auto s : Segments)
-		{
-			Vector2 T = s->tangentP(0.5);
-			Vector2 P = s->cubicP(0.5);
-			Vector2 normal = getNormal(P, T);
-			normal = normal.normalize();
-			Vector2 scaledT = cameraPos.toVec2() + T * cameraPos.Z;
-			Vector2 scaledP = cameraPos.toVec2() + P * cameraPos.Z;
-			Vector2 scaledN = cameraPos.toVec2() + normal * cameraPos.Z;
-			renderer->DrawLine(scaledP, scaledT, {PIXEL_SOLID, FG_LIGHTBLUE});
-		}
+		////	render tangents....very broken
+		//for (auto s : Segments)
+		//{
+		//	Vector2 T = s->tangentP(0.5);
+		//	Vector2 P = s->cubicP(0.5);
+		//	Vector2 normal = getNormal(P, T);
+		//	normal = normal.normalize();
+
+		//	Vector2 scaledT = cameraPos.toVec2() + T * cameraPos.Z;
+		//	Vector2 scaledP = cameraPos.toVec2() + P * cameraPos.Z;
+		//	Vector2 scaledN = cameraPos.toVec2() + normal * cameraPos.Z;
+		//	renderer->DrawLine(scaledP, scaledT, {PIXEL_SOLID, FG_LIGHTBLUE});
+		//}
 	}
 };
 

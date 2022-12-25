@@ -15,6 +15,11 @@ public:
 	BITMAPINFO Info;
 	HDC DeviceContext;
 
+	void clear(int color)
+	{
+		DrawQuad(0, 0, m_nWidth, m_nHeight, 0, 0, 0);
+	}
+
 	void renderToBuffer(OutputBuffer* pBuffer)
 	{
 		for (int nY = 0; nY < pBuffer->getHeight(); ++nY)
@@ -49,44 +54,53 @@ public:
 		int nBitmapMemorySize = (m_nWidth * m_nHeight) * nBytesPerPixel;
 		pBuffer = VirtualAlloc(0, nBitmapMemorySize, MEM_COMMIT, PAGE_READWRITE);
 
-		int pitch = m_nWidth * nBytesPerPixel;
-		uint8_t *row = (uint8_t*)pBuffer;
-		for (int y = 0; y < m_nHeight; ++y)
-		{
-			uint32_t* pixel = (uint32_t*)row;
-			for (int x = 0; x < m_nWidth; ++x)
+	}
+
+
+	void DrawQuad(int xMin, int yMin, int xMax, int yMax, uint8_t r, uint8_t g, uint8_t b)
+	{
+		for (int y = yMin; y < yMax; y++)
+			for (int x = xMin; x < xMax; x++)
 			{
-				//		   RR GG BB xx
-				//	Pixel: 00 00 00 00 
-	/*			*pixel = 255;
-				++pixel;
-
-				*pixel = 0;
-				++pixel;
-
-				*pixel = 0;
-				++pixel;
-
-				*pixel = 0;
-				++pixel;*/
-
-				uint8_t Blue = 0;
-				uint8_t Green = 255;
-				uint8_t Red = 0;
-
-				*pixel++ = (Red << 16 | Green << 8 | Blue);
-
+				set(x, y, r, g, b);
 			}
 
-			row += pitch;
+	}
+
+	void set(int xPos, int yPos, uint8_t r, uint8_t g, uint8_t b)
+	{
+		//		   RR GG BB xx
+		//	Pixel: 00 00 00 00 
+		int minX = xPos;
+		int minY = yPos;
+		int maxX = xPos + m_nPixelWidth;
+		int maxY = yPos + m_nPixelHeight;
+
+		if (minX < 0)
+			minX = 0;
+		if (minY < 0)
+			minY = 0;
+		if (maxY > m_nHeight)
+			maxY = m_nHeight;
+		if (maxX > m_nWidth)
+			maxX = m_nWidth;
+
+		int pitch = m_nWidth * nBytesPerPixel;
+
+		for (int x = minX; x < maxX; x++)
+		{
+			uint8_t* pixel = (uint8_t*)pBuffer + (x * nBytesPerPixel) + (yPos * pitch);
+			for (int y = minY; y < maxY; y++)
+			{
+				*(uint32_t*)pixel = (r << 16 | g << 8 | b);
+				pixel += pitch;
+			}
 		}
-
-
 	}
 
 };
 
-Win32Buffer Win32OutputBuffer(720, 480, 4, 4);
+Win32Buffer Win32OutputBuffer(720, 480, 1, 1);
 
 
 
@@ -151,12 +165,17 @@ class Win32Window : public OutputWindow
 {
 private:
 	HWND WindowHandle;
+	HDC DeviceContext; 
 	//	Win32Buffer BackBuffer;
 
 public:
 	Win32Window(int width, int height, int pwidth, int pheight) :
 		//	BackBuffer(width, height, pwidth, pheight),
 		OutputWindow(width, height, pwidth, pheight) {};
+	~Win32Window()
+	{
+		ReleaseDC(WindowHandle, DeviceContext);
+	}
 
 	void init()
 	{
@@ -193,6 +212,8 @@ public:
 		{
 			OutputDebugStringA("Window not created");
 		}
+
+		DeviceContext = GetDC(WindowHandle);
 	}
 
 	void renderToBuffer(OutputBuffer* pBuffer)
@@ -208,14 +229,14 @@ public:
 
 		Win32Buffer BackBuffer = Win32OutputBuffer;
 
-		HDC dc = GetDC(WindowHandle);
-		StretchDIBits(dc,
+		
+		StretchDIBits(DeviceContext,
 			0, 0, nWindowWidth, nWindowHeight,
 			0, 0, BackBuffer.getWidth(), BackBuffer.getHeight(),
 			BackBuffer.pBuffer,
 			&BackBuffer.Info,
 			DIB_RGB_COLORS, SRCCOPY);
 
-		ReleaseDC(WindowHandle, dc);
+
 	}
 };

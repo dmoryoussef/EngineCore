@@ -58,6 +58,10 @@ public:
 		return m_nHeight;
 	}
 
+	virtual void DrawQuad(int xMin, int yMin, int xMax, int yMax, uint8_t r, uint8_t g, uint8_t b) {}
+
+	virtual void set(int x, int y, uint8_t r, uint8_t g, uint8_t b) {}
+
 	virtual void resize(int nWidth, int nHeight) {}
 
 	virtual Pixel getPixel(int nX, int nY) { return Pixel(); }

@@ -724,9 +724,6 @@ public:
 		nWidth = pBuffer->getWidth();
 	}
 
-	//virtual void draw(BaseNode* pGameData, BaseNode* pCamera) {}
-
-
 	void DrawCircle(float x, float y, float radius, Pixel p, short mask = 0xFF)
 	{ 
 		// Thanks to IanM-Matrix1 #PR121
