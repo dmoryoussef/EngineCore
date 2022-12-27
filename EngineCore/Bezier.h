@@ -38,6 +38,14 @@ private:
 		return lerp(cubicA, cubicB, t);
 	}
 
+
+	struct line
+	{
+		Vector2 a;
+		Vector2 b;
+	};
+
+	
 	Vector2 lerpCubicP(float t)
 	{
 		//	finds the point at t using the lerp function
@@ -152,17 +160,6 @@ public:
 		}
 	}
 
-	Vector2 ALTcubicP(float t)
-	{
-		//	finds the point at t not using lerp
-		Vector2 p0 = controlPoints[0] * pow(-t, 3) + (3 * t * t) - (3 * t) + 1;	//	-t^3 + 3t^2 - 3t + 1
-		Vector2 p1 = controlPoints[1] * (3 * pow(t, 3)) - (6 * t * t) + (3 * t);					//	3t^3 - 6t^2 + 3t
-		Vector2 p2 = controlPoints[2] * (-3 * pow(t, 3)) + (3 * t * t);					//	-3t^3 + 3t^2
-		Vector2 p3 = controlPoints[3] * pow(t, 3);									//	t^3
-		return p0 + p1 + p2 + p3;
-	}
-
-
 
 	Vector2 cubicP(float t)
 	{
@@ -176,13 +173,32 @@ public:
 
 	Vector2 tangentP(float t)
 	{
+		float u = t - 1;
 		//	derivative of the cubic formula to find the tangent (rate of change)
-		Vector2 p0 = controlPoints[0] * (-3 * pow(1 - t, 2));						//	-3(1-t)^2
-		Vector2 p1 = controlPoints[1] * (3 * t - 1) * (3 * t - 1);					//	3(t - 1) * (3t - 1)
-		Vector2 p2 = controlPoints[2] * (6 * t - 1);								//	6(t - 1)
-		Vector2 p3 = controlPoints[3] * (3 * pow(t, 2));							//	3t^2
-		return p0 + p1 + p2 + p3;
+		float d0 = (-3 * u * u);					//	-3(1-t)^2
+		float d1 = 3 * (t - 1) * ((3 * t) - 1);				//	3(t - 1) * (3t - 1)
+		float d2 = 6 * (t - 1);								//	6(t - 1)
+		float d3 = (3 * t * t);									//	3t^2
+
+		Vector2 p0 = controlPoints[0] * d0;
+		Vector2 p1 = controlPoints[1] * d1;
+		Vector2 p2 = controlPoints[2] * d2;
+		Vector2 p3 = controlPoints[3] * d3;
+		Vector2 out = p0 + p1 + p2 + p3;
+		return out;
 	}
+
+	line getLerpTan(float t)
+	{
+		Vector2 linearA = lerp(controlPoints[0], controlPoints[1], t);
+		Vector2 linearB = lerp(controlPoints[1], controlPoints[2], t);
+		Vector2 linearC = lerp(controlPoints[2], controlPoints[3], t);
+		Vector2 quadA = lerp(linearA, linearB, t);
+		Vector2 quadB = lerp(linearB, linearC, t);
+
+		return { quadA, quadB };
+	}
+
 };
 
 class BezierSpline : public EventListener

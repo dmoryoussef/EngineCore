@@ -246,7 +246,7 @@ public:
 		}
 	}
 
-	void DrawLine(Vector2 start, Vector2 end, Pixel pixel)
+	void DrawLine(Vector2 start, Vector2 end, Pixel pixel = { PIXEL_SOLID, FG_WHITE })
 	{
 		Vector2 Start = vCameraTransform.toVec2() + start * vCameraTransform.Z;
 		Vector2 End = vCameraTransform.toVec2() + end * vCameraTransform.Z;
@@ -769,6 +769,12 @@ public:
 			DrawPoint(x, y, p);
 	}
 
+
+};
+	//void DrawTriangle(Triangle tri, Pixel pix)
+	//{
+	//	DrawTriangle(tri.A.toVec2(), tri.B.toVec2(), tri.C.toVec2(), pix);
+	//}
 	//void FillCircle(Vector2& pos, int radius, Pixel p)
 	//{
 	//	FillCircle((int)pos.X, (int)pos.Y, radius, p);
@@ -814,12 +820,6 @@ public:
 	}
 	*/
 
-
-};
-	//void DrawTriangle(Triangle tri, Pixel pix)
-	//{
-	//	DrawTriangle(tri.A.toVec2(), tri.B.toVec2(), tri.C.toVec2(), pix);
-	//}
 
 	//void FillTriangle(Triangle triangle, Pixel pixel)
 	//{

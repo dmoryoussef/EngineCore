@@ -18,9 +18,15 @@ struct Vector2
 		Y(sin(rad)),
 		X(cos(rad)) {};
 
+
+	Vector2 left()
+	{
+		return Vector2(-Y, X);
+	}
+
 	Vector2 right()
 	{
-		return (-X, Y);
+		return Vector2(Y, -X);
 	}
 	
 	float magnitude()
@@ -58,7 +64,7 @@ struct Vector2
 	string toString()
 	{
 		//	default int, if you want float, call the above funtion and specify float
-		return "[" + thingToString<int>(X) + ", " + thingToString<int>(Y) + "]";
+		return "[" + thingToString<float>(X) + ", " + thingToString<float>(Y) + "]";
 	}
 
 	Vector2 limit(float max)

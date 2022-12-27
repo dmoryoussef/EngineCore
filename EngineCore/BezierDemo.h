@@ -50,12 +50,9 @@ public:
 
 	void render(OutputBuffer* pEngineBuffer)
 	{
-		//	currently renders outside "window" becuase there is no bounding information
-		//	move to window to fix??
 		Render2D renderer(pEngineBuffer, pCamera->getPosition());
 		bezier.render(&renderer, pCamera->getPosition().Z);
 		Vector3 vCamPos = pCamera->getPosition();
-
 
 		BezierCurve *pSegment = bezier.getSegment(0);
 		float minX = pSegment->getPoints()[0].X;
@@ -64,16 +61,22 @@ public:
 		if (t < 0) t = 0;
 		if (t > 1) t = 1;
 		
-		Vector2 pos = pSegment->ALTcubicP(t);
-		
-		Vector2 tan = pSegment->tangentP(t).normalize() * 5;
-		Vector2 right = tan.right().normalize() * 5;
-		
+		Vector2 pos = pSegment->cubicP(t);
+		Vector2 tan = (pSegment->getLerpTan(t).b - pos).normalize();
+		Vector2 right = tan.right();
+		Vector2 left = tan.left();
+
+		tan.mult(2);
+		right.mult(2);
+		left.mult(2);
+
 		renderer.DrawCircle(pos.X, pos.Y, 0.5, { PIXEL_SOLID, FG_WHITE });
 		renderer.DrawString(pos.toString(), pos.X, pos.Y + 1);
+
 		renderer.DrawVector(tan, pos);
 		renderer.DrawVector(right, pos);
-		renderer.DrawString(tan.toString(), 5, 5);
+		renderer.DrawVector(left, pos);
+		
 	}
 
 };
