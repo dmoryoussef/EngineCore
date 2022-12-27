@@ -164,7 +164,7 @@ class ListExplorerWindow : public UIWindow
 		if (m_pBaseNode->getTotal() > nMinHeight - 3)
 			nMinHeight = m_pBaseNode->getTotal() + 3;
 
-		resize(m_nWidth, nMinHeight);
+		//resize(m_nWidth, nMinHeight);
 
 		clearList();
 
