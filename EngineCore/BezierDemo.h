@@ -4,6 +4,8 @@ private:
 	BezierSpline bezier;
 	Transform3D* pCamera;
 
+	float u;
+
 	int mouseX;
 
 	void onMouseWorldEvent(MouseWorldEvent* pEvent)
@@ -24,6 +26,7 @@ private:
 
 public:
 	BezierDemo() :
+		u(0),
 		pCamera(NULL),
 		bezier()
 	{
@@ -31,8 +34,8 @@ public:
 		Vector2 C = { 11, 15 };
 
 		bezier.addSegment(A, B);
-		/*bezier.addSegment(B, C);
-		bezier.addSegment(C, A);*/
+		bezier.addSegment(B, C);
+		// bezier.addSegment(C, A);
 
 		registerListener(MOUSEWORLD_EVENT);
 		registerListener(KEYBOARD_EVENT);
@@ -48,21 +51,34 @@ public:
 		pGUI->addChild(pCameraWindow);
 	}
 
+	void update(BaseNode* pData, float fDeltaTime)
+	{
+		if (u < (float)bezier.segments().size() - 0.001)
+			u = u + .001;// *fDeltaTime;
+		else
+			u = 0;
+
+	}
+
+
 	void render(OutputBuffer* pEngineBuffer)
 	{
 		Render2D renderer(pEngineBuffer, pCamera->getPosition());
 		bezier.render(&renderer, pCamera->getPosition().Z);
 		Vector3 vCamPos = pCamera->getPosition();
 
-		BezierCurve *pSegment = bezier.getSegment(0);
-		float minX = pSegment->getPoints()[0].X;
-		float maxX = pSegment->getPoints()[3].X;
-		float t = (((float)mouseX - minX) / (maxX - minX));	// normalized
-		if (t < 0) t = 0;
-		if (t > 1) t = 1;
+		//float minX = bezier.getSegment(0)->getPoints()[0].X;
+		//float maxX = bezier.getSegment(0)->getPoints()[3].X;
+		//float t = (((float)mouseX - minX) / (maxX - minX));	// normalized
+		//if (t < 0) t = 0;
+		//if (t > 1) t = 1;
 		
-		Vector2 pos = pSegment->cubicP(t);
-		Vector2 tan = (pSegment->getLerpTan(t).b - pos).normalize();
+		renderer.DrawNum<int>(u, 2, 2, FG_WHITE);
+
+		float t = u - (int)u;
+
+		Vector2 pos = bezier.getSegment(u)->cubicP(t);
+		Vector2 tan = (bezier.getSegment(u)->getLerpTan(t).b - pos).normalize();
 		Vector2 right = tan.right();
 		Vector2 left = tan.left();
 

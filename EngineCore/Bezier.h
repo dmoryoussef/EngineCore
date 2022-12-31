@@ -13,7 +13,6 @@ private:
 	}
 
 	
-
 	Vector2 lerpQuadP(float t)
 	{
 		Vector2 linearA = lerp(controlPoints[0], controlPoints[1], t);
@@ -102,7 +101,10 @@ public:
 		registerListener(MOUSEWORLD_EVENT);
 	}
 
-
+	int getActiveControlP()
+	{
+		return m_nActivePoint;
+	}
 
 	vector<Vector2> getPoints()
 	{
@@ -207,8 +209,76 @@ private:
 	vector<BezierCurve*> Segments;
 	vector<Vector2> Path;
 
+	bool m_bMirroredState; // broken, mirrored, aligned
+
+	void onKeyboardEvent(KeyboardEvent* pEvent)
+	{
+		if (pEvent->isKeyDown('m'))
+			m_bMirroredState = true;
+		if (pEvent->isKeyUp('m'))
+			m_bMirroredState = false;
+	}
+
+	void onMouseWorldEvent(MouseWorldEvent* pEvent)
+	{
+		MouseState mouseState = pEvent->getState();
+		Vector2 worldPosition = pEvent->getWorldPosition();
+
+		//	mirroreda
+		if (m_bMirroredState)
+		for (int i = 0; i < Segments.size(); i++)
+		{
+			if (mouseState.bLeftButtonDown)
+			{
+				if (Segments[i]->getActiveControlP() == 3)
+				{
+					//	move neighboring control points
+					//		current segment->point 2
+					//		next segment->point 0
+				}
+
+				if (Segments[i]->getActiveControlP() == 0)
+				{
+					//	move neighboring control points
+					//		current segment -> point 1
+					//		prev segment -> point 3
+				}
+
+
+				if (Segments[i]->getActiveControlP() == 1)
+				{
+					Vector2 mirror = Segments[i]->getPoints()[1].mirror(Segments[i]->getPoints()[0]);
+					int prev = (i - 1) % Segments.size();
+					Segments[prev]->setPoint(2, mirror);
+				}
+				if (Segments[i]->getActiveControlP() == 2)
+				{
+					Vector2 mirror = Segments[i]->getPoints()[2].mirror(Segments[i]->getPoints()[3]);
+					int next = (i + 1) % Segments.size();
+					Segments[next]->setPoint(1, mirror);
+				}
+			}
+		}
+	}
+
+	void onEvent(_Event* pEvent)
+	{
+		switch (pEvent->m_eType)
+		{
+			case MOUSEWORLD_EVENT: onMouseWorldEvent(pEvent->get<MouseWorldEvent>());
+				break;
+			case KEYBOARD_EVENT: onKeyboardEvent(pEvent->get<KeyboardEvent>());
+				break;
+		}
+		
+	}
+
 public:
-	BezierSpline() {};
+	BezierSpline() 
+	{
+		registerListener(MOUSEWORLD_EVENT);
+		registerListener(KEYBOARD_EVENT);
+	};
 
 	~BezierSpline()
 	{
@@ -216,6 +286,11 @@ public:
 		{
 			delete b;
 		}
+	}
+
+	vector<BezierCurve*> segments()
+	{
+		return Segments;
 	}
 
 	BezierCurve *getSegment(int i)
@@ -234,6 +309,22 @@ public:
 			}
 		}
 	}
+
+	/*Vector2 lerpTanP(int n, float t)
+	{
+		BezierCurve* segment = Segments[n];
+		return segment->getLerpTan(t);
+	}*/
+
+	Vector2 cubicP(float u)
+	{
+		int n = (int)u;
+		float t = u - (float)n;
+		BezierCurve *segment = Segments[n % (Segments.size() - 1)];
+		return segment->cubicP(t);
+	}
+
+
 
 	void addSegment(Vector2 A, Vector2 B)
 	{

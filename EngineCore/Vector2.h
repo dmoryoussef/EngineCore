@@ -19,6 +19,13 @@ struct Vector2
 		X(cos(rad)) {};
 
 
+	Vector2 mirror(Vector2 p)
+	{
+		Vector2 v(X - p.X, Y - p.Y);
+		Vector2 mirror(-v.X + p.X,  -v.Y + p.Y);
+		return mirror;
+	}
+
 	Vector2 left()
 	{
 		return Vector2(-Y, X);
