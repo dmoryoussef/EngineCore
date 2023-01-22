@@ -76,6 +76,9 @@
     <Filter Include="Source Files\EntityComponentSystem\BehaviorTree\NodeTypes">
       <UniqueIdentifier>{c1abb08e-7822-43ff-986e-a14a7317ca7f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GUI\UIObjects">
+      <UniqueIdentifier>{6acafe3b-919e-416f-af03-dff1bf394eda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -234,9 +237,6 @@
     <ClInclude Include="GameState.h">
       <Filter>Source Files\StateManager</Filter>
     </ClInclude>
-    <ClInclude Include="SelectionSquare.h">
-      <Filter>Source Files\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="SingleSelectButtonComponent.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
@@ -306,9 +306,6 @@
     <ClInclude Include="RectDemo.h">
       <Filter>Source Files\StateManager\States</Filter>
     </ClInclude>
-    <ClInclude Include="LiveEditPoly2D.h">
-      <Filter>Source Files\Geometry</Filter>
-    </ClInclude>
     <ClInclude Include="BehaviorTree.h">
       <Filter>Source Files\EntityComponentSystem\BehaviorTree</Filter>
     </ClInclude>
@@ -338,6 +335,21 @@
     </ClInclude>
     <ClInclude Include="Color.h">
       <Filter>Source Files\EngineCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32Buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PerlinDemo.h">
+      <Filter>Source Files\StateManager\States</Filter>
+    </ClInclude>
+    <ClInclude Include="InfiniteTileMapDemo.h">
+      <Filter>Source Files\StateManager\States</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectionSquare.h">
+      <Filter>Source Files\GUI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveEditPoly2D.h">
+      <Filter>Source Files\GUI\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

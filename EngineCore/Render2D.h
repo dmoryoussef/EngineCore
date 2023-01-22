@@ -639,17 +639,20 @@ public:
 		//fMaxX++;
 		//fMaxY++;
 
-		if (outside)
-		{
-			fMinX--;
-			fMinY--;
+		//if (outside)
+		//{
+		//	fMinX--;
+		//	fMinY--;
 
-		}
-		else
-		{
-			fMaxX--;
-			fMaxY--;
-		}
+		//}
+		//else
+		//{
+		//	fMaxX--;
+		//	fMaxY--;
+		//}
+
+		//fMinX++;
+		//fMinY++;
 
 		// render
 		for (int nY = fMinY; nY <= (int)fMaxY; nY++)
@@ -680,6 +683,7 @@ public:
 			fMaxX = nWidth;
 		if (fMaxY > nHeight)
 			fMaxY = nHeight;
+
 
 		for (int nY = fMinY; nY < fMaxY; nY++)
 		{

@@ -10,6 +10,11 @@ protected:
 
 	Vector2 WorldPosition(Vector2 ScreenPos, Vector2 CameraPos, Vector2 WindowPos, float fScale)
 	{
+		//Vector2 world = ScreenPos - WindowPos;
+		//world = world - CameraPos;
+		//world = world + Vector2(1, 1);
+		//world = world / fScale;
+		//return world;
 		return (ScreenPos - WindowPos - CameraPos) / fScale;
 	}
 

@@ -131,6 +131,29 @@ protected:
 		}
 	}
 
+	void createCheckerMap()
+	{
+		int color = 0;
+		for (int nY = 0; nY < Size.Y; nY++)
+		{
+			if (color == 0)
+				color = 1;
+			else
+				color = 0;
+
+			for (int nX = 0; nX < Size.X; nX++)
+			{
+				TileType* pCurrent = getTile(nX, nY);
+				pCurrent->setValue(color);
+				if (color == 0)
+					color = 1;
+				else
+					color = 0;
+				//	addEvent(new BaseNodeEvent(pCurrent));
+			}
+		}
+	}
+
 	void createBoarderMap()
 	{
 		for (int nY = 0; nY < Size.Y; nY++)
@@ -169,6 +192,15 @@ protected:
 				TilesRendered++;
 			}
 
+		if (m_bMouseOver)
+		{
+			pRenderer->DrawQuad(Position.X, Position.Y, (Position + Size).X, (Position + Size).Y, {PIXEL_SOLID, FG_LIGHTBLUE});
+			//pRenderer->DrawLine(Position, { Position.X + Size.X, Position.Y }, { PIXEL_SOLID, FG_LIGHTBLUE });
+			//pRenderer->DrawLine(Position, { Position.X, Position.Y + Size.Y }, { PIXEL_SOLID, FG_LIGHTBLUE });
+			//pRenderer->DrawLine({ Position.X, Position.Y + Size.Y }, Position + Size, { PIXEL_SOLID, FG_LIGHTBLUE });
+			//pRenderer->DrawLine({ Position.X + Size.X, Position.Y }, Position + Size, { PIXEL_SOLID, FG_LIGHTBLUE });
+		}
+
 		//	move to bottom of render, to put on top
 		if (getMouseOverTile())
 		{
@@ -187,14 +219,6 @@ protected:
 
 		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 3, FG_WHITE);
 
-		if (m_bMouseOver)
-		{
-			//pRenderer->DrawQuad(Position.X, Position.Y, (Position + Size).X, (Position + Size).Y, {PIXEL_SOLID, FG_LIGHTBLUE});
-			pRenderer->DrawLine(Position, { Position.X + Size.X, Position.Y }, { PIXEL_SOLID, FG_LIGHTBLUE });
-			pRenderer->DrawLine(Position, { Position.X, Position.Y + Size.Y }, { PIXEL_SOLID, FG_LIGHTBLUE });
-			pRenderer->DrawLine({ Position.X, Position.Y + Size.Y }, Position + Size, { PIXEL_SOLID, FG_LIGHTBLUE });
-			pRenderer->DrawLine({ Position.X + Size.X, Position.Y }, Position + Size, { PIXEL_SOLID, FG_LIGHTBLUE });
-		}
 
 	}
 
@@ -412,28 +436,20 @@ public:
 		createCheckerMap();
 	}
 
-	void createCheckerMap()
+	void initialize(float* fMap, int w, int h, float scale = 1)
 	{
-		int color = 0;
-		for (int nY = 0; nY < Size.Y; nY++)
+		for (int y = 0; y < h; y++)
 		{
-			if (color == 0)
-				color = 1;
-			else
-				color = 0;
-
-			for (int nX = 0; nX < Size.X; nX++)
+			for (int x = 0; x < w; x++)
 			{
-				DefaultTile* pCurrent = getTile(nX, nY);
-				pCurrent->setValue(color);
-				if (color == 0)
-					color = 1;
-				else
-					color = 0;
-				//	addEvent(new BaseNodeEvent(pCurrent));
+				DefaultTile* pCurrent = getTile(x, y);
+
+				pCurrent->setValue(fMap[y * w + x]);
 			}
 		}
 	}
+
+
 };
 
 class OrthographicTileMap : public DefaultTileMap

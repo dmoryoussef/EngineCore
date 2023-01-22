@@ -173,8 +173,8 @@ protected:
 	{	
 		m_pEngineBuffer->clear(FG_BLACK);
 		//	a) render the current state to engine buffer
-		m_pGUI->render(m_pData, m_pEngineBuffer);
 		m_pStateManager->render(m_pEngineBuffer);
+		m_pGUI->render(m_pData, m_pEngineBuffer);
 		//	b) render engine buffer to window buffer
 		m_pWindow->renderToBuffer(m_pEngineBuffer);
 		//	c) output buffer to window

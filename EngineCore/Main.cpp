@@ -13,6 +13,8 @@
 #include "DataTreeDemo.h"
 #include "RectDemo.h"
 #include "Win32Demo.h"
+#include "PerlinDemo.h"
+#include "InfiniteTileMapDemo.h"
 
 void main()
 {
@@ -28,7 +30,7 @@ void main()
 	engine.start(new ConsoleWindow(200, 150, 1, 1),
 		new ConsoleOutputBuffer(200, 150, 1, 1),
 		new ConsoleInputHandler(),
-		new BezierDemo());
+		new BuildingTest());
 	engine.run();
 }
 

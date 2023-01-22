@@ -80,34 +80,12 @@ public:
 		//	or draw a line from start to stop
 		if (m_bDrawLine)
 			pRenderer->DrawLine(vStart, vStop, { PIXEL_SOLID, FG_WHITE });
+		
+		
 		// show some data:
 		vector<string> data;
 		data.push_back(Min().toString());
 		data.push_back(Max().toString());
 		pRenderer->DrawString(data, Max().X + 1, Max().Y);
 	}
-
-	void render(Render2D* pRenderer, Vector3 vCamera)
-	{
-		// scale to screen:
-		Vector2 vScaledMin = vCamera.toVec2() + Min() * vCamera.Z;
-		Vector2 vScaledMax = vCamera.toVec2()  + Max() * vCamera.Z;  
-		Vector2 vScaledStart = vCamera.toVec2() + vStart * vCamera.Z;
-		Vector2 vScaledStop = vCamera.toVec2() + vStop * vCamera.Z;
-		//	draw:
-		pRenderer->DrawQuad(vScaledMin.X, vScaledMin.Y, vScaledMax.X, vScaledMax.Y, { PIXEL_SOLID, FG_WHITE });
-		//	or draw a line from start to stop
-		pRenderer->DrawLine(vScaledStart, vScaledStop, { PIXEL_SOLID, FG_WHITE });
-		// show some data:
-		pRenderer->DrawString(Min().toString(), vScaledMax.X + 1, vScaledMax.Y - 3);
-		pRenderer->DrawString(Max().toString(), vScaledMax.X + 1, vScaledMax.Y - 2);
-
-		//pRenderer->DrawQuad(vScaledStart.X, vScaledStart.Y, vScaledStart.X, vScaledStart.Y, { PIXEL_SOLID, FG_LIGHTBLUE });
-		// draw bezier curve for rounded edges:
-		//BezierSegment bezier(vStart, vStop);
-		//bezier.setPoint(1, { Min().X, Max().Y });
-		//bezier.setPoint(2, { Min().X, Max().Y });
-		//bezier.render(pRenderer, vCamera);
-	}
-
 };

@@ -171,6 +171,7 @@
     <ClInclude Include="GUI.h" />
     <ClInclude Include="BehaviorNode.h" />
     <ClInclude Include="Health.h" />
+    <ClInclude Include="InfiniteTileMapDemo.h" />
     <ClInclude Include="IsoTileMapTest.h" />
     <ClInclude Include="LightMap.h" />
     <ClInclude Include="LightTile.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="OutputWindow.h" />
     <ClInclude Include="PathfindingMap.h" />
     <ClInclude Include="PathfindingTile.h" />
+    <ClInclude Include="PerlinDemo.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Polygon.h" />
     <ClInclude Include="PursuitBehavior.h" />

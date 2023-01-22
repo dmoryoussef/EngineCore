@@ -486,9 +486,8 @@ private:
 	{
 		Vector2 mouse = pEvent->getWorldPosition();
 
-		//	onMouseOverVerts(mouse, pEvent->getState().bLeftButtonDown);
-
-		//	onMouseOverSides(mouse, pEvent->getState().bLeftButtonDown);
+		/*onMouseOverVerts(mouse, pEvent->getState().bLeftButtonDown);
+		onMouseOverSides(mouse, pEvent->getState().bLeftButtonDown);*/
 		onMouseOverPoly(mouse, pEvent->getState().bRightButtonDown);
 
 		vPrevMouse = mouse;
@@ -511,8 +510,7 @@ private:
 					}
 					i++;
 				}
-			}
-			break;
+			} break;
 
 			case 'w': // pull poly to the top
 			{
@@ -535,7 +533,7 @@ private:
 
 					addEvent(pEvent);
 				}
-			}
+			} break;
 		}
 	}
 
@@ -554,7 +552,16 @@ private:
 		}
 	}
 
-
+	void removeMouseOver()
+	{
+		int i = 0;
+		for (auto p : Polys)
+		{
+			if (p->isMouseOver())
+				Polys.erase(Polys.begin() + i);
+			i++;
+		}
+	}
 
 public:
 	PolyList() :
@@ -565,6 +572,18 @@ public:
 		registerListener(SELECTIONSQUARE_EVENT);
 		registerListener(SELECTIONLINE_EVENT);
 		registerListener(MOUSEWORLD_EVENT);
+	}
+
+	~PolyList()
+	{
+		int i = 0;
+		for (auto p : Polys)
+		{
+			auto erase = Polys.begin() + i;
+			Polys.erase(erase);
+			delete p;
+			i++;
+		}
 	}
 
 	void addNewPoly(EditablePoly2D* poly)

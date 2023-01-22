@@ -282,10 +282,11 @@ private:
 	vector<Building*> Buildings;
 	Building* pSelected;
 
+	PolyList editablePolies;
 
-	Vector2 rayStart;
-	Vector2 rayEnd;
-	Vector2 vIntersection;
+	//Vector2 rayStart;
+	//Vector2 rayEnd;
+	//Vector2 vIntersection;
 
 	bool isOverlapping(Vector2 vMin, Vector2 vMax)
 	{
@@ -408,6 +409,7 @@ private:
 		{
 			ValidTiles.clear();
 			//	draw square
+			//	editablePolies.addNewPoly(new EditablePoly2D(vWorldMin, vWorldMax));
 			if (nCurrentBuildMode == 1)
 			{
 				//	if (Building *pBuilding = getOverlapping(vWorldMin - Position, vWorldMax - Position))
@@ -451,20 +453,21 @@ private:
 
 	void onMouseWorldEvent(MouseWorldEvent* pEvent) 
 	{
-		rayEnd = pEvent->getWorldPosition();
-		if (pEvent->getState().bRightButtonDown)
-		{
-			vIntersection = doRayCast(rayStart, rayEnd);
-		}
+		//rayEnd = pEvent->getWorldPosition();
+		//if (pEvent->getState().bRightButtonDown)
+		//{
+		//	vIntersection = doRayCast(rayStart, rayEnd);
+		//}
 
-		if (pEvent->getState().bLeftButtonDown)
-		{
-			Vector2 pos = pEvent->getWorldPosition();
-			if (BuildingTile* pTile = getWorldTile(pos.X, pos.Y))
-			{
-				pTile->setValue(1.0);
-			}
-		}
+		//if (pEvent->getState().bLeftButtonDown)
+		//{
+		//	Vector2 pos = pEvent->getWorldPosition();
+		//	if (BuildingTile* pTile = getWorldTile(pos.X, pos.Y))
+		//	{
+		//		pTile->setBlocking(true);
+		//		pTile->setValue(1.0);
+		//	}
+		//}
 	}
 
 	bool isInList(BuildingTile* tile, vector<BuildingTile*> list)
@@ -522,6 +525,7 @@ private:
 		{
 			Vector2 newMin = pEvent->getObjects()[i + 2];
 			Vector2 newMax = pEvent->getObjects()[i + 3];
+
 			for (int y = newMin.Y; y <= newMax.Y; y++)
 				for (int x = newMin.X; x <= newMax.X; x++)
 				{
@@ -564,9 +568,6 @@ public:
 	BuildingMap(float width = 100, float height = 100) :
 		nCurrentBuildMode(1),
 		pSelected(NULL),
-		rayStart(15, 15),
-		rayEnd(0, 0),
-		vIntersection(0, 0),
 		_TileMap({ width, height }, "BUILDING_MAP") 
 	{
 		setPosition(5, 5);
@@ -579,7 +580,6 @@ public:
 	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
 	{
 		float fTileSize = 1.0;
-		int TilesRendered = 0;
 		
 		_TileMap::render(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
 
@@ -633,9 +633,9 @@ public:
 		//	render mouse over building outline
 		for (auto b : Buildings)
 		{
-			//	buildings are in world space already
-			//	vScaled functions go from tile space to world space
-			//	subtract position to normalize
+				//buildings are in world space already
+				//vScaled functions go from tile space to world space
+				//subtract position to normalize
 
 			//Vector2 vOutlineMin = b->Min - Position;
 			//Vector2 vOutlineMax = b->Max - Position;
@@ -657,14 +657,17 @@ public:
 			//	pRenderer->DrawString(thingToString<int>(b->getRooms().size()), vTileMin.X + 2, vTileMin.Y + 2);
 			//	pRenderer->DrawString(b->Min.toString(), vTileMin.X + 2, vTileMin.Y + 3);
 			//	pRenderer->DrawString(b->Max.toString(), vTileMin.X + 2, vTileMin.Y + 4);
-			//}
+			//	}
 
 		}
-		pRenderer->DrawNum<int>(Buildings.size(), 2, pRenderer->getSize().Y - 4, FG_WHITE);
 
-		pRenderer->DrawLine(rayStart, rayEnd, { PIXEL_SOLID, FG_DARKRED });
+		editablePolies.render(pRenderer);
+
+
+		//	demo ray intersect with tilemap test
+		/*pRenderer->DrawLine(rayStart, rayEnd, { PIXEL_SOLID, FG_DARKRED });
 		pRenderer->DrawCircle(rayStart.X, rayStart.Y, 1, { PIXEL_SOLID, FG_LIGHTRED });
-		pRenderer->DrawCircle(vIntersection.X, vIntersection.Y, 1, { PIXEL_SOLID, FG_YELLOW });
+		pRenderer->DrawCircle(vIntersection.X, vIntersection.Y, 1, { PIXEL_SOLID, FG_YELLOW });*/
 	}
 
 };

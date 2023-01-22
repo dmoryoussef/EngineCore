@@ -8,6 +8,7 @@ private:
 	float fMinZoom;
 	float fMaxZoom;
 	bool m_bCameraPanning;
+	SelectionSquare* pSelectionSquare = NULL;
 
 	bool m_bSelectionSquareKeyTriggerPressed;
 
@@ -96,8 +97,6 @@ private:
 		}
 	}
 
-	SelectionSquare* pSelectionSquare = NULL;
-
 	void onMouseWorldEvent(MouseWorldEvent* pEvent)
 	{
 		if (pEvent->getState().bLeftButtonDown && m_bSelectionSquareKeyTriggerPressed)
@@ -175,7 +174,7 @@ private:
 
 		if (pSelectionSquare)
 		{
-			pSelectionSquare->render(&renderer, vCurrentCameraPosition);
+			pSelectionSquare->render(&renderer);
 		}
 
 		pBuffer->set(" Screen: " + vCurrentMousePosition.toString(), getWidth() - 25, 2, FG_WHITE);
@@ -191,7 +190,7 @@ public:
 		m_fDeltaTime(0.0),
 		m_bCameraZoomable(true),
 		fMinZoom(0.1),
-		fMaxZoom(25.0),
+		fMaxZoom(100.0),
 	    m_bCameraPanning(false),
 		m_bSelectionSquareKeyTriggerPressed(false),
 		WorldViewWindow(nWidth, nHeight, nPosX, nPosY)
