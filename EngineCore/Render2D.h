@@ -629,9 +629,9 @@ public:
 		if (fMaxY > nHeight)
 			fMaxY = nHeight;
 
-		//	inner?
-		//fMaxX--;
-		//fMaxY--;
+		//	render inside the quad
+		fMaxX--;
+		fMaxY--;
 
 		//	or outer?
 		//fMinX--;
