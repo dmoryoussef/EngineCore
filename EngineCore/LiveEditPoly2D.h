@@ -22,7 +22,10 @@ bool isLinevLine()
 
 bool isQuadvQuad(Vector2 minA, Vector2 maxA, Vector2 minB, Vector2 maxB)
 {
-	return (isPointvQuad(minA, minB, maxB) || isPointvQuad(maxA, minB, maxB) || isPointvQuad({ maxA.X, minA.Y }, minB, maxB) || isPointvQuad({ minA.X, maxA.Y }, minB, maxB));
+	return (isPointvQuad(minA, minB, maxB) || 
+			isPointvQuad(maxA, minB, maxB) || 
+			isPointvQuad({ maxA.X, minA.Y }, minB, maxB) || 
+			isPointvQuad({ minA.X, maxA.Y }, minB, maxB));
 }
 
 class EditablePoly2D : public EventListener
@@ -359,6 +362,8 @@ private:
 	EditablePoly2D* currentPoly;
 	Vector2 vPrevMouse;
 
+	vector<Rect2D*> Overlaps;
+
 	void onSelectionLineEvent(SelectionLineEvent* pEvent)
 	{
 		//	if start is over a poly
@@ -423,6 +428,7 @@ private:
 				if (button && !currentPoly)
 				{
 					currentPoly = p;
+					//	move to top if mouse clicked
 				}
 			}
 			else
@@ -434,7 +440,6 @@ private:
 			currentPoly->updatePosition(mouse - vPrevMouse);
 			if (currentPoly->moved())
 			{
-				collisionTest();
 				PolyEvent();
 			}
 			else
@@ -460,18 +465,40 @@ private:
 		addEvent(pEvent);
 	}
 
+	void handleCollision(EditablePoly2D* a, EditablePoly2D* b)
+	{
+		a->setOverlap(true);
+		b->setOverlap(true);
+
+		//	add overlap rect
+		Rect2D A(a->getMin(), a->getMax());
+		Rect2D B(b->getMin(), b->getMax());
+		Overlaps.push_back(new Rect2D(A, B));
+	}
+
 	void collisionTest()
 	{
+		// reset collisions
 		for (auto p : Polys) p->setOverlap(false);
+		// clear overlap rects
+		for (auto r : Overlaps)
+			delete r;
+		Overlaps.clear();
 
 		for (int a = 0; a < Polys.size(); a++)
 		{
 			for (int b = a + 1; b < Polys.size(); b++)
 			{
+				//	PolyA v PolyB
 				if (isQuadvQuad(Polys[a]->getMin(), Polys[a]->getMax(), Polys[b]->getMin(), Polys[b]->getMax()))
 				{
-					Polys[a]->setOverlap(true);
-					Polys[b]->setOverlap(true);
+					handleCollision(Polys[a], Polys[b]);
+				}
+
+				//	PolyB v PolyA
+				if (isQuadvQuad(Polys[b]->getMin(), Polys[b]->getMax(), Polys[a]->getMin(), Polys[a]->getMax()))
+				{
+					handleCollision(Polys[a], Polys[b]);
 				}
 			}
 		}
@@ -596,10 +623,17 @@ public:
 		return Polys[i];
 	}
 
+	void update()
+	{
+		collisionTest();
+	}
+
 	void render(Render2D* renderer)
 	{
 		for (auto p : Polys) p->render(renderer);
 		renderer->DrawNum<int>(Polys.size(), 2, 2, FG_WHITE);
+
+		for (auto rec : Overlaps) rec->render(renderer, { PIXEL_SOLID, FG_LIGHTRED });
 	}
 
 };

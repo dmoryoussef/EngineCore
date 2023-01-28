@@ -83,51 +83,53 @@ protected:
 	};
 	vector<sEdge> vecEdges;
 
+	void onMouseWorldEvent(MouseWorldEvent* pEvent)
+	{
+		Vector2 WorldPosition = pEvent->get<MouseWorldEvent>()->getWorldPosition();
+		if (WorldPosition.Y >= Position.Y && WorldPosition.Y < Size.Y + Position.Y &&
+			WorldPosition.X >= Position.X && WorldPosition.X < Size.X + Position.X)
+		{
+			m_bMouseOver = true;
+			if (TileType* pTile = getWorldTile(WorldPosition.X, WorldPosition.Y))
+			{
+				if (m_pMouseOverTile != pTile)
+				{
+					//	 new mouseover tile
+					if (m_pMouseOverTile != NULL)
+					{
+						//	previous tile no longer mouse over
+						m_pMouseOverTile->setMouseOver(false);
+						//	*send previous mouse over tile update event here*
+						addEvent(new BaseNodeEvent(m_pMouseOverTile));
+					}
+					m_pMouseOverTile = pTile;
+					m_pMouseOverTile->setMouseOver(true);
+					//	*send new mouse over tile event here*
+					addEvent(new BaseNodeEvent(m_pMouseOverTile));
+				}
+			}
+
+		}
+		else
+		{
+			m_bMouseOver = false;
+			if (m_pMouseOverTile != NULL)
+			{
+				//	mouse no longer over tilemap at all
+				m_pMouseOverTile->setMouseOver(false);
+				//	*send previous mouse over tile update event here*
+				addEvent(new BaseNodeEvent(m_pMouseOverTile));
+				m_pMouseOverTile = NULL;
+			}
+		}
+	}
+
 	void onEvent(_Event* pEvent)
 	{
 		switch (pEvent->m_eType)
 		{
-			case MOUSEWORLD_EVENT:
-			{
-				Vector2 WorldPosition = pEvent->get<MouseWorldEvent>()->getWorldPosition();
-				if (WorldPosition.Y >= Position.Y && WorldPosition.Y < Size.Y + Position.Y && 
-					WorldPosition.X >= Position.X && WorldPosition.X < Size.X + Position.X)
-				{
-					m_bMouseOver = true;
-					if (TileType* pTile = getWorldTile(WorldPosition.X, WorldPosition.Y))
-					{
-						if (m_pMouseOverTile != pTile)
-						{
-							//	 new mouseover tile
-							if (m_pMouseOverTile != NULL)
-							{
-								//	previous tile no longer mouse over
-								m_pMouseOverTile->setMouseOver(false);
-								//	*send previous mouse over tile update event here*
-								addEvent(new BaseNodeEvent(m_pMouseOverTile));
-							}
-							m_pMouseOverTile = pTile;
-							m_pMouseOverTile->setMouseOver(true);
-							//	*send new mouse over tile event here*
-							addEvent(new BaseNodeEvent(m_pMouseOverTile));
-						}
-					}
-
-				}
-				else
-				{
-					m_bMouseOver = false;
-					if (m_pMouseOverTile != NULL)
-					{
-						//	mouse no longer over tilemap at all
-						m_pMouseOverTile->setMouseOver(false);
-						//	*send previous mouse over tile update event here*
-						addEvent(new BaseNodeEvent(m_pMouseOverTile));
-						m_pMouseOverTile = NULL;
-					}
-				}
-			}
-			break;
+			case MOUSEWORLD_EVENT: onMouseWorldEvent(pEvent->get<MouseWorldEvent>());
+				break;
 		}
 	}
 
@@ -179,14 +181,13 @@ protected:
 		for (int nY = vTileMin.Y; nY < vTileMax.Y; nY++)
 			for (int nX = vTileMin.X; nX < vTileMax.X; nX++)
 			{
+				Vector2 TileMin = Vector2(nX, nY) + Position;
+				Vector2 TileMax = TileMin + Vector2(fTileSize, fTileSize);
 
-				Vector2 Min = Vector2(nX, nY) + Position;
-				Vector2 Max = Min + Vector2(fTileSize, fTileSize);
-
-				pRenderer->FillQuad(Min.X,
-									Min.Y,
-									Max.X,
-									Max.Y,
+				pRenderer->FillQuad(TileMin.X,
+									TileMin.Y,
+									TileMax.X,
+									TileMax.Y,
 									pRenderer->getGreyscaleColor(getTile(nX, nY)->getValue()));
 
 				TilesRendered++;

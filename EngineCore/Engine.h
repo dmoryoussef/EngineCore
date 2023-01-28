@@ -81,6 +81,7 @@ float clamp(float value, float min, float max)
 // these use control nodes, events, output buffer, renderer etc:
 #include "DataTree.h"
 #include "Bezier.h"
+#include "Rect2D.h"
 #include "LiveEditPoly2D.h"
 #include "BehaviorNode.h"
 

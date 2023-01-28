@@ -1,40 +1,3 @@
-class Rect
-{
-private:
-	Vector2 vMin;
-	Vector2 vMax;
-
-public:
-	Rect(Vector2 min, Vector2 max) :
-		vMin(min),
-		vMax(max) {};
-
-	Vector2 getSize()
-	{
-		return vMax - vMin;
-	}
-
-	Vector2 getMin()
-	{
-		return vMin;
-	}
-
-	Vector2 getMax()
-	{
-		return vMax;
-	}
-
-	float getPerimeter()
-	{
-		return 0;
-	}
-
-	float getArea()
-	{
-		return 0;
-	}
-};
-
 class RectDemo : public GameState
 {
 private:
@@ -69,13 +32,13 @@ public:
 
 		Polys.render(&renderer);
 
-		Rect A(Polys.get(0)->getMin(), Polys.get(0)->getMax());
-		Rect B(Polys.get(1)->getMin(), Polys.get(1)->getMax());
+		Rect2D A(Polys.get(0)->getMin(), Polys.get(0)->getMax());
+		Rect2D B(Polys.get(1)->getMin(), Polys.get(1)->getMax());
 
 		Vector2 min = Vector2(max(A.getMin().X, B.getMin().X), max(A.getMin().Y, B.getMin().Y));
 		Vector2 max = Vector2(min(A.getMax().X, B.getMax().X), min(A.getMax().Y, B.getMax().Y));
 
-		Rect C(min, max);
-		renderer.DrawQuad(C.getMin().X, C.getMin().Y, C.getMax().X, C.getMax().Y, { PIXEL_SOLID, FG_LIGHTRED });
+		Rect2D C(min, max);
+		C.render(&renderer, { PIXEL_SOLID, FG_LIGHTRED });
 	}
 };

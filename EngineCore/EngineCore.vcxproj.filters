@@ -351,6 +351,9 @@
     <ClInclude Include="LiveEditPoly2D.h">
       <Filter>Source Files\GUI\UIObjects</Filter>
     </ClInclude>
+    <ClInclude Include="Rect2D.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

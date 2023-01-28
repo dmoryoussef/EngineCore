@@ -1,6 +1,5 @@
 #include "Engine.h"
 
-
 #include "TestState.h"
 #include "IsoTileMapTest.h"
 #include "BuildingTest.h"
@@ -27,8 +26,8 @@ void main()
 	//			 new Win32InputHandler(),
 	//			 new Win32Demo());
 
-	engine.start(new ConsoleWindow(100, 75, 1, 1),
-		new ConsoleOutputBuffer(100, 75, 1, 1),
+	engine.start(new ConsoleWindow(200, 150, 1, 1),
+		new ConsoleOutputBuffer(200, 150, 1, 1),
 		new ConsoleInputHandler(),
 		new BuildingTest());
 	engine.run();

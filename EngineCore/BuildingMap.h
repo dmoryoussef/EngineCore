@@ -282,7 +282,7 @@ private:
 	vector<Building*> Buildings;
 	Building* pSelected;
 
-	PolyList editablePolies;
+	PolyList editablePolies;   
 
 	//Vector2 rayStart;
 	//Vector2 rayEnd;
@@ -539,7 +539,7 @@ private:
 				}
 		}
 
-		//	find doorsp
+		//	find doors
 	}
 
 	void onEvent(_Event *pEvent)
@@ -575,6 +575,11 @@ public:
 		registerListener(GUI_EVENT);
 		registerListener(SELECTIONSQUARE_EVENT);
 		registerListener(EDITOROBJECT_EVENT);
+	}
+
+	void update(float fDeltaTime)
+	{
+		editablePolies.update();
 	}
 
 	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)

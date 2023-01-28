@@ -197,6 +197,7 @@
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Polygon.h" />
     <ClInclude Include="PursuitBehavior.h" />
+    <ClInclude Include="Rect2D.h" />
     <ClInclude Include="RectDemo.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="Render2D.h" />
