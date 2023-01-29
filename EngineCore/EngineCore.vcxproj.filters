@@ -49,9 +49,6 @@
     <Filter Include="Source Files\EntityComponentSystem\Systems">
       <UniqueIdentifier>{67748a35-4ec3-46ac-8411-96ad217a36dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\EngineCore\Window">
-      <UniqueIdentifier>{534877da-d345-456f-8e9f-4cd1a5153969}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\StateManager">
       <UniqueIdentifier>{385478e8-f09a-4844-9553-2d0f31a7f947}</UniqueIdentifier>
     </Filter>
@@ -78,6 +75,9 @@
     </Filter>
     <Filter Include="Source Files\GUI\UIObjects">
       <UniqueIdentifier>{6acafe3b-919e-416f-af03-dff1bf394eda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EngineCore\PlatformWindow">
+      <UniqueIdentifier>{534877da-d345-456f-8e9f-4cd1a5153969}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -199,13 +199,13 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OutputWindow.h">
-      <Filter>Source Files\EngineCore\Window</Filter>
+      <Filter>Source Files\EngineCore\PlatformWindow</Filter>
     </ClInclude>
     <ClInclude Include="Win32Window.h">
-      <Filter>Source Files\EngineCore\Window</Filter>
+      <Filter>Source Files\EngineCore\PlatformWindow</Filter>
     </ClInclude>
     <ClInclude Include="ConsoleWindow.h">
-      <Filter>Source Files\EngineCore\Window</Filter>
+      <Filter>Source Files\EngineCore\PlatformWindow</Filter>
     </ClInclude>
     <ClInclude Include="CollisionDetectionSystem.h">
       <Filter>Source Files\EntityComponentSystem\Systems</Filter>

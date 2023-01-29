@@ -81,7 +81,7 @@ float clamp(float value, float min, float max)
 // these use control nodes, events, output buffer, renderer etc:
 #include "DataTree.h"
 #include "Bezier.h"
-#include "Rect2D.h"
+#include "Rect2D.h"	//	not correct - poly edit class uses this - restructure this later
 #include "LiveEditPoly2D.h"
 #include "BehaviorNode.h"
 
@@ -255,6 +255,7 @@ public:
 		m_pWindow->init();
 		m_pInputHandler = ih;
 
+		ob->validate(ow->getWidth(), ow->getHeight());
 		m_pEngineBuffer = ob;
 
 		//	gui needs buffers based on the output buffer

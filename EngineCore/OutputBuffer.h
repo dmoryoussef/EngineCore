@@ -58,6 +58,18 @@ public:
 		return m_nHeight;
 	}
 
+	void validate(int windowWidth, int windowHeight)
+	{
+		if (windowHeight < m_nHeight || windowWidth < m_nWidth)
+		{
+			OutputDebugStringA("Error: Resizing buffer \n");
+			m_nHeight = windowHeight;
+			m_nWidth = windowWidth;
+			resize(m_nWidth, m_nHeight);
+		}
+	
+	}
+
 	virtual void DrawQuad(int xMin, int yMin, int xMax, int yMax, uint8_t r, uint8_t g, uint8_t b) {}
 
 	virtual void set(int x, int y, uint8_t r, uint8_t g, uint8_t b) {}

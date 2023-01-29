@@ -53,14 +53,15 @@ public:
 		{
 			OutputDebugStringA("Error: Screen Height / Font Height Too Big \n");
 			OutputDebugStringA("resizing screen height \n");
-			m_nScreenHeight = csbi.dwMaximumWindowSize.Y;
+			//	resize with - 2 due to buffer oversize
+			m_nScreenHeight = csbi.dwMaximumWindowSize.Y - 2;
 		}
 
 		if (m_nScreenWidth > csbi.dwMaximumWindowSize.X)
 		{
 			OutputDebugStringA("Error: Screen Width / Font Width Too Big \n");
 			OutputDebugStringA("resizing screen width \n");
-			m_nScreenWidth = csbi.dwMaximumWindowSize.X;
+			m_nScreenWidth = csbi.dwMaximumWindowSize.X - 2;
 		}
 
 

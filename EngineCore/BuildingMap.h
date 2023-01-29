@@ -1,3 +1,10 @@
+enum BUILDING_TYPES
+{
+	NONE,
+	WALL,
+	FLOOR
+};
+
 class Door : public BaseNode
 {
 private:
@@ -516,7 +523,10 @@ private:
 				for (int x = prevMin.X; x <= prevMax.X; x++)
 				{
 					if (BuildingTile* pTile = getWorldTile(x, y))
+					{
+						pTile->setType(NONE);
 						pTile->setValue(0.1);
+					}
 				}
 		}
 		
@@ -532,9 +542,15 @@ private:
 					if (BuildingTile* pTile = getWorldTile(x, y))
 					{
 						if (x == (int)newMin.X || x == (int)newMax.X || y == (int)newMin.Y || y == (int)newMax.Y)
+						{
+							pTile->setType(WALL);
 							pTile->setValue(1.0);
+						}
 						else
+						{
+							pTile->setType(FLOOR);
 							pTile->setValue(0.4);
+						}
 					}
 				}
 		}
@@ -584,9 +600,38 @@ public:
 
 	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
 	{
-		float fTileSize = 1.0;
-		
-		_TileMap::render(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
+		Vector2 vTileMin = clipMin(vWorldMin);
+		Vector2 vTileMax = clipMax(vWorldMax);
+
+		for (int nY = vTileMin.Y; nY < vTileMax.Y; nY++)
+			for (int nX = vTileMin.X; nX < vTileMax.X; nX++)
+			{
+				Vector2 TileMin = Vector2(nX, nY) + Position;
+				Vector2 TileMax = TileMin + Vector2(fTileSize, fTileSize);
+
+				int type = getTile(nX, nY)->getType();
+
+				pRenderer->FillQuad(TileMin.X,
+									TileMin.Y,
+									TileMax.X,
+									TileMax.Y,
+									pRenderer->getGreyscaleColor(type));
+			}
+
+		if (getMouseOverTile())
+		{
+			int nX = getMouseOverTile()->getPosition().X + Position.X;
+			int nY = getMouseOverTile()->getPosition().Y + Position.X;
+
+			Vector2 Min(nX, nY);
+			Vector2 Max = Min + Vector2(fTileSize, fTileSize);
+
+			pRenderer->DrawQuad(Min.X,
+								Min.Y,
+								Max.X,
+								Max.Y,
+								Pixel(PIXEL_SOLID, FG_LIGHTGREEN));
+		}
 
 		//	render valid tile list
 		for (auto t : ValidTiles)

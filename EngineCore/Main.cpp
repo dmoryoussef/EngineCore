@@ -27,9 +27,9 @@ void main()
 	//			 new Win32Demo());
 
 	engine.start(new ConsoleWindow(200, 150, 1, 1),
-		new ConsoleOutputBuffer(200, 150, 1, 1),
-		new ConsoleInputHandler(),
-		new BuildingTest());
+				 new ConsoleOutputBuffer(200, 150, 1, 1),
+				 new ConsoleInputHandler(),
+				 new BuildingTest());
 	engine.run();
 }
 

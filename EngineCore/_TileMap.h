@@ -15,6 +15,7 @@ protected:
 	Vector2 Size;
 	TileType* m_pTileMap;
 	int m_nTotalGroups;
+	float fTileSize;
 
 	TileType* m_pMouseOverTile;
 	bool m_bMouseOver;
@@ -231,6 +232,7 @@ public:
 		Position({ 0, 0 }),
 		m_nTotalGroups(0),
 		m_bMouseOver(false),
+		fTileSize(1.0),
 		BaseNode(strName)
 	{
 		registerListener(MOUSEWORLD_EVENT);
