@@ -2,7 +2,8 @@ enum BUILDING_TYPES
 {
 	NONE,
 	WALL,
-	FLOOR
+	FLOOR,
+	DOOR
 };
 
 class Door : public BaseNode
@@ -518,44 +519,105 @@ private:
 		{
 			Vector2 prevMin = pEvent->getObjects()[i];
 			Vector2 prevMax = pEvent->getObjects()[i + 1];
-
-			for (int y = prevMin.Y; y <= prevMax.Y; y++)
-				for (int x = prevMin.X; x <= prevMax.X; x++)
-				{
-					if (BuildingTile* pTile = getWorldTile(x, y))
-					{
-						pTile->setType(NONE);
-						pTile->setValue(0.1);
-					}
-				}
+			clearBuilding(prevMin, prevMax);
 		}
 		
-		//	apply walls
+		//	apply buildings
 		for (int i = 0; i < pEvent->getObjects().size(); i = i + 4)
 		{
 			Vector2 newMin = pEvent->getObjects()[i + 2];
 			Vector2 newMax = pEvent->getObjects()[i + 3];
+			setBuilding(newMin, newMax);
+		}
 
-			for (int y = newMin.Y; y <= newMax.Y; y++)
-				for (int x = newMin.X; x <= newMax.X; x++)
+	}
+
+	void clearBuilding(Vector2 vWorldMin, Vector2 vWorldMax)
+	{
+		for (int y = vWorldMin.Y; y <= vWorldMax.Y; y++)
+			for (int x = vWorldMin.X; x <= vWorldMax.X; x++)
+			{
+				if (BuildingTile* pTile = getWorldTile(x, y))
 				{
-					if (BuildingTile* pTile = getWorldTile(x, y))
+					pTile->setType(NONE);
+				}
+			}
+
+	}
+
+	void setBuilding(Vector2 vWorldMin, Vector2 vWorldMax)
+	{
+		for (int y = vWorldMin.Y; y <= vWorldMax.Y; y++)
+			for (int x = vWorldMin.X; x <= vWorldMax.X; x++)
+			{
+				if (BuildingTile* pTile = getWorldTile(x, y))
+				{
+					if (x == (int)vWorldMin.X || x == (int)vWorldMax.X || y == (int)vWorldMin.Y || y == (int)vWorldMax.Y)
 					{
-						if (x == (int)newMin.X || x == (int)newMax.X || y == (int)newMin.Y || y == (int)newMax.Y)
+						pTile->setType(WALL);
+					}
+					else
+					{
+						pTile->setType(FLOOR);
+					}
+				}
+			}
+		//	find doors
+		for (int y = vWorldMin.Y; y <= vWorldMax.Y; y++)
+			for (int x = vWorldMin.X; x <= vWorldMax.X; x++)
+			{
+				if (x == (int)vWorldMin.X || x == (int)vWorldMax.X || y == (int)vWorldMin.Y || y == (int)vWorldMax.Y)
+					validDoorLocation(x, y);
+			}
+	}
+
+	void validDoorLocation(int x, int y)
+
+	{
+		if (getWorldTile(x, y)->getType() == WALL)
+		{
+			//	already on a wall
+			//	find valid door
+			//		
+			Vector2 vTest(x, y);
+			Vector2 vForward(1, 0);
+			//Vector2 vSample = vTest + vForward;
+			//	sample
+			for (int i = 0; i < 4; i++)
+			{
+				Vector2 vSample = vTest + vForward;
+				
+				if (getWorldTile(vSample.X, vSample.Y)->getType() == WALL);
+				{
+					vForward = vForward.right();
+					vForward = vForward.right();
+					vSample = vTest + vForward;
+
+					if (getWorldTile(vSample.X, vSample.Y)->getType() == WALL)
+					{
+						vForward = vForward.right();
+						vSample = vTest + vForward;
+
+						if (getWorldTile(vSample.X, vSample.Y)->getType() == NONE || getWorldTile(vSample.X, vSample.Y)->getType() == FLOOR)
 						{
-							pTile->setType(WALL);
-							pTile->setValue(1.0);
-						}
-						else
-						{
-							pTile->setType(FLOOR);
-							pTile->setValue(0.4);
+							vForward = vForward.right();
+							vForward = vForward.right();
+							vSample = vTest + vForward;
+
+							if (getWorldTile(vSample.X, vSample.Y)->getType() == NONE || getWorldTile(vSample.X, vSample.Y)->getType() == FLOOR)
+							{
+								// door
+								getWorldTile(vTest.X, vTest.Y)->setType(DOOR);
+								//	return here so more doors are not added
+								//	return;
+							}
 						}
 					}
 				}
-		}
 
-		//	find doors
+				vForward = vForward.right();
+			}
+		}
 	}
 
 	void onEvent(_Event *pEvent)
@@ -587,10 +649,20 @@ public:
 		_TileMap({ width, height }, "BUILDING_MAP") 
 	{
 		setPosition(5, 5);
-		createBoarderMap();
+		
 		registerListener(GUI_EVENT);
 		registerListener(SELECTIONSQUARE_EVENT);
 		registerListener(EDITOROBJECT_EVENT);
+
+		
+		for (int nY = 0; nY < Size.Y; nY++)
+			for (int nX = 0; nX < Size.X; nX++)
+				if (nY == 0 || nY == Size.Y - 1 || nX == 0 || nX == Size.X - 1)
+					getTile(nX, nY)->setType(1);
+				else
+					getTile(nX, nY)->setType(0);
+		
+
 	}
 
 	void update(float fDeltaTime)
@@ -610,12 +682,24 @@ public:
 				Vector2 TileMax = TileMin + Vector2(fTileSize, fTileSize);
 
 				int type = getTile(nX, nY)->getType();
+				float color = 0;
+				switch (type)
+				{
+					case NONE: color = 0.0f;
+						break;
+					case FLOOR: color = 0.4f;
+						break;
+					case WALL: color = 1.0f;
+						break;
+					case DOOR: color = 0.5f;
+						break;
+				}
 
 				pRenderer->FillQuad(TileMin.X,
 									TileMin.Y,
 									TileMax.X,
 									TileMax.Y,
-									pRenderer->getGreyscaleColor(type));
+									pRenderer->getGreyscaleColor(color));
 			}
 
 		if (getMouseOverTile())

@@ -20,13 +20,7 @@ protected:
 	TileType* m_pMouseOverTile;
 	bool m_bMouseOver;
 
-	void setBoarders()
-	{
-		for (int nY = 0; nY < Size.Y; nY++)
-			for (int nX = 0; nX < Size.X; nX++)
-				if (nY == 0 || nY == Size.Y - 1 || nX == 0 || nX == Size.X - 1)
-					getTile(nX, nY)->setValue(1);
-	}
+
 
 	void initialize(float fInitialValue)
 	{

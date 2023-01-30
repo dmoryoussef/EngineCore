@@ -35,10 +35,23 @@ class BuildingTest : public GameState
 	//		build mode - highlight important info
 
 
+	void onEvent(_Event* pEvent)
+	{
+		switch (pEvent->m_eType)
+		{
+			case MOUSEWORLD_EVENT:
+				vTest = pEvent->get<MouseWorldEvent>()->getWorldPosition();
+				break;
+		}
+	}
+
 private:
+	Vector2 vTest;
+	Transform3D *cameraPos;
 
 public:
-	BuildingTest()
+	BuildingTest() :
+		vTest()
 	{
 		registerListener(MOUSEWORLD_EVENT);
 		registerListener(KEYBOARD_EVENT);
@@ -51,7 +64,9 @@ public:
 		int height = pGUI->cast<_UIComponent>()->getHeight();
 		int width = pGUI->cast<_UIComponent>()->getWidth();
 		CameraViewWindow* pCameraWindow = new CameraViewWindow(width, height, 0, 0);
-		pData->add(pCameraWindow->getCamera());
+		BaseNode *cam = pCameraWindow->getCamera();
+		cameraPos = cam->getChild<Transform3D>();
+		pData->add(cam);
 		pGUI->addChild(pCameraWindow);
 
 		//SingleSelectButtonComponent* pComponent = new SingleSelectButtonComponent();
@@ -67,7 +82,27 @@ public:
 
 	void render(OutputBuffer* pEngineBuffer)
 	{
-		Render2D renderer(pEngineBuffer);
+		Render2D renderer(pEngineBuffer, cameraPos->getPosition());
+
+		float tileSize = 1.0f;
+		renderer.DrawQuad(vTest.X - tileSize/2, vTest.Y - tileSize / 2, vTest.X + tileSize / 2, vTest.Y + tileSize / 2, {PIXEL_SOLID, FG_WHITE});
+		Vector2 f = Vector2(1, 0);
+
+		Vector2 a = vTest + f;
+		renderer.DrawQuad(a.X - tileSize / 2, a.Y - tileSize / 2, a.X + tileSize / 2, a.Y + tileSize / 2, { PIXEL_SOLID, FG_LIGHTGREEN });
+		
+		f = f.right();
+		Vector2 b = vTest + f;
+		renderer.DrawQuad(b.X - tileSize / 2, b.Y - tileSize / 2, b.X + tileSize / 2, b.Y + tileSize / 2, { PIXEL_SOLID, FG_LIGHTBLUE });
+
+		f = f.right();
+		Vector2 c = vTest + f;
+		renderer.DrawQuad(c.X - tileSize / 2, c.Y - tileSize / 2, c.X + tileSize / 2, c.Y + tileSize / 2, { PIXEL_SOLID, FG_LIGHTBLUE });
+
+		f = f.right();
+		Vector2 d = vTest + f;
+		renderer.DrawQuad(d.X - tileSize / 2, d.Y - tileSize / 2, d.X + tileSize / 2, d.Y + tileSize / 2, { PIXEL_SOLID, FG_LIGHTBLUE });
+
 	}
 
 };

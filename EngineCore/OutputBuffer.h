@@ -43,6 +43,13 @@ public:
 		m_nPixelHeight(pixelHeight),
 		Size(width, height)	{};
 	
+	OutputBuffer() :
+		m_nWidth(0),
+		m_nHeight(0),
+		m_nPixelWidth(0),
+		m_nPixelHeight(0),
+		Size(0, 0) {};
+
 	Vector2 getSize()
 	{
 		return Size;
@@ -60,14 +67,9 @@ public:
 
 	void validate(int windowWidth, int windowHeight)
 	{
-		if (windowHeight < m_nHeight || windowWidth < m_nWidth)
-		{
-			OutputDebugStringA("Error: Resizing buffer \n");
-			m_nHeight = windowHeight;
-			m_nWidth = windowWidth;
-			resize(m_nWidth, m_nHeight);
-		}
-	
+		m_nHeight = windowHeight;
+		m_nWidth = windowWidth;
+		resize(m_nWidth, m_nHeight);
 	}
 
 	virtual void DrawQuad(int xMin, int yMin, int xMax, int yMax, uint8_t r, uint8_t g, uint8_t b) {}

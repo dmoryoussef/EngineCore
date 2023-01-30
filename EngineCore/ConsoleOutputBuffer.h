@@ -6,9 +6,9 @@ protected:
 	Pixel* m_pBuffer;
 
 public:
-	ConsoleOutputBuffer(int width, int height, int pwidth, int pheight) :
+	ConsoleOutputBuffer() :
 		m_pBuffer(NULL),
-		OutputBuffer(width, height, pwidth, pheight)
+		OutputBuffer()
 	{
 		m_pBuffer = new Pixel[m_nWidth * m_nHeight];
 	};
