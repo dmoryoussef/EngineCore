@@ -18,6 +18,12 @@ public:
 	bool isMouseOver() { return m_bMouseOver; }
 	void setMouseOver(bool mouseOver) { m_bMouseOver = mouseOver; }
 
+	virtual vector<string> toStringStack() 
+	{ 
+		vector<string> s; 
+		return s;
+	}
+
 	virtual bool rayTest()
 	{
 		return false;
@@ -143,6 +149,8 @@ public:
 	{
 		return m_bBlocking;
 	}
+
+	
 
 };
 

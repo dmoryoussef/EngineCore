@@ -567,12 +567,12 @@ private:
 			for (int x = vWorldMin.X; x <= vWorldMax.X; x++)
 			{
 				if (x == (int)vWorldMin.X || x == (int)vWorldMax.X || y == (int)vWorldMin.Y || y == (int)vWorldMax.Y)
-					validDoorLocation(x, y);
+					if (validDoorLocation(x, y))
+						return;
 			}
 	}
 
-	void validDoorLocation(int x, int y)
-
+	bool validDoorLocation(int x, int y)
 	{
 		if (getWorldTile(x, y)->getType() == WALL)
 		{
@@ -609,7 +609,7 @@ private:
 								// door
 								getWorldTile(vTest.X, vTest.Y)->setType(DOOR);
 								//	return here so more doors are not added
-								//	return;
+								return true;
 							}
 						}
 					}
@@ -618,6 +618,8 @@ private:
 				vForward = vForward.right();
 			}
 		}
+
+		return false;
 	}
 
 	void onEvent(_Event *pEvent)
@@ -802,6 +804,8 @@ public:
 		/*pRenderer->DrawLine(rayStart, rayEnd, { PIXEL_SOLID, FG_DARKRED });
 		pRenderer->DrawCircle(rayStart.X, rayStart.Y, 1, { PIXEL_SOLID, FG_LIGHTRED });
 		pRenderer->DrawCircle(vIntersection.X, vIntersection.Y, 1, { PIXEL_SOLID, FG_YELLOW });*/
+
+	
 	}
 
 };

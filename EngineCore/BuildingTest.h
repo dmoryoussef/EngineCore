@@ -48,6 +48,7 @@ class BuildingTest : public GameState
 private:
 	Vector2 vTest;
 	Transform3D *cameraPos;
+	BuildingMap* map;
 
 public:
 	BuildingTest() :
@@ -77,12 +78,17 @@ public:
 		//pCameraWindow->addComponent(pComponent);
 		//pComponent->setAlignment(ALIGN_RIGHT);
 
-		pData->add(new BuildingMap());
+		map = new BuildingMap();
+		pData->add(map);
 	}
 
 	void render(OutputBuffer* pEngineBuffer)
 	{
-		Render2D renderer(pEngineBuffer, cameraPos->getPosition());
+		Render2D r(pEngineBuffer);
+		if (map->getMouseOverTile())
+		{
+			r.DrawString(map->getMouseOverTile()->toStringStack(), 5, 5);
+		}
 	}
 
 };

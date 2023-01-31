@@ -631,7 +631,7 @@ public:
 	void render(Render2D* renderer)
 	{
 		for (auto p : Polys) p->render(renderer);
-		renderer->DrawNum<int>(Polys.size(), 2, 2, FG_WHITE);
+		//	 brenderer->DrawNum<int>(Polys.size(), 2, 2, FG_WHITE);
 
 		for (auto rec : Overlaps) rec->render(renderer, { PIXEL_SOLID, FG_LIGHTRED });
 	}
