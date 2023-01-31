@@ -257,7 +257,7 @@ public:
 		return Rooms;
 	}
 
-	void render(_TileMap<BuildingTile>* map)
+	void apply(_TileMap<BuildingTile>* map)
 	{
 		for (auto r : Rooms)
 		{
@@ -639,7 +639,7 @@ private:
 
 	void updateMap(Building* b)
 	{
-		b->render(this);
+		b->apply(this);
 	}
 
 public:
