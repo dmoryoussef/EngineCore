@@ -563,16 +563,57 @@ private:
 				}
 			}
 		//	find doors
-		for (int y = vWorldMin.Y; y <= vWorldMax.Y; y++)
-			for (int x = vWorldMin.X; x <= vWorldMax.X; x++)
-			{
-				if (x == (int)vWorldMin.X || x == (int)vWorldMax.X || y == (int)vWorldMin.Y || y == (int)vWorldMax.Y)
-					if (validDoorLocation(x, y))
-						return;
-			}
+		validDoorLocationPerWall(vWorldMin, vWorldMax);
 	}
 
-	bool validDoorLocation(int x, int y)
+	void validDoorLocationOnWall(Vector2 vWallMin, Vector2 vWallMax, float tA, float tB)
+	{
+		if (tA >= 0.0 && tB <= 1.0)
+		{
+			Vector2 vSamplePoint = lerp(vWallMin, vWallMax, tA);
+			if (isValidDoorLocation(vSamplePoint.X, vSamplePoint.Y))
+			{
+				getWorldTile(vSamplePoint.X, vSamplePoint.Y)->setType(DOOR);
+			}
+			else
+			{
+				validDoorLocationOnWall(vWallMin, vSamplePoint, tA,  tB + 0.1);
+
+				Vector2 vSamplePoint = lerp(vWallMin, vWallMax, tB);
+				if (isValidDoorLocation(vSamplePoint.X, vSamplePoint.Y))
+				{
+					getWorldTile(vSamplePoint.X, vSamplePoint.Y)->setType(DOOR);
+				}
+				else
+					validDoorLocationOnWall(vSamplePoint, vWallMax, tA - 0.1, tB);
+			}
+		}
+	}
+
+	void validDoorLocationPerWall(Vector2 vBuildingMin, Vector2 vBuildingMax)
+	{
+		//	top wall
+		Vector2 topMin = vBuildingMin;
+		Vector2 topMax = { vBuildingMax.X, vBuildingMin.Y };
+		validDoorLocationOnWall(topMin, topMax, 0.5, 0.5);
+
+		//	bottom wall
+		Vector2 bottomMin = { vBuildingMin.X, vBuildingMax.Y };
+		Vector2 bottomMax = vBuildingMax;
+		validDoorLocationOnWall(bottomMin, bottomMax, 0.5, 0.5);
+
+		//	left wall
+		Vector2 leftMin = vBuildingMin;
+		Vector2 leftMax = {vBuildingMin.X, vBuildingMax.Y};
+		validDoorLocationOnWall(leftMin, leftMax, 0.5, 0.5);
+
+		//	right wall
+		Vector2 rightMin = { vBuildingMax.X, vBuildingMin.Y };
+		Vector2 rightMax = vBuildingMax;
+		validDoorLocationOnWall(rightMin, rightMax, 0.5, 0.5);
+	}
+
+	bool isValidDoorLocation(int x, int y)
 	{
 		if (getWorldTile(x, y)->getType() == WALL)
 		{
@@ -586,7 +627,7 @@ private:
 			for (int i = 0; i < 4; i++)
 			{
 				Vector2 vSample = vTest + vForward;
-				
+
 				if (getWorldTile(vSample.X, vSample.Y)->getType() == WALL);
 				{
 					vForward = vForward.right();
@@ -607,8 +648,6 @@ private:
 							if (getWorldTile(vSample.X, vSample.Y)->getType() == NONE || getWorldTile(vSample.X, vSample.Y)->getType() == FLOOR)
 							{
 								// door
-								getWorldTile(vTest.X, vTest.Y)->setType(DOOR);
-								//	return here so more doors are not added
 								return true;
 							}
 						}
@@ -620,6 +659,17 @@ private:
 		}
 
 		return false;
+	}
+
+	void validDoorLocationAll(Vector2 vWorldBuildingMin, Vector2 vWorldBuildingMax)
+	{
+		for (int y = vWorldBuildingMin.Y; y <= vWorldBuildingMax.Y; y++)
+			for (int x = vWorldBuildingMin.X; x <= vWorldBuildingMax.X; x++)
+			{
+				if (x == (int)vWorldBuildingMin.X || x == (int)vWorldBuildingMax.X || y == (int)vWorldBuildingMin.Y || y == (int)vWorldBuildingMax.Y)
+					if (isValidDoorLocation(x, y))
+						getWorldTile(x, y)->setType(DOOR);
+			}
 	}
 
 	void onEvent(_Event *pEvent)
