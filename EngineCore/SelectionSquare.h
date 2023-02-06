@@ -56,7 +56,7 @@ private:
 	}
 
 public:
-	SelectionSquare(Vector2 start, bool drawLine = true, bool drawQuad = true) :
+	SelectionSquare(Vector2 start, bool drawLine = false, bool drawQuad = true) :
 		m_bReleased(false),
 		vStart(start),
 		vStop(start),
@@ -79,7 +79,11 @@ public:
 			pRenderer->DrawQuad(Min().X, Min().Y, Max().X, Max().Y, {PIXEL_SOLID, FG_WHITE});
 		//	or draw a line from start to stop
 		if (m_bDrawLine)
+		{
 			pRenderer->DrawLine(vStart, vStop, { PIXEL_SOLID, FG_WHITE });
+			pRenderer->DrawCircle(vStart.X, vStart.Y, 0.3, { PIXEL_SOLID, FG_WHITE });
+			pRenderer->DrawCircle(vStop.X, vStop.Y, 0.3, { PIXEL_SOLID, FG_WHITE });
+		}
 		
 		
 		// show some data:

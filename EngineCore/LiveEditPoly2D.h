@@ -30,7 +30,7 @@ bool isQuadvQuad(Vector2 minA, Vector2 maxA, Vector2 minB, Vector2 maxB)
 
 class EditablePoly2D : public EventListener
 {
-private:
+protected:
 	bool m_bMouseOver;
 	bool m_bOverlap;
 
@@ -245,6 +245,10 @@ public:
 		else
 			return (top->B->position);
 	}
+	Vector2 getSize()
+	{
+		return getMax() - getMin();
+	}
 
 	Vector2 getPrevMin() { return vPreviousMin; }
 	Vector2 getPrevMax() { return vPreviousMax; }
@@ -315,10 +319,10 @@ public:
 
 	void render(Render2D* renderer)
 	{
-		for (auto e : Edges)
+		/*for (auto e : Edges)
 		{
 			renderer->DrawLine(getMin(), e->getMax(), { PIXEL_SOLID, FG_LIGHTBLUE });
-		}
+		}*/
 
 		for (auto s : Sides)
 		{
@@ -355,11 +359,12 @@ public:
 	}
 };
 
+template <typename T>
 class PolyList : public EventListener
 {
 private:
-	vector<EditablePoly2D*> Polys;
-	EditablePoly2D* currentPoly;
+	vector<T*> Polys;
+	T* currentPoly;
 	Vector2 vPrevMouse;
 
 	vector<Rect2D*> Overlaps;
@@ -406,7 +411,7 @@ private:
 	{
 		if (pEvent->isReleased())
 		{
-			addNewPoly(new EditablePoly2D(pEvent->getMin(), pEvent->getMax()));
+			addNewPoly(new T(pEvent->getMin(), pEvent->getMax()));
 
 			EditorObjectEvent* pObjEvent = new EditorObjectEvent();
 			for (auto p : Polys)
@@ -453,6 +458,7 @@ private:
 			}
 		}
 	}
+
 
 	void PolyEvent()
 	{
@@ -613,7 +619,7 @@ public:
 		}
 	}
 
-	void addNewPoly(EditablePoly2D* poly)
+	void addNewPoly(T* poly)
 	{
 		Polys.push_back(poly);
 	}
@@ -621,6 +627,17 @@ public:
 	EditablePoly2D* get(int i)
 	{
 		return Polys[i];
+	}
+
+	T *getPoly(Vector2 pos)
+	{
+		for (auto p : Polys)
+		{
+			if (isPointvQuad(pos, p->getMin(), p->getMax()))
+			{
+				return p;
+			}
+		}
 	}
 
 	void update()

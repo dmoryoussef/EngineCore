@@ -3,7 +3,7 @@ class RectDemo : public GameState
 private:
 	Transform3D* pCameraTransform;
 	EditablePoly2D* poly;
-	PolyList Polys;
+	PolyList<EditablePoly2D> Polys;
 
 public:
 	RectDemo() {};

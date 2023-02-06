@@ -1,12 +1,10 @@
-
-
 class LivePolyEditor : public GameState
 {
 private:
 	SelectionSquare* selectionSquare;
 	Transform3D* pCameraTransform;
 	bool bSelectionSquareHotkey;
-	PolyList Polys;
+	PolyList<EditablePoly2D> Polys;
 
 	void onSelectionLineEvent(SelectionLineEvent* pEvent)
 	{

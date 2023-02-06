@@ -139,6 +139,28 @@ public:
 	}
 };
 
+class EditableRoom : public EditablePoly2D
+{
+private:
+	//vector<EditableRoom*> EdgeList;	// list of connected rooms - doors
+
+public:
+	EditableRoom(Vector2 min, Vector2 max) :
+		EditablePoly2D(min, max) {};
+		
+	void render(Render2D* renderer)
+	{
+		EditablePoly2D::render(renderer);
+
+		for (auto e : Edges)
+		{
+			renderer->DrawLine(getMin() + (getSize() / 2), e->getMin() + (e->getSize() / 2), {PIXEL_HALF, FG_LIGHTRED});
+		}
+
+		renderer->DrawString("Editable Room", getMin().X + 1, getMin().Y + 1);
+	}
+};
+
 class Building : public BaseNode, EventListener
 {
 private:
@@ -290,11 +312,7 @@ private:
 	vector<Building*> Buildings;
 	Building* pSelected;
 
-	PolyList editablePolies;   
-
-	//Vector2 rayStart;
-	//Vector2 rayEnd;
-	//Vector2 vIntersection;
+	PolyList<EditableRoom> editableRooms;   
 
 	bool isOverlapping(Vector2 vMin, Vector2 vMax)
 	{
@@ -408,6 +426,17 @@ private:
 		}
 	}
 
+	void onSelectionLineEvent(SelectionLineEvent* pEvent)
+	{
+		if (EditableRoom *start = editableRooms.getPoly(pEvent->getStart()))
+		{
+			if (EditableRoom* end = editableRooms.getPoly(pEvent->getStop()))
+			{
+				start->addEdge(end);
+			}
+		}
+	}
+
 	void onSelectionSquareEvent(_Event* pEvent)
 	{
 		SelectionSquareEvent* pSelectionEvent = pEvent->get<SelectionSquareEvent>();
@@ -436,7 +465,6 @@ private:
 					// updateMap(b);	// refresh map with new building data
 				}
 			}
-
 		}
 		else
 		{
@@ -461,6 +489,7 @@ private:
 
 	void onMouseWorldEvent(MouseWorldEvent* pEvent) 
 	{
+		//	if ()
 		//rayEnd = pEvent->getWorldPosition();
 		//if (pEvent->getState().bRightButtonDown)
 		//{
@@ -542,7 +571,6 @@ private:
 					pTile->setType(NONE);
 				}
 			}
-
 	}
 
 	void setBuilding(Vector2 vWorldMin, Vector2 vWorldMax)
@@ -719,7 +747,7 @@ public:
 
 	void update(float fDeltaTime)
 	{
-		editablePolies.update();
+		editableRooms.update();
 	}
 
 	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
@@ -847,15 +875,7 @@ public:
 
 		}
 
-		editablePolies.render(pRenderer);
-
-
-		//	demo ray intersect with tilemap test
-		/*pRenderer->DrawLine(rayStart, rayEnd, { PIXEL_SOLID, FG_DARKRED });
-		pRenderer->DrawCircle(rayStart.X, rayStart.Y, 1, { PIXEL_SOLID, FG_LIGHTRED });
-		pRenderer->DrawCircle(vIntersection.X, vIntersection.Y, 1, { PIXEL_SOLID, FG_YELLOW });*/
-
-	
+		editableRooms.render(pRenderer);
 	}
 
 };

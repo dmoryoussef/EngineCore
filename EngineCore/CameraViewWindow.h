@@ -10,7 +10,8 @@ private:
 	bool m_bCameraPanning;
 	SelectionSquare* pSelectionSquare = NULL;
 
-	bool m_bSelectionSquareKeyTriggerPressed;
+	bool m_bActiveSelectionSquareKey;
+	bool m_bActiveConnectingLine;
 
 	void handleWorldPosition(MouseState mouseState)
 	{
@@ -99,11 +100,19 @@ private:
 
 	void onMouseWorldEvent(MouseWorldEvent* pEvent)
 	{
-		if (pEvent->getState().bLeftButtonDown && m_bSelectionSquareKeyTriggerPressed)
+		if (pEvent->getState().bLeftButtonDown && m_bActiveSelectionSquareKey)
 		{
 			if (!pSelectionSquare)
 			{
 				pSelectionSquare = new SelectionSquare(pEvent->getWorldPosition());
+			}
+		}
+
+		if (pEvent->getState().bLeftButtonDown && m_bActiveConnectingLine)
+		{
+			if (!pSelectionSquare)
+			{
+				pSelectionSquare = new SelectionSquare(pEvent->getWorldPosition(), true, false);
 			}
 		}
 				
@@ -135,10 +144,10 @@ private:
 
 	void onKeyboardEvent(KeyboardEvent* pEvent)
 	{
-		if (pEvent->getKey() == 's')
-		{
-			m_bSelectionSquareKeyTriggerPressed = pEvent->isKeyDown();
-		}
+		if (pEvent->getKey() == 'l') m_bActiveConnectingLine = pEvent->isKeyDown();
+
+		if (pEvent->getKey() == 's') m_bActiveSelectionSquareKey = pEvent->isKeyDown();
+		
 	}
 
 	void onEvent(_Event* pEvent)
@@ -192,7 +201,8 @@ public:
 		fMinZoom(0.1),
 		fMaxZoom(100.0),
 	    m_bCameraPanning(false),
-		m_bSelectionSquareKeyTriggerPressed(false),
+		m_bActiveSelectionSquareKey(false),
+		m_bActiveConnectingLine(false),
 		WorldViewWindow(nWidth, nHeight, nPosX, nPosY)
 	{
 		m_fScreenScale = 5;

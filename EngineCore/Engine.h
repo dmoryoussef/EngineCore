@@ -79,10 +79,12 @@ float clamp(float value, float min, float max)
 #include "ConsoleInputHandler.h"
 
 // these use control nodes, events, output buffer, renderer etc:
+#include "SelectionSquare.h"
 #include "DataTree.h"
 #include "Bezier.h"
 #include "Rect2D.h"	//	not correct - poly edit class uses this - restructure this later
 #include "LiveEditPoly2D.h"
+#include "ConnectingLine.h"
 #include "BehaviorNode.h"
 
 //	Systems
