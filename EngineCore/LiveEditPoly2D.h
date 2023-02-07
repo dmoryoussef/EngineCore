@@ -28,6 +28,7 @@ bool isQuadvQuad(Vector2 minA, Vector2 maxA, Vector2 minB, Vector2 maxB)
 			isPointvQuad({ minA.X, maxA.Y }, minB, maxB));
 }
 
+
 class EditablePoly2D : public EventListener
 {
 protected:
@@ -247,7 +248,7 @@ public:
 	}
 	Vector2 getSize()
 	{
-		return getMax() - getMin();
+		return (getMax() - getMin());
 	}
 
 	Vector2 getPrevMin() { return vPreviousMin; }
@@ -373,8 +374,8 @@ private:
 	{
 		//	if start is over a poly
 		//	set poly to "selected color" for visual feedback
-		EditablePoly2D* start = NULL;
-		EditablePoly2D* end = NULL;
+		T* start = NULL;
+		T* end = NULL;
 		for (auto p : Polys)
 		{
 			if (isPointvQuad(pEvent->getStart(), p->getMin(), p->getMax()))
