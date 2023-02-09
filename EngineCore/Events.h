@@ -19,28 +19,41 @@ enum EVENT_TYPE
 class EditorObjectEvent : public _Event
 {
 private:
-	vector<Vector2> Objects;
+	vector<Vector2> Vectors;
+
+	BaseNode* Objects;
 
 public:
 	EditorObjectEvent(Vector2 prevMin, Vector2 prevMax, Vector2 curMin, Vector2 curMax) :
-		_Event(EDITOROBJECT_EVENT) 
+		_Event(EDITOROBJECT_EVENT) ,
+		Objects(NULL)
 	{
-		addObject(prevMin, prevMax, curMin, curMax);
+		addVectors(prevMin, prevMax, curMin, curMax);
 	};
 
-	EditorObjectEvent() :
-		Objects(),
+	EditorObjectEvent(BaseNode* obj) :
+		Objects(obj),
 		_Event(EDITOROBJECT_EVENT) {};
 
-	void addObject(Vector2 prevMin, Vector2 prevMax, Vector2 curMin, Vector2 curMax)
+	EditorObjectEvent() :
+		Vectors(),
+		Objects(NULL),
+		_Event(EDITOROBJECT_EVENT) {};
+
+	BaseNode* getObjects()
 	{
-		Objects.push_back(prevMin); 
-		Objects.push_back(prevMax);
-		Objects.push_back(curMin);
-		Objects.push_back(curMax);
+		return Objects;
 	}
 
-	vector<Vector2> getObjects() { return Objects; }
+	void addVectors(Vector2 prevMin, Vector2 prevMax, Vector2 curMin, Vector2 curMax)
+	{
+		Vectors.push_back(prevMin); 
+		Vectors.push_back(prevMax);
+		Vectors.push_back(curMin);
+		Vectors.push_back(curMax);
+	}
+
+	vector<Vector2> getVectors() { return Vectors; }
 };
 
 class SelectionLineEvent : public _Event

@@ -29,7 +29,8 @@ bool isQuadvQuad(Vector2 minA, Vector2 maxA, Vector2 minB, Vector2 maxB)
 }
 
 
-class EditablePoly2D : public EventListener
+class EditablePoly2D : public EventListener, 
+					   public BaseNode
 {
 protected:
 	bool m_bMouseOver;
@@ -191,7 +192,8 @@ public:
 		m_bOverlap(false),
 		m_bMouseOver(false),
 		ActiveSide(NULL),
-		ActiveVert(NULL)
+		ActiveVert(NULL),
+		BaseNode()
 	{
 		registerListener(MOUSEWORLD_EVENT);
 
@@ -414,13 +416,7 @@ private:
 		{
 			addNewPoly(new T(pEvent->getMin(), pEvent->getMax()));
 
-			EditorObjectEvent* pObjEvent = new EditorObjectEvent();
-			for (auto p : Polys)
-			{
-				pObjEvent->addObject(p->getPrevMin(), p->getPrevMax(), p->getMin(), p->getMax());
-			}
-
-			addEvent(pObjEvent);
+			createPolyEvent();
 		}
 	}
 
@@ -446,7 +442,7 @@ private:
 			currentPoly->updatePosition(mouse - vPrevMouse);
 			if (currentPoly->moved())
 			{
-				PolyEvent();
+				createPolyEvent();
 			}
 			else
 			{
@@ -461,15 +457,23 @@ private:
 	}
 
 
-	void PolyEvent()
+	void createPolyEvent()
 	{
-		EditorObjectEvent* pEvent = new EditorObjectEvent();
+		//EditorObjectEvent* pEvent = new EditorObjectEvent();
+		//for (auto p : Polys)
+		//{
+		//	pEvent->addVectors(p->getPrevMin(), p->getPrevMax(), p->getMin(), p->getMax());
+		//}
+
+		//addEvent(pEvent);
+
+		BaseNode *objects = new BaseNode();
 		for (auto p : Polys)
 		{
-			pEvent->addObject(p->getPrevMin(), p->getPrevMax(), p->getMin(), p->getMax());
+			objects->addChild(p);
 		}
-
-		addEvent(pEvent);
+		
+		addEvent(new EditorObjectEvent(objects));
 	}
 
 	void handleCollision(EditablePoly2D* a, EditablePoly2D* b)
@@ -562,7 +566,7 @@ private:
 					EditorObjectEvent* pEvent = new EditorObjectEvent();
 					for (auto p : Polys)
 					{
-						pEvent->addObject(p->getPrevMin(), p->getPrevMax(), p->getMin(), p->getMax());
+						pEvent->addVectors(p->getPrevMin(), p->getPrevMax(), p->getMin(), p->getMax());
 					}
 
 					addEvent(pEvent);

@@ -79,6 +79,9 @@
     <Filter Include="Source Files\EngineCore\PlatformWindow">
       <UniqueIdentifier>{534877da-d345-456f-8e9f-4cd1a5153969}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\TileMapSystem\Objects">
+      <UniqueIdentifier>{2e526079-cb5f-4bb9-93ae-2f3042bdf068}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -356,6 +359,9 @@
     </ClInclude>
     <ClInclude Include="ConnectingLine.h">
       <Filter>Source Files\GUI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="EditableRoom2D.h">
+      <Filter>Source Files\TileMapSystem\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

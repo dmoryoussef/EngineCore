@@ -6,6 +6,8 @@ enum BUILDING_TYPES
 	DOOR
 };
 
+#include "EditableRoom2D.h"
+
 class Door : public BaseNode
 {
 private:
@@ -619,7 +621,8 @@ private:
 	vector<Building*> Buildings;
 	Building* pSelected;
 
-	PolyList<EditableRoom> editableRooms;   
+	PolyList<EditableRoom2D> editableRooms;   
+
 
 	bool isOverlapping(Vector2 vMin, Vector2 vMax)
 	{
@@ -671,7 +674,6 @@ private:
 
 		return false;
 	}
-
 	Building* getOverlapping(Vector2 vMin, Vector2 vMax)
 	{
 		//for (auto b : Buildings)
@@ -716,34 +718,84 @@ private:
 
 		return NULL;
 	}
-
-	void onGUIEvent(_Event* pEvent)
+	bool isInList(BuildingTile* tile, vector<BuildingTile*> list)
 	{
-		if (pEvent->get<GuiEvent>()->getComponent<UIButton>()->getState() == LEFT_RELEASED)
+		for (auto t : list)
 		{
-			if (pEvent->get<GuiEvent>()->getComponent<UIButton>()->getText() == "POINT")
+			if (tile == t)
 			{
-				nCurrentBuildMode = 0;
-			}
-
-			if (pEvent->get<GuiEvent>()->getComponent<UIButton>()->getText() == "QUAD")
-			{
-				nCurrentBuildMode = 1;
+				return true;
 			}
 		}
+		return false;
+	}
+	void updateSingle(Vector2 prevMin, Vector2 prevMax, Vector2 newMin, Vector2 newMax)
+	{
+		for (int y = prevMin.Y; y <= prevMax.Y; y++)
+			for (int x = prevMin.X; x <= prevMax.X; x++)
+			{
+				if (BuildingTile *pTile = getWorldTile(x, y))
+					pTile->setValue(0.1);
+			}
+
+		for (int y = newMin.Y; y <= newMax.Y; y++)
+			for (int x = newMin.X; x <= newMax.X; x++)
+			{
+				if (BuildingTile* pTile = getWorldTile(x, y))
+				{
+					if (x == (int)newMin.X || x == (int)newMax.X || y == (int)newMin.Y || y == (int)newMax.Y)
+						pTile->setValue(1.0);
+					else
+						pTile->setValue(0.4);
+				}
+			}
+	}
+	void clearBuilding(Vector2 vWorldMin, Vector2 vWorldMax)
+	{
+		for (int y = vWorldMin.Y; y <= vWorldMax.Y; y++)
+			for (int x = vWorldMin.X; x <= vWorldMax.X; x++)
+			{
+				if (BuildingTile* pTile = getWorldTile(x, y))
+				{
+					pTile->setType(NONE);
+				}
+			}
+	}
+	void updateMap(Building* b)
+	{
+		b->apply(this);
+	}
+	void setBuilding(Vector2 vWorldMin, Vector2 vWorldMax)
+	{
+		for (int y = vWorldMin.Y; y <= vWorldMax.Y; y++)
+			for (int x = vWorldMin.X; x <= vWorldMax.X; x++)
+			{
+				if (BuildingTile* pTile = getWorldTile(x, y))
+				{
+					if (x == (int)vWorldMin.X || x == (int)vWorldMax.X || y == (int)vWorldMin.Y || y == (int)vWorldMax.Y)
+					{
+						pTile->setType(WALL);
+					}
+					else
+					{
+						pTile->setType(FLOOR);
+					}
+				}
+			}
+		//	find doors
+		//	validDoorLocationPerWall(vWorldMin, vWorldMax);
 	}
 
 	void onSelectionLineEvent(SelectionLineEvent* pEvent)
 	{
-		if (EditableRoom *start = editableRooms.getPoly(pEvent->getStart()))
+		if (EditableRoom2D *start = editableRooms.getPoly(pEvent->getStart()))
 		{
-			if (EditableRoom* end = editableRooms.getPoly(pEvent->getStop()))
+			if (EditableRoom2D* end = editableRooms.getPoly(pEvent->getStop()))
 			{
 				start->addEdge(end);
 			}
 		}
 	}
-
 	void onSelectionSquareEvent(_Event* pEvent)
 	{
 		SelectionSquareEvent* pSelectionEvent = pEvent->get<SelectionSquareEvent>();
@@ -793,7 +845,6 @@ private:
 
 		}
 	}
-
 	void onMouseWorldEvent(MouseWorldEvent* pEvent) 
 	{
 		//	if ()
@@ -813,104 +864,53 @@ private:
 		//	}
 		//}
 	}
-
-	bool isInList(BuildingTile* tile, vector<BuildingTile*> list)
-	{
-		for (auto t : list)
-		{
-			if (tile == t)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	void updateSingle(Vector2 prevMin, Vector2 prevMax, Vector2 newMin, Vector2 newMax)
-	{
-		for (int y = prevMin.Y; y <= prevMax.Y; y++)
-			for (int x = prevMin.X; x <= prevMax.X; x++)
-			{
-				if (BuildingTile *pTile = getWorldTile(x, y))
-					pTile->setValue(0.1);
-			}
-
-		for (int y = newMin.Y; y <= newMax.Y; y++)
-			for (int x = newMin.X; x <= newMax.X; x++)
-			{
-				if (BuildingTile* pTile = getWorldTile(x, y))
-				{
-					if (x == (int)newMin.X || x == (int)newMax.X || y == (int)newMin.Y || y == (int)newMax.Y)
-						pTile->setValue(1.0);
-					else
-						pTile->setValue(0.4);
-				}
-			}
-	}
-	
 	void onEditorObjectEvent(EditorObjectEvent* pEvent)
 	{
 		//	clear all
-		for (int i = 0; i < pEvent->getObjects().size(); i = i + 4)
+		//for (int i = 0; i < pEvent->getVectors().size(); i = i + 4)
+		//{
+		//	Vector2 prevMin = pEvent->getVectors()[i];
+		//	Vector2 prevMax = pEvent->getVectors()[i + 1];
+		//	clearBuilding(prevMin, prevMax);
+		//}
+		//
+		////	apply buildings
+		//for (int i = 0; i < pEvent->getVectors().size(); i = i + 4)
+		//{
+		//	Vector2 newMin = pEvent->getVectors()[i + 2];
+		//	Vector2 newMax = pEvent->getVectors()[i + 3];
+		//	setBuilding(newMin, newMax);
+		//}
+
+		if (BaseNode *b = pEvent->getObjects())
 		{
-			Vector2 prevMin = pEvent->getObjects()[i];
-			Vector2 prevMax = pEvent->getObjects()[i + 1];
-			//clearBuilding(prevMin, prevMax);
+			while (b->isIterating())
+			{
+				EditableRoom2D* room = dynamic_cast<EditableRoom2D*>(b->getCurrent());
+				Vector2 prevMin = room->getPrevMin();
+				Vector2 prevMax = room->getPrevMax();
+				clearBuilding(prevMin, prevMax);
+			}
 		}
-		
-		//	apply buildings
-		for (int i = 0; i < pEvent->getObjects().size(); i = i + 4)
+
+		if (BaseNode *b = pEvent->getObjects())
 		{
-			Vector2 newMin = pEvent->getObjects()[i + 2];
-			Vector2 newMax = pEvent->getObjects()[i + 3];
-			//setBuilding(newMin, newMax);
+			while (b->isIterating())
+			{
+				EditableRoom2D* room = dynamic_cast<EditableRoom2D*>(b->getCurrent());
+				Vector2 newMin = room->getMin();
+				Vector2 newMax = room->getMax();
+				setBuilding(newMin, newMax);
+			}
 		}
 
 	}
-
-	void clearBuilding(Vector2 vWorldMin, Vector2 vWorldMax)
-	{
-		for (int y = vWorldMin.Y; y <= vWorldMax.Y; y++)
-			for (int x = vWorldMin.X; x <= vWorldMax.X; x++)
-			{
-				if (BuildingTile* pTile = getWorldTile(x, y))
-				{
-					pTile->setType(NONE);
-				}
-			}
-	}
-
-	void setBuilding(Vector2 vWorldMin, Vector2 vWorldMax)
-	{
-		for (int y = vWorldMin.Y; y <= vWorldMax.Y; y++)
-			for (int x = vWorldMin.X; x <= vWorldMax.X; x++)
-			{
-				if (BuildingTile* pTile = getWorldTile(x, y))
-				{
-					if (x == (int)vWorldMin.X || x == (int)vWorldMax.X || y == (int)vWorldMin.Y || y == (int)vWorldMax.Y)
-					{
-						pTile->setType(WALL);
-					}
-					else
-					{
-						pTile->setType(FLOOR);
-					}
-				}
-			}
-		//	find doors
-		//	validDoorLocationPerWall(vWorldMin, vWorldMax);
-	}
-
-
-
 	void onEvent(_Event *pEvent)
 	{
 		_TileMap::onEvent(pEvent);
 
 		switch (pEvent->m_eType)
 		{
-			case GUI_EVENT:				onGUIEvent(pEvent);
-				break;
 			case MOUSEWORLD_EVENT:		onMouseWorldEvent(pEvent->get<MouseWorldEvent>());
 				break;
 			case SELECTIONSQUARE_EVENT: onSelectionSquareEvent(pEvent);
@@ -920,10 +920,6 @@ private:
 		}
 	}
 
-	void updateMap(Building* b)
-	{
-		b->apply(this);
-	}
 
 public:
 	BuildingMap(float width = 100, float height = 100) :
