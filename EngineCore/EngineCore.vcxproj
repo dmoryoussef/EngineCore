@@ -160,6 +160,7 @@
     <ClInclude Include="DataTree.h" />
     <ClInclude Include="DataTreeDemo.h" />
     <ClInclude Include="EditableRoom2D.h" />
+    <ClInclude Include="EntityComponentSystemDemo.h" />
     <ClInclude Include="FleeBehavior.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Damage.h" />

@@ -14,6 +14,7 @@
 #include "Win32Demo.h"
 #include "PerlinDemo.h"
 #include "InfiniteTileMapDemo.h"
+#include "EntityComponentSystemDemo.h"
 
 void main()
 {
@@ -29,7 +30,7 @@ void main()
 	engine.start(new ConsoleWindow(200, 150, 1, 1),
 				 new ConsoleOutputBuffer(),
 				 new ConsoleInputHandler(),
-				 new BuildingTest());
+				 new EntityComponentSystemDemo());
 	engine.run();
 }
 
