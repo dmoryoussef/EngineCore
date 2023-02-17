@@ -18,8 +18,9 @@ public:
 			Vector2 vTotal;
 			for (auto accel : AccelChildren)
 			{
-				vTotal = vTotal + accel->getForce();
-				accel->setForce({0, 0});
+				Vector2 vForce = accel->getForce();
+				vTotal = vTotal + vForce;
+				//accel->setForce(Vector2(0, 0));
 			}
 
 			Accelerate* pAccel = pEntity->getChild<Accelerate>();
@@ -37,7 +38,7 @@ public:
 				vVelocity = vVelocity * 0.972;
 
 				//	clamp to 0 if magnitude is less than
-				vVelocity.floor(0.00001);
+				vVelocity.floor(0.0001);
 
 
 				//	set back
@@ -47,7 +48,11 @@ public:
 				Vector2 vPosition = pTransform->getPosition();
 				vVelocity = vVelocity * fDeltaTime;
 
-				pTransform->setRotation({ -vVelocity.X, vVelocity.Y });
+				if (vVelocity.X == 0 && vVelocity.Y == 0)
+				{
+					// dont update rotation
+				}else
+					pTransform->setRotation(Vector2(-vVelocity.X, vVelocity.Y));
 				pTransform->setPosition(vPosition + vVelocity);
 			}
 		}

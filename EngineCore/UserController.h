@@ -234,7 +234,7 @@ private:
 			if (bRight) vForce = vForce + Vector2(1, 0);
 			if (Accelerate* accel = getParent()->getChild<Accelerate>())
 			{
-				accel->setForce(vForce * 0.01);
+				accel->setForce(vForce * 0.001);
 			}
 				
 		}

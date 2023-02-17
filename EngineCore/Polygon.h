@@ -29,6 +29,18 @@ public:
 		rotate(PI / 2);
 	}
 
+	vector<Vector2> transformedVerts(mat3x3 mWorld)
+	{
+		vector<Vector2> verts;
+		for (auto& vert : Verticies)
+		{
+			Vector2 v = vert;
+			v = v * mWorld;
+			verts.push_back(v);
+		}
+		return verts;
+	}
+
 	void transform(Vector2 vScale, float fRad, Vector2 vTranslate)
 	{
 		scale(vScale);
@@ -56,7 +68,7 @@ public:
 
 	void rotate(float fRad)
 	{
-		mat3x3 matRot = matRot.Rotate(fRad);
+		mat3x3 matRot = matRot.RotateZ(fRad);
 		for (auto& vert : Verticies)
 		{
 			vert = vert * matRot;

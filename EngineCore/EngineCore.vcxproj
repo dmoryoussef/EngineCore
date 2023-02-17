@@ -176,6 +176,7 @@
     <ClInclude Include="Health.h" />
     <ClInclude Include="InfiniteTileMapDemo.h" />
     <ClInclude Include="IsoTileMapTest.h" />
+    <ClInclude Include="Joint.h" />
     <ClInclude Include="LightMap.h" />
     <ClInclude Include="LightTile.h" />
     <ClInclude Include="ListExplorerWindow.h" />

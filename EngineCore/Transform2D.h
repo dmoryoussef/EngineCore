@@ -26,6 +26,16 @@ public:
 	}
 
 	void translate(Vector2 translate) {	m_vPosition = m_vPosition + translate;	}
+	void scale(Vector2 scale)
+	{
+		m_vScale.X = m_vScale.X * scale.X;
+		m_vScale.Y = m_vScale.Y * scale.Y;
+	}
+	void rotate(Vector2 rotate)
+	{
+		mat3x3 matRot = matRot.RotateZ(rotate.getAngle());
+		m_vRotation = m_vRotation * matRot;
+	}
 
 	void setPosition(Vector2 position) { m_vPosition = position; }
 	void setRotation(Vector2 rotation) { m_vRotation = rotation; }
@@ -34,7 +44,7 @@ public:
 	Vector2 getForward()
 	{
 		Vector2 forward(0, 1);
-		mat3x3 matRotate = matRotate.Rotate(m_vRotation.getAngle());
+		mat3x3 matRotate = matRotate.RotateZ(m_vRotation.getAngle());
 
 		forward = forward * matRotate;
 

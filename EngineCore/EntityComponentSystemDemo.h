@@ -29,7 +29,16 @@ public:
 	{
 		GameState::start(pData, pSystems, pGUI);
 		
-		Root = new BaseNode("TESTNODE");
+		Root = pSystems->getChild<EntityFactory>()->createPlayer(0);
+
+		Joint* j = new Joint();
+		Polygon2D shape;
+		shape.createPoly(4);
+		j->addChild(new Transform2D({0, -1}, {0, 0}, {1, 1}));
+		j->addChild(new Render(shape));
+		Root->addChild(j);
+
+		pData->addChild(Root);
 	}
 
 	void update(BaseNode* pData, float fDeltaTime) {}

@@ -363,6 +363,12 @@
     <ClInclude Include="EditableRoom2D.h">
       <Filter>Source Files\TileMapSystem\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="Joint.h">
+      <Filter>Source Files\EntityComponentSystem\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityComponentSystemDemo.h">
+      <Filter>Source Files\StateManager\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

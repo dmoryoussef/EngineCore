@@ -4,8 +4,7 @@ protected:
 	Transform3D* cameraPos;
 
 public:
-	GameState()
-	{};
+	GameState()	{};
 
 	virtual void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI) 
 	{

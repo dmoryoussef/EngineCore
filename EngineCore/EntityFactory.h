@@ -88,14 +88,14 @@ public:
 		shape.createPoly(3);
 		BaseNode* pEntity = new BaseNode(s);
 		pEntity->addChild(new Render(shape));
-		pEntity->addChild(new Transform2D({ float(random(1, 10)), float(random(1, 10))}, {0, 0}, {1, 1}));
+		pEntity->addChild(new Transform2D({ float(random(1, 10)), float(random(1, 10))}, {1, 0}, {1, 1}));
 		pEntity->addChild(new Velocity());
 		pEntity->addChild(new UserController(playerId));
 		pEntity->addChild(new ShootAction(100000, 200.0));
 		pEntity->addChild(new Collider2D(shape));
 		pEntity->addChild(new UIState()); 
 		pEntity->addChild(new Health(100));
-		pEntity->addChild(new Accelerate(0.001));
+		pEntity->addChild(new Accelerate(0.0));
 		
 		addEvent(new NewBaseNodeEvent(pEntity));
 

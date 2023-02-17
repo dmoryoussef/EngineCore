@@ -10,7 +10,7 @@
 #include "Collider2D.h"
 #include "CollisionResponse.h"
 #include "UIState.h"
-
+#include "Joint.h"
 
 #include "Damage.h"
 #include "Health.h"

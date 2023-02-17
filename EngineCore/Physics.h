@@ -9,7 +9,7 @@ public:
 	Accelerate(float max) :
 		m_fMax(max),
 		m_fCurrent(0.0),
-		vForce(),
+		vForce(0,0),
 		_EntityComponent("Thrust") {};
 
 	float getMax() { return m_fMax; }
@@ -44,13 +44,10 @@ public:
 		_EntityComponent("Physics")	{};
 
 	Velocity() :
-		vVelocity({0, 0}),
+		vVelocity(0, 0),
 		fMaxVelocity(1.0),
 		fMass(1.0),
-		_EntityComponent("Physics")
-	{
-
-	};
+		_EntityComponent("Physics")	{};
 
 	void setVelocity(Vector2 vVel) 
 	{ 
