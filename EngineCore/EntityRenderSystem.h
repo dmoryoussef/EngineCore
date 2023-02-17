@@ -22,8 +22,8 @@ public:
 
 			mat3x3 mLocal = mLocal.Identity();
 			mLocal = mLocal * mTranslate;
-			mLocal = mLocal * mScale;
-			mLocal = mLocal * mRotate;
+			//mLocal = mLocal * mScale;
+			//mLocal = mLocal * mRotate;
 
 			mWorld = mWorld * mLocal;
 
