@@ -8,18 +8,21 @@ struct mat3x3
 		matrix.m[0][0] = 1.0f;
 		matrix.m[1][1] = 1.0f;
 		matrix.m[2][2] = 1.0f;
-
 		return matrix;
 	}
 
 	mat3x3 RotateZ(float fAngleRad)
 	{
 		mat3x3 matRotate;
-		m[0][0] = cosf(fAngleRad);
-		m[0][1] = sinf(fAngleRad);
-		m[1][0] = -sinf(fAngleRad);
-		m[1][1] = cosf(fAngleRad);
-		m[2][2] = 1.0f;
+		matRotate.m[0][0] = cosf(fAngleRad);
+		matRotate.m[0][1] = sinf(fAngleRad);
+		matRotate.m[0][2] = 0;
+		matRotate.m[1][0] = -sinf(fAngleRad);
+		matRotate.m[1][1] = cosf(fAngleRad);
+		matRotate.m[1][2] = 0;
+		matRotate.m[2][0] = 0;
+		matRotate.m[2][1] = 0;
+		matRotate.m[2][2] = 1.0f;
 
 		return matRotate;
 	}
@@ -27,11 +30,11 @@ struct mat3x3
 	mat3x3 RotateX(float fAngleRad)
 	{
 		mat3x3 matRotate;
-		m[0][0] = 1;
-		m[1][1] = cosf(fAngleRad);
-		m[1][2] = sinf(fAngleRad);
-		m[2][1] = -sinf(fAngleRad);
-		m[2][2] = cosf(fAngleRad);
+		matRotate.m[0][0] = 1;
+		matRotate.m[1][1] = cosf(fAngleRad);
+		matRotate.m[1][2] = sinf(fAngleRad);
+		matRotate.m[2][1] = -sinf(fAngleRad);
+		matRotate.m[2][2] = cosf(fAngleRad);
 
 		return matRotate;
 	}
@@ -39,11 +42,11 @@ struct mat3x3
 	mat3x3 RotateY(float fAngleRad)
 	{
 		mat3x3 matRotate;
-		m[0][0] = cosf(fAngleRad);
-		m[0][2] = sinf(fAngleRad);
-		m[2][0] = -sinf(fAngleRad);
-		m[1][1] = 1.0f;
-		m[2][2] = cosf(fAngleRad);
+		matRotate.m[0][0] = cosf(fAngleRad);
+		matRotate.m[0][2] = sinf(fAngleRad);
+		matRotate.m[2][0] = -sinf(fAngleRad);
+		matRotate.m[1][1] = 1.0f;
+		matRotate.m[2][2] = cosf(fAngleRad);
 		return matRotate;
 	}
 
@@ -77,6 +80,7 @@ Vector2 operator*(Vector2 &vec, mat3x3 &mat)
 
 	return out;
 }
+
 
 Triangle2D operator*(Triangle2D& tri, mat3x3& mat)
 {
