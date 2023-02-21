@@ -16,6 +16,11 @@ private:
 public:
 	Polygon2D() {};
 
+	Polygon2D(int sides)
+	{
+		createPoly(sides);
+	}
+
 	void createPoly(int sides)
 	{
 		Verticies.clear();

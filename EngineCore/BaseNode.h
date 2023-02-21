@@ -218,6 +218,16 @@ public:
 		}
 	}
 
+	BaseNode* addNode(BaseNode* pChild)
+	{
+		if (pChild)
+		{
+			pChild->setParent(this);
+			addAtEnd(pChild);
+		}
+		return this;
+	}
+
 	virtual void start() {}
 
 	virtual void update(float fDeltaTime) {}
