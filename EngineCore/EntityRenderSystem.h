@@ -25,13 +25,11 @@ public:
 
 			mWorld = mLocal * mWorld;
 		
-			if (worldPos.X > vWorldMin.X &&	//	change to a pointvquad collision check for consistancy?  
-				worldPos.X < vWorldMax.X &&	//	change to add full bounding quad not just position vector
-				worldPos.Y > vWorldMin.Y &&
-				worldPos.Y < vWorldMax.Y)
+			Polygon2D polygon = pRender->getPolygon();
+			vector<Vector2> transVerts = polygon.transformedVerts(mWorld);
+			
+			if (isPolyvQuad(transVerts, vWorldMin, vWorldMax)) 
 			{
-				Polygon2D polygon = pRender->getPolygon();
-				vector<Vector2> transVerts = polygon.transformedVerts(mWorld);
 
 				Pixel color = { PIXEL_SOLID, FG_WHITE };
 

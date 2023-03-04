@@ -28,6 +28,16 @@ bool isQuadvQuad(Vector2 minA, Vector2 maxA, Vector2 minB, Vector2 maxB)
 			isPointvQuad({ minA.X, maxA.Y }, minB, maxB));
 }
 
+bool isPolyvQuad(vector<Vector2> verts, Vector2 min, Vector2 max)
+{
+	for (auto v : verts)
+	{
+		if (isPointvQuad(v, min, max))
+			return true;
+	}
+
+	return false;
+}
 
 class EditablePoly2D : public EventListener, 
 					   public BaseNode
