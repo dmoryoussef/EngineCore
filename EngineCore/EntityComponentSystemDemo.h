@@ -31,11 +31,17 @@ public:
 		
 		Root = pSystems->getChild<EntityFactory>()->createPlayer(0);
 
-		Joint* j = new Joint();
-		Root->addNode(j);
-		j->addNode(new Transform2D({ 0, -1 }, { 0, 0 }, { 1, 1 }))->
-		   addNode(new Render(Polygon2D(4)));
+		Joint* a = new Joint("a");
+		a->addNode(new Transform2D({ 0.5, -0.71 }, { 0.5, 0.5 }, { .3, .3 }))->
+		   addNode(new Render(Polygon2D(4)))->
+		   addNode(new UIState());
+		Root->addNode(a);
 
+		Joint* b = new Joint("b");
+		b->addNode(new Transform2D({ -0.5, -0.71 }, { .5, .5 }, { .3, .3 }))->
+		   addNode(new Render(Polygon2D(4)))->
+		   addNode(new UIState());
+		Root->addNode(b);
 
 		pData->addChild(Root);
 	}

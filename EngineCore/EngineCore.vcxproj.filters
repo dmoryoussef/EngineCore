@@ -102,9 +102,6 @@
     <ClInclude Include="UILayout.h">
       <Filter>Source Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2.h">
-      <Filter>Source Files\EngineCore</Filter>
-    </ClInclude>
     <ClInclude Include="Events.h">
       <Filter>Source Files\EventSystem</Filter>
     </ClInclude>
@@ -125,9 +122,6 @@
     </ClInclude>
     <ClInclude Include="_Tile2D.h">
       <Filter>Source Files\TileMapSystem\Tiles</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector3.h">
-      <Filter>Source Files\EngineCore</Filter>
     </ClInclude>
     <ClInclude Include="Render2D.h">
       <Filter>Source Files\EngineCore</Filter>
@@ -368,6 +362,12 @@
     </ClInclude>
     <ClInclude Include="EntityComponentSystemDemo.h">
       <Filter>Source Files\StateManager\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>Source Files\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -92,6 +92,36 @@ private:
 		return true;
 	}
 
+	void updateState(BaseNode *pEntity, mat3x3 mWorld, vector<Vector2> mousePosition, MouseState mouseState)
+	{
+		if (UIState* pUIState = pEntity->getChild<UIState>())
+			if (Render* pRender = pEntity->getChild<Render>())
+				if (Transform2D* pTransform = pEntity->getChild<Transform2D>())
+				{
+					Polygon2D poly = pRender->getPolygon();
+					Polygon2D transformedPoly = poly;
+
+					mat3x3 mScale = mScale.Scale(pTransform->getScale());
+					mat3x3 mRotate = mRotate.RotateZ(pTransform->getRotation().getAngle());
+					mat3x3 mTranslate = mTranslate.Translate(pTransform->getPosition());
+					mat3x3 mLocal = mLocal.Identity();
+					mLocal = mLocal * mScale;
+					mLocal = mLocal * mRotate;
+					mLocal = mLocal * mTranslate;
+					mWorld = mLocal * mWorld;
+					vector<Vector2> transVerts = poly.transformedVerts(mWorld);
+
+					bool bMouseOver = (isSeperatingAxisCollisionVectors(transVerts, mousePosition));
+
+					pUIState->setState(mouseState.updateState(bMouseOver, pUIState->isActive(), pUIState->getState()));
+				}
+
+		while (pEntity->isIterating())
+		{
+			BaseNode* pCurrent = pEntity->getCurrent();
+			updateState(pCurrent, mWorld, mousePosition, mouseState);
+		}
+	}
 
 	void onEvent(_Event* pEvent)
 	{
@@ -101,26 +131,13 @@ private:
 			{
 				Vector2 vMousePosition = pEvent->get<MouseWorldEvent>()->getWorldPosition();
 				MouseState mouseState = pEvent->get<MouseWorldEvent>()->getState();
-
 				vector<Vector2> mousePosition;
 				mousePosition.push_back(vMousePosition);
-
+				mat3x3 mWorld = mWorld.Identity();
 				while (m_pEntityList->isIterating())
 				{
-					BaseNode* pEntityA = m_pEntityList->getCurrent();
-					if (UIState *pUIState = pEntityA->getChild<UIState>())
-						if (Collider2D* pColliderA = pEntityA->getChild<Collider2D>())
-							if (Render* pRenderA = pEntityA->getChild<Render>())
-								if (Transform2D* pTransformA = pEntityA->getChild<Transform2D>())
-								{
-									Polygon2D polyA = pRenderA->getPolygon();
-									Polygon2D transformedPolyA = polyA;
-									transformedPolyA.transform(pTransformA->getScale(), pTransformA->getRotation().getAngle(), pTransformA->getPosition());
-
-									bool bMouseOver = (isSeperatingAxisCollisionVectors(transformedPolyA.getVerticies(), mousePosition));
-										
-									pUIState->setState(mouseState.updateState(bMouseOver, pUIState->isActive(), pUIState->getState()));
-								}
+					BaseNode* pEntity = m_pEntityList->getCurrent();
+					updateState(pEntity, mWorld, mousePosition, mouseState);
 				}
 							
 				

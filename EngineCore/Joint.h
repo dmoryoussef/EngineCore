@@ -3,8 +3,8 @@ class Joint : public _EntityComponent
 private:
 
 public:
-	Joint() :
-		_EntityComponent("JOINT")
+	Joint(string s = "JOINT") :
+		_EntityComponent(s)
 	{
 
 	};

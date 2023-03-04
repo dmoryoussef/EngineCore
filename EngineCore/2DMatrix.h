@@ -55,6 +55,7 @@ struct mat3x3
 		mat3x3 matScale;
 		matScale.m[0][0] = scale.X;
 		matScale.m[1][1] = scale.Y;
+		matScale.m[2][2] = 1;
 		return matScale;
 	}
 
