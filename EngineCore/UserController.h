@@ -232,9 +232,11 @@ private:
 			if (bLeft)	vForce = vForce + Vector2(-1, 0);
 			if (bDown)	vForce = vForce + Vector2(0, 1);
 			if (bRight) vForce = vForce + Vector2(1, 0);
-			if (Accelerate* accel = getParent()->getChild<Accelerate>())
+
+			vector<Accelerate*> AccelChildren = getParent()->getChildren<Accelerate>();
+			for (auto accel : AccelChildren)
 			{
-				accel->setForce(vForce * 0.001);
+				accel->setForce(vForce * 0.0001);	// this needs to be the "jolt" value
 			}
 				
 		}

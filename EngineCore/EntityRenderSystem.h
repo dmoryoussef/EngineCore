@@ -28,9 +28,8 @@ public:
 			Polygon2D polygon = pRender->getPolygon();
 			vector<Vector2> transVerts = polygon.transformedVerts(mWorld);
 			
-			if (isPolyvQuad(transVerts, vWorldMin, vWorldMax)) 
+			if (isPolyvQuad(transVerts, vWorldMin, vWorldMax)) // only render if at least part of the poly is on screen
 			{
-
 				Pixel color = { PIXEL_SOLID, FG_WHITE };
 
 				if (UIState* pUIState = pEntity->getChild<UIState>())
@@ -54,8 +53,7 @@ public:
 				// draw forward direction
 				r->DrawLine(worldPos, transVerts[0], color);
 
-
-				//	if (pEntity->getParent() == NULL)
+				if (pEntity->getParent() == NULL)	// find a better way to detect root node
 				{
 					vector<string> EntityData;
 					EntityData.push_back(pEntity->getName());
@@ -69,9 +67,7 @@ public:
 					pos = pos + worldPos;
 					r->DrawString(EntityData, pos.X, pos.Y);
 				}
-
 			}
-
 		}
 
 		while (pEntity->isIterating())
