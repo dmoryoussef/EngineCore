@@ -14,15 +14,7 @@ public:
 			Vector2 localPos = pTransform->getPosition();
 			Vector2 worldPos = localPos * mWorld;
 
-			mat3x3 mScale = mScale.Scale(pTransform->getScale());
-			mat3x3 mRotate = mRotate.RotateZ(pTransform->getRotation().getAngle());
-			mat3x3 mTranslate = mTranslate.Translate(localPos);
-
-			mat3x3 mLocal = mLocal.Identity();
-			mLocal = mLocal * mScale;
-			mLocal = mLocal * mRotate;
-			mLocal = mLocal * mTranslate;
-
+			mat3x3 mLocal = pTransform->getTransformMatrix();
 			mWorld = mLocal * mWorld;
 		
 			Polygon2D polygon = pRender->getPolygon();
@@ -42,10 +34,15 @@ public:
 					}
 				}
 
-				//	override with entity collision color
+				//	draw collider box and state
 				if (Collider2D* pCollider = pEntity->getChild<Collider2D>())
+				{
+					Pixel colliderColor = { PIXEL_QUARTER, FG_DARKRED };
 					if (pCollider->isColliding())
-						color = { PIXEL_SOLID, FG_DARKRED };
+						colliderColor = { PIXEL_SOLID, FG_DARKRED };
+					vector<Vector2> colliderVerts = pCollider->getPoly().transformedVerts(mWorld);
+					r->DrawPoly(colliderVerts, colliderColor);
+				}
 
 				// draw poly
 				r->DrawPoly(transVerts, color);
@@ -53,12 +50,12 @@ public:
 				// draw forward direction
 				r->DrawLine(worldPos, transVerts[0], color);
 
-				if (pEntity->getParent() == NULL)	// find a better way to detect root node
-				{
+				if (DetailsPanel *pPanel = pEntity->getChild<DetailsPanel>())	//	find a better way to detect root node
+				{																//	or a better way for info panel gui
 					vector<string> EntityData;
 					EntityData.push_back(pEntity->getName());
 					EntityData.push_back(worldPos.toString());
-					EntityData.push_back(pTransform->getRotation().toString());
+					//	EntityData.push_back(pTransform->getRotation().toString());
 
 					if (Health* pHealth = pEntity->getChild<Health>())
 						EntityData.push_back(thingToString(pHealth->getHealth()));

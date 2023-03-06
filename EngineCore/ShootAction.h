@@ -33,6 +33,21 @@ public:
 
 	}
 
+	//	generalize action!
+	void tryAction()
+	{
+		if (bReady && nAmmo > 0)
+		{
+			nAmmo--;
+			fCurrent = fCooldown;
+			//	protect against multi shoot events triggering 
+			//	before next update
+			bReady = false;
+			// shoot
+			addEvent(new CommandEvent(getParent(), new ActionCommand()));
+		}
+	}
+
 	bool canShoot()
 	{
 		if (bReady && nAmmo > 0)

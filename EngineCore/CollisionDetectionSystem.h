@@ -77,12 +77,8 @@ private:
 		return true;
 	}
 
-
-	bool isSeperatingAxisCollision(Polygon2D A, Polygon2D B)
+	bool isSeperatingAxisCollision(vector<Vector2> polyA, vector<Vector2> polyB)
 	{
-		vector<Vector2> polyA = A.getVerticies();
-		vector<Vector2> polyB = B.getVerticies();
-
 		if (!isSeperatingAxisCollisionVectors(polyA, polyB))
 			return false;
 
@@ -101,14 +97,9 @@ private:
 					Polygon2D poly = pRender->getPolygon();
 					Polygon2D transformedPoly = poly;
 
-					mat3x3 mScale = mScale.Scale(pTransform->getScale());
-					mat3x3 mRotate = mRotate.RotateZ(pTransform->getRotation().getAngle());
-					mat3x3 mTranslate = mTranslate.Translate(pTransform->getPosition());
-					mat3x3 mLocal = mLocal.Identity();
-					mLocal = mLocal * mScale;
-					mLocal = mLocal * mRotate;
-					mLocal = mLocal * mTranslate;
+					mat3x3 mLocal = pTransform->getTransformMatrix();
 					mWorld = mLocal * mWorld;
+
 					vector<Vector2> transVerts = poly.transformedVerts(mWorld);
 
 					bool bMouseOver = (isSeperatingAxisCollisionVectors(transVerts, mousePosition));
@@ -154,8 +145,6 @@ public:
 		registerListener(MOUSEWORLD_EVENT);
 	};
 
-
-
 	void resetColliders()
 	{
 		while (m_pEntityList->isIterating())
@@ -177,101 +166,97 @@ public:
 		{
 			BaseNode* pEntityA = m_pEntityList->getCurrent();
 			if (Collider2D *pColliderA = pEntityA->getChild<Collider2D>())
-				if (Render* pRenderA = pEntityA->getChild<Render>())
-					if (Transform2D* pTransformA = pEntityA->getChild<Transform2D>())
+				if (Transform2D* pTransformA = pEntityA->getChild<Transform2D>())
+				{
+					//	check against world min/max
+					Vector2 vPosition = pTransformA->getPosition();
+					Vector2 vWorldMax(75, 75);
+					Vector2 vWorldMin(-75, -75);
+					if (vPosition.X > vWorldMax.X || vPosition.X < vWorldMin.X ||
+						vPosition.Y > vWorldMax.Y || vPosition.Y < vWorldMin.Y)
 					{
-						//	check against world min/max
-						Vector2 vPosition = pTransformA->getPosition();
-						Vector2 vWorldMax(75, 75);
-						Vector2 vWorldMin(-75, -75);
-						if (vPosition.X > vWorldMax.X || vPosition.X < vWorldMin.X ||
-							vPosition.Y > vWorldMax.Y || vPosition.Y < vWorldMin.Y)
+						pColliderA->setColliding(true);
+						if (CollisionResponse* pResponse = pEntityA->getChild<OutOfBoundsCollision>())
 						{
-							pColliderA->setColliding(true);
-							if (CollisionResponse* pResponse = pEntityA->getChild<OutOfBoundsCollision>())
-							{
-								pResponse->onCollision();
-							}
-						}
-
-						//	check entity collisions
-						BaseNode* pEntityB = pEntityA->getNext();
-						while (pEntityB)
-						{
-							if (Collider2D* pColliderB = pEntityB->getChild<Collider2D>())
-								if (Render* pRenderB = pEntityB->getChild<Render>())
-									if (Transform2D* pTransformB = pEntityB->getChild<Transform2D>())
-									{
-										//	transform polygons
-										Polygon2D transformedPolyA = pRenderA->getPolygon();
-										Polygon2D transformedPolyB = pRenderB->getPolygon();
-
-										transformedPolyA.transform(pTransformA->getScale(), pTransformA->getRotation().getAngle(), pTransformA->getPosition());
-										transformedPolyB.transform(pTransformB->getScale(), pTransformB->getRotation().getAngle(), pTransformB->getPosition());
-
-										if (isSeperatingAxisCollision(transformedPolyA, transformedPolyB))
-										{
-											pColliderA->setColliding(true);
-											pColliderB->setColliding(true);
-
-											// send collision event?
-											//	colliding entities
-											//	vectors/forces for resolution
-											
-											//	move to CollisionResponseSystem?????
-											//	collision response:
-
-											//	doesnt work correctly probably cant use inheritance for this
-											if (CollisionResponse* pResponseA = pEntityA->getChild<OutOfBoundsCollision>())
-											{
-												pResponseA->onCollision();
-											}
-											if (CollisionResponse* pResponseB = pEntityB->getChild<OutOfBoundsCollision>())
-											{
-												pResponseB->onCollision();
-											}
-
-											Health* pHealthA = pEntityA->getChild<Health>();
-											Damage* pDamageA = pEntityA->getChild<Damage>();
-
-											Health* pHealthB = pEntityB->getChild<Health>();
-											Damage* pDamageB = pEntityB->getChild<Damage>();
-
-											if (pHealthA && pDamageB)
-											{
-												int nCurrentHealth = pHealthA->getHealth();
-												int nDamage = pDamageB->getDamage();
-												nCurrentHealth = nCurrentHealth - nDamage;
-												if (nCurrentHealth < 0)
-												{
-													nCurrentHealth = 0;
-													addEvent(new DeleteBaseNodeEvent(pHealthA->getParent()));
-												}
-												else
-													pHealthA->setHealth(nCurrentHealth);
-
-											}
-
-											if (pHealthB && pDamageA)
-											{
-												int nCurrentHealth = pHealthB->getHealth();
-												int nDamage = pDamageA->getDamage();
-												nCurrentHealth = nCurrentHealth - nDamage;
-												if (nCurrentHealth < 0)
-												{
-													nCurrentHealth = 0;
-													addEvent(new DeleteBaseNodeEvent(pHealthB->getParent()));
-												}
-												else
-													pHealthB->setHealth(nCurrentHealth);
-											}
-
-										}
-									}
-
-							pEntityB = pEntityB->getNext();
+							pResponse->onCollision();
 						}
 					}
+
+					//	check entity collisions
+					BaseNode* pEntityB = pEntityA->getNext();
+					while (pEntityB)
+					{
+						if (Collider2D* pColliderB = pEntityB->getChild<Collider2D>())
+							if (Transform2D* pTransformB = pEntityB->getChild<Transform2D>())
+							{
+								mat3x3 mLocalA = pTransformA->getTransformMatrix();
+								vector<Vector2> transVertsA = pColliderA->getPoly().transformedVerts(mLocalA);
+								mat3x3 mLocalB = pTransformB->getTransformMatrix();
+								vector<Vector2> transVertsB = pColliderB->getPoly().transformedVerts(mLocalB);
+
+								if (isSeperatingAxisCollision(transVertsA, transVertsB))
+								{
+									pColliderA->setColliding(true);
+									pColliderB->setColliding(true);
+
+									// send collision event?
+									//	colliding entities
+									//	vectors/forces for resolution
+											
+									//	move to CollisionResponseSystem?????
+									//	collision response:
+
+									//	doesnt work correctly probably cant use inheritance for this
+									if (CollisionResponse* pResponseA = pEntityA->getChild<OutOfBoundsCollision>())
+									{
+										pResponseA->onCollision();
+									}
+									if (CollisionResponse* pResponseB = pEntityB->getChild<OutOfBoundsCollision>())
+									{
+										pResponseB->onCollision();
+									}
+
+									Health* pHealthA = pEntityA->getChild<Health>();
+									Damage* pDamageA = pEntityA->getChild<Damage>();
+
+									Health* pHealthB = pEntityB->getChild<Health>();
+									Damage* pDamageB = pEntityB->getChild<Damage>();
+
+									if (pHealthA && pDamageB)
+									{
+										int nCurrentHealth = pHealthA->getHealth();
+										int nDamage = pDamageB->getDamage();
+										nCurrentHealth = nCurrentHealth - nDamage;
+										if (nCurrentHealth < 0)
+										{
+											nCurrentHealth = 0;
+											addEvent(new DeleteBaseNodeEvent(pHealthA->getParent()));
+										}
+										else
+											pHealthA->setHealth(nCurrentHealth);
+
+									}
+
+									if (pHealthB && pDamageA)
+									{
+										int nCurrentHealth = pHealthB->getHealth();
+										int nDamage = pDamageA->getDamage();
+										nCurrentHealth = nCurrentHealth - nDamage;
+										if (nCurrentHealth < 0)
+										{
+											nCurrentHealth = 0;
+											addEvent(new DeleteBaseNodeEvent(pHealthB->getParent()));
+										}
+										else
+											pHealthB->setHealth(nCurrentHealth);
+									}
+
+								}
+							}
+
+						pEntityB = pEntityB->getNext();
+					}
+				}
 					
 		}
 	}

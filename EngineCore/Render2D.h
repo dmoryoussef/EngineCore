@@ -177,7 +177,7 @@ public:
 		//DrawTriangle()
 	}
 
-	void DrawString(vector<string> strings, float x, float y)
+	void DrawString(vector<string> strings, float x, float y, int color = FG_WHITE )
 	{
 		x = vCameraTransform.X + x * vCameraTransform.Z;
 		y = vCameraTransform.Y + y * vCameraTransform.Z;
@@ -187,7 +187,7 @@ public:
 		{
 			for (int nI = 0; nI < s.length(); nI++)
 			{
-				m_pTargetBuffer->set(s, x, y + offsetY, FG_WHITE);
+				m_pTargetBuffer->set(s, x, y + offsetY, color);
 			}
 			offsetY++;
 		}
@@ -709,7 +709,7 @@ public:
 				m_pTargetBuffer->set(ch, nX, nY, color);
 	}
 
-	void DrawString(string str, float x, float y)
+	void DrawString(string str, float x, float y, int color = FG_WHITE)
 	{
 		//	scale
 		x = vCameraTransform.X + x * vCameraTransform.Z;

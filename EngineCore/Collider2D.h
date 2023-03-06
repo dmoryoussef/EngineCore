@@ -17,6 +17,11 @@ public:
 		PolygonCollider(poly),
 		_EntityComponent("COLLIDER") {};
 
+	Polygon2D getPoly()
+	{
+		return PolygonCollider;
+	}
+
 	bool isColliding() { return m_bColliding; }
 	void setColliding(bool b)
 	{

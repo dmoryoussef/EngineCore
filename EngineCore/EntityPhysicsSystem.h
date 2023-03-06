@@ -35,7 +35,8 @@ public:
 				vVelocity = vVelocity + vTotal;
 				
 				//	add friction
-				vVelocity = vVelocity * 0.972;
+				if (pVelocity->applyFriction())
+					vVelocity = vVelocity * 0.972;
 
 				//	clamp to 0 if magnitude is less than
 				vVelocity.floor(0.0001);

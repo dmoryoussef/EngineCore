@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Accelerate.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AttackBehavior.h" />
     <ClInclude Include="BaseNode.h" />
@@ -153,12 +154,14 @@
     <ClInclude Include="Collider2D.h" />
     <ClInclude Include="CollisionDetectionSystem.h" />
     <ClInclude Include="CollisionResponse.h" />
+    <ClInclude Include="Commands.h" />
     <ClInclude Include="CommandSystem.h" />
     <ClInclude Include="ConnectingLine.h" />
     <ClInclude Include="ControllerWidget.h" />
     <ClInclude Include="BezierCurveTestWindow.h" />
     <ClInclude Include="DataTree.h" />
     <ClInclude Include="DataTreeDemo.h" />
+    <ClInclude Include="DetailsPanel.h" />
     <ClInclude Include="EditableRoom2D.h" />
     <ClInclude Include="EntityComponentSystemDemo.h" />
     <ClInclude Include="FleeBehavior.h" />
@@ -198,7 +201,7 @@
     <ClInclude Include="PathfindingMap.h" />
     <ClInclude Include="PathfindingTile.h" />
     <ClInclude Include="PerlinDemo.h" />
-    <ClInclude Include="Physics.h" />
+    <ClInclude Include="Velocity.h" />
     <ClInclude Include="Polygon.h" />
     <ClInclude Include="PursuitBehavior.h" />
     <ClInclude Include="Rect2D.h" />

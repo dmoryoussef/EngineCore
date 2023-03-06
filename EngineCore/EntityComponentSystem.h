@@ -1,7 +1,8 @@
 #include "_EntityComponent.h"
 #include "Transform2D.h"
 #include "Transform3D.h"
-#include "Physics.h"
+#include "Velocity.h"
+#include "Accelerate.h"
 #include "Render.h"
 #include "ShootAction.h"
 #include "ControllerWidget.h"
@@ -11,6 +12,7 @@
 #include "CollisionResponse.h"
 #include "UIState.h"
 #include "Joint.h"
+#include "DetailsPanel.h"
 
 #include "Damage.h"
 #include "Health.h"

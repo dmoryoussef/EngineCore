@@ -159,7 +159,7 @@
     <ClInclude Include="ControllerWidget.h">
       <Filter>Source Files\EntityComponentSystem\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Physics.h">
+    <ClInclude Include="Velocity.h">
       <Filter>Source Files\EntityComponentSystem\Components</Filter>
     </ClInclude>
     <ClInclude Include="Render.h">
@@ -368,6 +368,15 @@
     </ClInclude>
     <ClInclude Include="Vector2.h">
       <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Accelerate.h">
+      <Filter>Source Files\EntityComponentSystem\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands.h">
+      <Filter>Source Files\EntityComponentSystem\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="DetailsPanel.h">
+      <Filter>Source Files\EntityComponentSystem\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,29 +1,3 @@
-class Accelerate : public _EntityComponent
-{
-private:
-	float m_fMax;
-	float m_fCurrent;
-	Vector2 vForce;
-
-public:
-	Accelerate(float max) :
-		m_fMax(max),
-		m_fCurrent(0.0),
-		vForce(0,0),
-		_EntityComponent("Thrust") {};
-
-	float getMax() { return m_fMax; }
-
-	Vector2 getForce()
-	{
-		return vForce;
-	}
-	void setForce(Vector2 force)
-	{
-		vForce = force;
-	}
-};
-
 class Velocity : 
 	public _EntityComponent
 {
@@ -34,24 +8,31 @@ private:
 	float fMaxVelocity;
 	float fMass;
 	//	other stuff
-
+	bool m_bApplyFriction;
 
 public:
-	Velocity(Vector2 velocity) :
+	Velocity(Vector2 velocity, bool friction = true) :
 		vVelocity(velocity),
 		fMaxVelocity(1.0),
 		fMass(1.0),
+		m_bApplyFriction(friction),
 		_EntityComponent("Physics")	{};
 
-	Velocity() :
+	Velocity(bool friction = true) :
 		vVelocity(0, 0),
 		fMaxVelocity(1.0),
 		fMass(1.0),
+		m_bApplyFriction(friction),
 		_EntityComponent("Physics")	{};
 
 	void setVelocity(Vector2 vVel) 
 	{ 
 		vVelocity = vVel; 
+	}
+
+	bool applyFriction()
+	{
+		return m_bApplyFriction;
 	}
 
 	Vector2 getVelocity() { return vVelocity; }

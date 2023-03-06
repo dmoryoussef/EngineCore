@@ -51,6 +51,20 @@ public:
 		return forward;
 	}
 
+	mat3x3 getTransformMatrix()
+	{
+		mat3x3 mScale = mScale.Scale(m_vScale);
+		mat3x3 mRotate = mRotate.RotateZ(m_vRotation.getAngle());
+		mat3x3 mTranslate = mTranslate.Translate(m_vPosition);
+
+		mat3x3 mLocal = mLocal.Identity();
+		mLocal = mLocal * mScale;
+		mLocal = mLocal * mRotate;
+		mLocal = mLocal * mTranslate;
+
+		return mLocal;
+	}
+
 	string toString()
 	{
 		return m_vPosition.toString();

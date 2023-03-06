@@ -1,53 +1,4 @@
-enum COMMANDS
-{
-	ACTION,	//	general action
-	ACCELERATE,
-	ROTATE,
-	FIRE,
-	MOVE
-};
 
-class AccelerateCommand : public _Command
-{
-private:
-	Vector2 m_vForce;
-
-public:
-	AccelerateCommand(Vector2 f) :
-		m_vForce(f),
-		_Command(ACCELERATE) {};
-
-	Vector2 getForce() { return m_vForce; }
-};
-
-class RotateCommand : public _Command
-{
-private: 
-	Vector2 m_vRotate;
-
-public:
-	RotateCommand(Vector2 r) :
-		m_vRotate(r),
-		_Command(ROTATE) {};
-
-	Vector2 getVector() { return m_vRotate; }
-};
-
-class ActionCommand : public _Command
-{
-private:
-	Vector2 vTarget;
-
-public:
-	ActionCommand() :
-		_Command(FIRE) {};
-
-	ActionCommand(Vector2 target) :
-		vTarget(target),
-		_Command(ACTION) {};
-
-	Vector2 getTarget() { return vTarget; }
-};
 
 //class UserController : public _EntityComponent
 //{
@@ -185,7 +136,7 @@ private:
 	bool bDown;
 	bool bLeft;
 	bool bRight;
-
+	bool bAction;
 
 	void onMouseWorldEvent(MouseWorldEvent* pEvent)
 	{
@@ -223,9 +174,15 @@ private:
 
 			if (pEvent->isKeyDown(32))
 			{
-				//	action
+				bAction = true;
+			}
+			if (pEvent->isKeyUp(32))
+			{
+				bAction = true;
 			}
 
+
+			
 
 			Vector2 vForce(0, 0);
 			if (bUp)	vForce = vForce + Vector2(0, -1);
@@ -236,7 +193,8 @@ private:
 			vector<Accelerate*> AccelChildren = getParent()->getChildren<Accelerate>();
 			for (auto accel : AccelChildren)
 			{
-				accel->setForce(vForce * 0.0001);	// this needs to be the "jolt" value
+				float scaler = accel->getMax();
+				accel->setForce(vForce * scaler);	// this needs to be the "jolt" value?
 			}
 				
 		}
@@ -299,10 +257,11 @@ private:
 public:
 	UserController(int id) :
 		m_nControllerID(id),
-		 bUp(false),
-		 bDown(false),
-		 bLeft(false),
-		 bRight(false),
+		bUp(false),
+		bDown(false),
+		bLeft(false),
+		bRight(false),
+		bAction(false),
 		_EntityComponent("USER_CONTROLLER")
 	{
 		registerListener(GAMEPAD_EVENT);
@@ -311,7 +270,13 @@ public:
 	}
 	void update(float fDeltaTime)
 	{
-
+		if (bAction)
+		{
+			if (ShootAction* pAction = getParent()->getChild<ShootAction>())
+			{
+				pAction->tryAction();
+			}
+		} 
 			
 	}
 

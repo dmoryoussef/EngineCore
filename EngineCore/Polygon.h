@@ -16,18 +16,18 @@ private:
 public:
 	Polygon2D() {};
 
-	Polygon2D(int sides)
+	Polygon2D(int sides, float fSize = 1.0)
 	{
-		createPoly(sides);
+		createPoly(sides, fSize);
 	}
 
-	void createPoly(int sides)
+	void createPoly(int sides, float fSize = 1.0)
 	{
 		Verticies.clear();
 
 		for (int nI = 0; nI < sides; nI++)
 		{
-			Verticies.push_back({ cosf((nI / (float)(sides)) * 2 * PI) , sinf((nI / (float)(sides)) * 2 * PI) });
+			Verticies.push_back({ (cosf((nI / (float)(sides)) * 2 * PI)) * fSize , (sinf((nI / (float)(sides)) * 2 * PI) * fSize) });
 		}	
 
 		// HACK to rotate points to match object forward vec

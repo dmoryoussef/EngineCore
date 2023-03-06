@@ -203,7 +203,10 @@ public:
 		m_pParent(pParent),
 		m_pCommand(pCommand),
 		_Event(COMMAND_EVENT) {};
-
+	~CommandEvent()
+	{
+		delete m_pCommand;
+	}
 
 	BaseNode* getParent() { return m_pParent; }
 	_Command *getCommand() { return m_pCommand; }

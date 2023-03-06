@@ -5,6 +5,7 @@ class EntityFactory :
 private:
 	BaseNode* m_pEntityList;
 
+	//	change to action event???A!@
 	void onCommandEvent(CommandEvent* pEvent)
 	{
 		BaseNode* pParent = pEvent->getParent();
@@ -19,12 +20,13 @@ private:
 						Vector2 rotation = transform->getRotation();
 						Vector2 forward = transform->getForward().normalize();
 						Vector2 position = transform->getPosition() + (forward * 1.5);
+						Polygon2D shape(2);
 						//	spawn entity event
 						BaseNode* pEntity = new BaseNode("Projectile");
-						pEntity->addChild(new Render(2));
+						pEntity->addChild(new Render(shape));
 						pEntity->addChild(new Transform2D(position, rotation, { 0.1, 0.1 }));
-						pEntity->addChild(new Velocity(forward * 0.05));
-						pEntity->addChild(new Collider2D());
+						pEntity->addChild(new Velocity(forward * 0.05, false));
+						pEntity->addChild(new Collider2D(shape));
 						pEntity->addChild(new OutOfBoundsCollision());
 						//pEntity->addChild(new Damage(25));
 						m_pEntityList->add(pEntity);
