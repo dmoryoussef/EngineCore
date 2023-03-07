@@ -2,7 +2,23 @@ class EntityPhysicsSystem : public BaseNode
 {
 private:
 	BaseNode* m_pEntityList;
-
+	Vector2 getForce(BaseNode* pParent)
+	{
+		Vector2 vForce;
+		if (pParent)
+		{
+			for (BaseNode* pCurrent = pParent->getStart(); pCurrent != NULL; pCurrent = pCurrent->getNext())
+			{
+				if (typeid(Accelerate) == typeid(*pCurrent))
+				{
+					Accelerate* pAccel = static_cast<Accelerate*>(pCurrent);
+					vForce = vForce + pAccel->getForce();
+				}
+				vForce = vForce + getForce(pCurrent);
+			}
+		}
+		return vForce;
+	}
 public:
 	EntityPhysicsSystem(BaseNode* pEntityList) :
 		m_pEntityList(pEntityList),
@@ -14,14 +30,8 @@ public:
 		{
 			BaseNode* pEntity = m_pEntityList->getCurrent();
 
-			vector<Accelerate*> AccelChildren = pEntity->getChildren<Accelerate>();
-			Vector2 vTotal;
-			for (auto accel : AccelChildren)
-			{
-				Vector2 vForce = accel->getForce();
-				vTotal = vTotal + vForce;
-				//accel->setForce(Vector2(0, 0));
-			}
+			Vector2 vTotal = getForce(pEntity);
+			vTotal = vTotal * fDeltaTime;
 
 			Accelerate* pAccel = pEntity->getChild<Accelerate>();
 			Transform2D* pTransform = pEntity->getChild<Transform2D>();
@@ -36,14 +46,15 @@ public:
 				
 				//	add friction
 				if (pVelocity->applyFriction())
-					vVelocity = vVelocity * 0.972;
+					vVelocity = vVelocity * 0.995;
 
 				//	clamp to 0 if magnitude is less than
 				vVelocity.floor(0.0001);
 
+				pVelocity->setVelocity(vVelocity);
+
 
 				//	set back
-				pVelocity->setVelocity(vVelocity);
 
 				//	set new position
 				Vector2 vPosition = pTransform->getPosition();
@@ -54,6 +65,7 @@ public:
 					// dont update rotation
 				}else
 					pTransform->setRotation(Vector2(-vVelocity.X, vVelocity.Y));
+
 				pTransform->setPosition(vPosition + vVelocity);
 			}
 		}

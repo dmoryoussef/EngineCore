@@ -138,6 +138,14 @@ private:
 	bool bRight;
 	bool bAction;
 
+
+	bool bRotateLeft;
+	bool bRotateRight;
+	bool bForward;
+	bool bBack;
+
+	bool bDirectScheme;
+
 	void onMouseWorldEvent(MouseWorldEvent* pEvent)
 	{
 		if (pEvent->getState().bRightButtonDown)
@@ -154,49 +162,27 @@ private:
 	{
 		if (m_nControllerID == 0)
 		{
-			if (pEvent->getKey() == 'W' || pEvent->getKey() == 'w')
-				bUp = pEvent->isKeyDown();
+			if (bDirectScheme)
+			{
+				//	Control scheme with direct movement mapped to keys
+				if (pEvent->getKey() == 'W' || pEvent->getKey() == 'w')	bForward = pEvent->isKeyDown();
+				if (pEvent->getKey() == 'S' || pEvent->getKey() == 's')	bBack = pEvent->isKeyDown();
+				if (pEvent->getKey() == 'D' || pEvent->getKey() == 'd')	bRight = pEvent->isKeyDown();
+				if (pEvent->isKeyDown('a'))	bLeft = true;
+				if (pEvent->isKeyUp('a')) bLeft = false;
+			}
+			else
+			{
+				//	Alternate scheme with left/right mapped to rotate, and up/down for forward/reverse
+				if (pEvent->getKey() == 'W' || pEvent->getKey() == 'w')	bUp = pEvent->isKeyDown();
+				if (pEvent->getKey() == 'S' || pEvent->getKey() == 's')	bDown = pEvent->isKeyDown();
+				if (pEvent->getKey() == 'D' || pEvent->getKey() == 'd')	bRotateRight = pEvent->isKeyDown();
+				if (pEvent->isKeyDown('a'))	bRotateLeft = true;
+				if (pEvent->isKeyUp('a')) bRotateLeft = false;
+			}
 			
-			if (pEvent->getKey() == 'S' || pEvent->getKey() == 's')
-				bDown = pEvent->isKeyDown();
-
-
-			if (pEvent->getKey() == 'D' || pEvent->getKey() == 'd')
-				bRight = pEvent->isKeyDown();
-
-
-			if (pEvent->isKeyDown('a'))
-				bLeft = true;
-
-			if (pEvent->isKeyUp('a'))
-				bLeft = false;
-
-
-			if (pEvent->isKeyDown(32))
-			{
-				bAction = true;
-			}
-			if (pEvent->isKeyUp(32))
-			{
-				bAction = true;
-			}
-
-
-			
-
-			Vector2 vForce(0, 0);
-			if (bUp)	vForce = vForce + Vector2(0, -1);
-			if (bLeft)	vForce = vForce + Vector2(-1, 0);
-			if (bDown)	vForce = vForce + Vector2(0, 1);
-			if (bRight) vForce = vForce + Vector2(1, 0);
-
-			vector<Accelerate*> AccelChildren = getParent()->getChildren<Accelerate>();
-			for (auto accel : AccelChildren)
-			{
-				float scaler = accel->getMax();
-				accel->setForce(vForce * scaler);	// this needs to be the "jolt" value?
-			}
-				
+			if (pEvent->isKeyDown(32)) bAction = true;
+			if (pEvent->isKeyUp(32)) bAction = false;
 		}
 	}
 	void onGamepadEvent(GamePadEvent* pEvent)
@@ -253,21 +239,43 @@ private:
 		}
 	}
 
+	void setForce(BaseNode *pParent, Vector2 v)
+	{
+		if (pParent)
+		{
+			for (BaseNode* pCurrent = pParent->getStart(); pCurrent != NULL; pCurrent = pCurrent->getNext())
+			{
+				if (typeid(Accelerate) == typeid(*pCurrent))
+				{
+					Accelerate* pAccel = static_cast<Accelerate*>(pCurrent);
+					float scaler = pAccel->getMax();
+					pAccel->setForce(v * scaler);
+				}
+				setForce(pCurrent, v);
+			}
+		}
+	}
 
 public:
 	UserController(int id) :
 		m_nControllerID(id),
+		bDirectScheme(false),
 		bUp(false),
 		bDown(false),
 		bLeft(false),
 		bRight(false),
 		bAction(false),
+		bForward(false),
+		bBack(false),
+		bRotateLeft(false),
+		bRotateRight(false),
 		_EntityComponent("USER_CONTROLLER")
 	{
 		registerListener(GAMEPAD_EVENT);
 		registerListener(MOUSEWORLD_EVENT);
 		registerListener(KEYBOARD_EVENT);
 	}
+
 	void update(float fDeltaTime)
 	{
 		if (bAction)
@@ -277,7 +285,19 @@ public:
 				pAction->tryAction();
 			}
 		} 
-			
+
+		Vector2 vForce(0, 0);
+		if (bUp)	vForce = vForce + Vector2(0, -1);
+		if (bLeft)	vForce = vForce + Vector2(-1, 0);
+		if (bDown)	vForce = vForce + Vector2(0, 1);
+		if (bRight) vForce = vForce + Vector2(1, 0);
+
+		if (bForward)		vForce = getParent()->getChild<Transform2D>()->getForward().normalize();	// not safe
+		if (bBack)			vForce = -getParent()->getChild<Transform2D>()->getForward().normalize();
+		if (bRotateLeft)	getParent()->getChild<Transform2D>()->rotate(0);
+		if (bRotateRight)	getParent()->getChild<Transform2D>()->rotate(0);
+
+		setForce(getParent(), vForce);
 	}
 
 	int getControllerId()

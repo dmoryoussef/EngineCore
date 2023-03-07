@@ -2,6 +2,7 @@ class EntityNode : public DataTreeNode<EntityNode>
 {
 private:
 	BaseNode* pBaseNode;
+	
 
 public:
 	EntityNode(BaseNode* pnode) :
@@ -19,6 +20,9 @@ public:
 class EntityComponentSystemDemo : public GameState
 {
 private:
+	BaseNode* pTest;
+	BaseNode* pGameData;
+
 	BaseNode *createEntity(int id)
 	{
 		BaseNode *Root = new BaseNode("PLAYER " + thingToString<int>(id + 1));
@@ -62,8 +66,10 @@ public:
 
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI) 
 	{
+		pGameData = pData;
 		GameState::start(pData, pSystems, pGUI);
-		pData->add(createEntity(0));
+		pTest = createEntity(0);
+		pData->add(pTest);
 		pData->add(createEntity(1));
 
 	}
@@ -72,6 +78,10 @@ public:
 
 	void render(OutputBuffer* pEngineBuffer) 
 	{
-		Render2D r(pEngineBuffer, cameraPos->getPosition());
+		Render2D r(pEngineBuffer);
+		r.DrawNum<int>(pGameData->getTotal(), 5, 4);
+		if (Velocity *pVelocity = pTest->getChild<Velocity>())
+			r.DrawString(thingToString<float>(pVelocity->getVelocity().magnitude()), 5, 5);
+
 	}
 };

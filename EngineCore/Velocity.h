@@ -20,14 +20,15 @@ public:
 
 	Velocity(bool friction = true) :
 		vVelocity(0, 0),
-		fMaxVelocity(1.0),
+		fMaxVelocity(0.5),
 		fMass(1.0),
 		m_bApplyFriction(friction),
 		_EntityComponent("Physics")	{};
 
 	void setVelocity(Vector2 vVel) 
 	{ 
-		vVelocity = vVel; 
+		if (vVelocity.magnitude() + vVel.magnitude() < fMaxVelocity)
+			vVelocity = vVel; 
 	}
 
 	bool applyFriction()

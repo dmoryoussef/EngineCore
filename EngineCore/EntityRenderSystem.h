@@ -56,7 +56,11 @@ public:
 					EntityData.push_back(pEntity->getName());
 					EntityData.push_back(worldPos.toString());
 					//	EntityData.push_back(pTransform->getRotation().toString());
-
+					if (Velocity* pVelocity = pEntity->getChild<Velocity>())
+					{
+						EntityData.push_back(thingToString<float>(pVelocity->getVelocity().magnitude()));
+						
+					}
 					if (Health* pHealth = pEntity->getChild<Health>())
 						EntityData.push_back(thingToString(pHealth->getHealth()));
 

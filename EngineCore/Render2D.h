@@ -695,7 +695,7 @@ public:
 	}
 
 	template <typename T>
-	void DrawNum(T d, int nX, int nY, int color)
+	void DrawNum(T d, int nX, int nY, int color = FG_WHITE)
 	{
 		if (nX >= 0 && nY >= 0)
 			if (nX < nWidth && nY < nHeight)
