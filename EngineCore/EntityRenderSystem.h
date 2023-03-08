@@ -55,7 +55,8 @@ public:
 					vector<string> EntityData;
 					EntityData.push_back(pEntity->getName());
 					EntityData.push_back(worldPos.toString());
-					//	EntityData.push_back(pTransform->getRotation().toString());
+					EntityData.push_back("Rotation: " + thingToString<float>(pTransform->getRotation().getAngle()));
+					EntityData.push_back("Forward: " + thingToString<float>(pTransform->getForward().getAngle()));
 					if (Velocity* pVelocity = pEntity->getChild<Velocity>())
 					{
 						EntityData.push_back(thingToString<float>(pVelocity->getVelocity().magnitude()));

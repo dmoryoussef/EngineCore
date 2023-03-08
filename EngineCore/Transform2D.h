@@ -10,27 +10,36 @@ private:
 	Vector2 vDeltaTranslate;
 	Vector2 vDeltaRotate;
 
-	
+
 public:
-	Transform2D(Vector2 P, Vector2 R = { 0, 0 }, Vector2 S = {1, 1}) :
+	Transform2D(Vector2 P, Vector2 R = { 0, 0 }, Vector2 S = { 1, 1 }) :
 		m_vPosition(P),
 		m_vScale(S),
 		m_vRotation(R),
-		_EntityComponent("Transform2D")	
+		_EntityComponent("Transform2D")
 	{	};
 
-	void draw(OutputBuffer *pFrame)
+	void draw(OutputBuffer* pFrame)
 	{
 		pFrame->set("TRANSLATION " + m_vPosition.toString(), 2, 2, FG_WHITE + BG_BLACK);
 		pFrame->set("ROTATION " + m_vRotation.toString(), 3, 2, FG_WHITE + BG_BLACK);
 	}
 
-	void translate(Vector2 translate) {	m_vPosition = m_vPosition + translate;	}
+	void translate(Vector2 translate) { m_vPosition = m_vPosition + translate; }
 	void scale(Vector2 scale)
 	{
 		m_vScale.X = m_vScale.X * scale.X;
 		m_vScale.Y = m_vScale.Y * scale.Y;
 	}
+
+	void rotate(float t)
+	{
+		float current = m_vRotation.getAngle();
+		float newAngle = current + t;
+		mat3x3 matRot = matRot.RotateZ(newAngle);
+		m_vRotation = m_vRotation * matRot;
+	}
+
 	void rotate(Vector2 rotate)
 	{
 		mat3x3 matRot = matRot.RotateZ(rotate.getAngle());

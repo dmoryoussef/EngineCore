@@ -165,8 +165,8 @@ private:
 			if (bDirectScheme)
 			{
 				//	Control scheme with direct movement mapped to keys
-				if (pEvent->getKey() == 'W' || pEvent->getKey() == 'w')	bForward = pEvent->isKeyDown();
-				if (pEvent->getKey() == 'S' || pEvent->getKey() == 's')	bBack = pEvent->isKeyDown();
+				if (pEvent->getKey() == 'W' || pEvent->getKey() == 'w')	bUp = pEvent->isKeyDown();
+				if (pEvent->getKey() == 'S' || pEvent->getKey() == 's')	bDown = pEvent->isKeyDown();
 				if (pEvent->getKey() == 'D' || pEvent->getKey() == 'd')	bRight = pEvent->isKeyDown();
 				if (pEvent->isKeyDown('a'))	bLeft = true;
 				if (pEvent->isKeyUp('a')) bLeft = false;
@@ -174,8 +174,8 @@ private:
 			else
 			{
 				//	Alternate scheme with left/right mapped to rotate, and up/down for forward/reverse
-				if (pEvent->getKey() == 'W' || pEvent->getKey() == 'w')	bUp = pEvent->isKeyDown();
-				if (pEvent->getKey() == 'S' || pEvent->getKey() == 's')	bDown = pEvent->isKeyDown();
+				if (pEvent->getKey() == 'W' || pEvent->getKey() == 'w')	bForward = pEvent->isKeyDown();
+				if (pEvent->getKey() == 'S' || pEvent->getKey() == 's')	bBack = pEvent->isKeyDown();
 				if (pEvent->getKey() == 'D' || pEvent->getKey() == 'd')	bRotateRight = pEvent->isKeyDown();
 				if (pEvent->isKeyDown('a'))	bRotateLeft = true;
 				if (pEvent->isKeyUp('a')) bRotateLeft = false;
@@ -292,10 +292,20 @@ public:
 		if (bDown)	vForce = vForce + Vector2(0, 1);
 		if (bRight) vForce = vForce + Vector2(1, 0);
 
-		if (bForward)		vForce = getParent()->getChild<Transform2D>()->getForward().normalize();	// not safe
-		if (bBack)			vForce = -getParent()->getChild<Transform2D>()->getForward().normalize();
-		if (bRotateLeft)	getParent()->getChild<Transform2D>()->rotate(0);
-		if (bRotateRight)	getParent()->getChild<Transform2D>()->rotate(0);
+		if (bForward)		vForce = getParent()->getChild<Transform2D>()->getForward().normalize();	//	not safe - need to verify 
+		if (bBack)			vForce = -getParent()->getChild<Transform2D>()->getForward().normalize();	//	if transform2d exists first
+		if (bRotateLeft)
+		{
+			Transform2D* pTransform = getParent()->getChild<Transform2D>();
+			Vector2 rot = pTransform->getRotation(); 
+			float a = rot.getAngle();
+			a = a + 0.1;
+			mat3x3 matRot = matRot.RotateZ(a);
+			rot = rot * matRot;
+			pTransform->setRotation(rot);
+		}
+
+		if (bRotateRight)	getParent()->getChild<Transform2D>()->rotate(-0.1);
 
 		setForce(getParent(), vForce);
 	}

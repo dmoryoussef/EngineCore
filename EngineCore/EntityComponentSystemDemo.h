@@ -27,7 +27,7 @@ private:
 	{
 		BaseNode *Root = new BaseNode("PLAYER " + thingToString<int>(id + 1));
 		Root->addNode(new Render(Polygon2D(3)))->
-			  addNode(new Transform2D({ float(random(1, 10)), float(random(1, 10)) }, { 1, 0 }, { 1, 1 }))->
+			  addNode(new Transform2D({ float(random(1, 10)), float(random(1, 10)) }, { 0, 1 }, { 1, 1 }))->
 			  addNode(new DetailsPanel())->
 			  addNode(new Velocity())->
 			  addNode(new UserController(id))->

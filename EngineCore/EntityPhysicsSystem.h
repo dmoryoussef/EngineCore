@@ -64,7 +64,9 @@ public:
 				{
 					// dont update rotation
 				}else
-					pTransform->setRotation(Vector2(-vVelocity.X, vVelocity.Y));
+				{				
+				//	ws	pTransform->setRotation(Vector2(-vVelocity.X, vVelocity.Y));
+				}
 
 				pTransform->setPosition(vPosition + vVelocity);
 			}
