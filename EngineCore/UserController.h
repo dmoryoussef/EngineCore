@@ -145,6 +145,9 @@ private:
 	bool bBack;
 
 	bool bDirectScheme;
+	bool bLookAtMouse;
+
+	Vector2 MousePosition;
 
 	void onMouseWorldEvent(MouseWorldEvent* pEvent)
 	{
@@ -152,6 +155,7 @@ private:
 		{
 			Vector2 vTarget = pEvent->getWorldPosition();
 			addEvent(new CommandEvent(getParent(), new ActionCommand(vTarget)));
+			MousePosition = pEvent->getWorldPosition();
 		}
 
 		/*Vector2 vRotate(pEvent->getWorldPosition());
@@ -256,10 +260,12 @@ private:
 		}
 	}
 
+
 public:
 	UserController(int id) :
 		m_nControllerID(id),
 		bDirectScheme(false),
+		bLookAtMouse(true),
 		bUp(false),
 		bDown(false),
 		bLeft(false),
@@ -292,22 +298,34 @@ public:
 		if (bDown)	vForce = vForce + Vector2(0, 1);
 		if (bRight) vForce = vForce + Vector2(1, 0);
 
-		if (bForward)		vForce = getParent()->getChild<Transform2D>()->getForward().normalize();	//	not safe - need to verify 
-		if (bBack)			vForce = -getParent()->getChild<Transform2D>()->getForward().normalize();	//	if transform2d exists first
-		if (bRotateLeft)
+		if (Transform2D* pTransform = getParent()->getChild<Transform2D>())
 		{
-			Transform2D* pTransform = getParent()->getChild<Transform2D>();
-			Vector2 rot = pTransform->getRotation(); 
-			float a = rot.getAngle();
-			a = a + 0.1;
-			mat3x3 matRot = matRot.RotateZ(a);
-			rot = rot * matRot;
-			pTransform->setRotation(rot);
+			if (bForward)		vForce = pTransform->getForward().normalize();	
+			if (bBack)			vForce = -pTransform->getForward().normalize();
+			if (bRotateLeft)	pTransform->addAngle(.01);
+			if (bRotateRight)	pTransform->addAngle(-.01);
 		}
 
-		if (bRotateRight)	getParent()->getChild<Transform2D>()->rotate(-0.1);
+		if (bLookAtMouse) 
+		{
+			if (Transform2D* pTransform = getParent()->getChild<Transform2D>())
+			{
+				Vector2 LookAt = pTransform->getPosition() - MousePosition;
+				pTransform->setRotation(LookAt.normalize());
+			}
+		}
 
 		setForce(getParent(), vForce);
+		if (vForce.X == 0 && vForce.Y == 0)
+		{
+			// dont update rotation
+		}
+		else
+		{
+			if (Velocity *pVelocity = getParent()->getChild<Velocity>())
+				if (Transform2D* pTransform = getParent()->getChild<Transform2D>())
+					if (bDirectScheme) pTransform->setRotation({ -pVelocity->getVelocity().X, -pVelocity->getVelocity().Y });
+		}
 	}
 
 	int getControllerId()

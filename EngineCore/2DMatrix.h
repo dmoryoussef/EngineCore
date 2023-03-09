@@ -15,9 +15,9 @@ struct mat3x3
 	{
 		mat3x3 matRotate;
 		matRotate.m[0][0] = cosf(fAngleRad);
-		matRotate.m[0][1] = sinf(fAngleRad);
+		matRotate.m[0][1] = -sinf(fAngleRad);
 		matRotate.m[0][2] = 0;
-		matRotate.m[1][0] = -sinf(fAngleRad);
+		matRotate.m[1][0] = sinf(fAngleRad);
 		matRotate.m[1][1] = cosf(fAngleRad);
 		matRotate.m[1][2] = 0;
 		matRotate.m[2][0] = 0;

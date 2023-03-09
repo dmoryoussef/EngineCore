@@ -5,7 +5,7 @@ private:
 	Vector2 m_vPosition;
 	Vector2 m_vScale;
 	Vector2 m_vRotation;
-	//float angle;
+	float angle;
 
 	Vector2 vDeltaTranslate;
 	Vector2 vDeltaRotate;
@@ -16,6 +16,7 @@ public:
 		m_vPosition(P),
 		m_vScale(S),
 		m_vRotation(R),
+		angle(R.getAngle()),
 		_EntityComponent("Transform2D")
 	{	};
 
@@ -32,19 +33,19 @@ public:
 		m_vScale.Y = m_vScale.Y * scale.Y;
 	}
 
-	void rotate(float t)
+
+	void addAngle(float theta)
 	{
-		float current = m_vRotation.getAngle();
-		float newAngle = current + t;
-		mat3x3 matRot = matRot.RotateZ(newAngle);
-		m_vRotation = m_vRotation * matRot;
+		mat3x3 matRot = matRot.RotateZ(theta);
+		Vector2 newRotation = m_vRotation * matRot;
+		m_vRotation = newRotation;
 	}
 
-	void rotate(Vector2 rotate)
-	{
-		mat3x3 matRot = matRot.RotateZ(rotate.getAngle());
-		m_vRotation = m_vRotation * matRot;
-	}
+	//void rotate(Vector2 rotate)
+	//{
+	//	mat3x3 matRot = matRot.RotateZ(rotate.getAngle());
+	//	m_vRotation = m_vRotation * matRot;
+	//}
 
 	void setPosition(Vector2 position) { m_vPosition = position; }
 	void setRotation(Vector2 rotation) { m_vRotation = rotation; }
@@ -52,12 +53,7 @@ public:
 
 	Vector2 getForward()
 	{
-		Vector2 forward(0, 1);
-		mat3x3 matRotate = matRotate.RotateZ(m_vRotation.getAngle());
-
-		forward = forward * matRotate;
-
-		return forward;
+		return { -m_vRotation.X, -m_vRotation.Y };
 	}
 
 	mat3x3 getTransformMatrix()
@@ -87,8 +83,5 @@ public:
 	Vector2 getPosition() { return m_vPosition; }
 	Vector2 getRotation() { return m_vRotation; }
 	Vector2 getScale() { return m_vScale; }
-
-
-
 
 };

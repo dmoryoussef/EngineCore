@@ -23,11 +23,23 @@ private:
 	BaseNode* pTest;
 	BaseNode* pGameData;
 
+	void addAI(BaseNode* pEntity, BaseNode* pData)
+	{
+		RepeatDecorator* baseA = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard(pEntity, pData));
+		baseA->setState(RUNNING);
+		BehaviorNode* sequenceA = new SequenceNode();
+		baseA->addChild(sequenceA);
+		sequenceA->addChild(new GetTarget());
+		sequenceA->addChild(new PursuitBehaviorNode());
+		pEntity->addChild(new Behavior(baseA));
+		pEntity->remove<UserController>();
+	}
+
 	BaseNode *createEntity(int id)
 	{
 		BaseNode *Root = new BaseNode("PLAYER " + thingToString<int>(id + 1));
 		Root->addNode(new Render(Polygon2D(3)))->
-			  addNode(new Transform2D({ float(random(1, 10)), float(random(1, 10)) }, { 0, 1 }, { 1, 1 }))->
+			  addNode(new Transform2D({ float(random(1, 10)), float(random(1, 10)) }, { 1, 0 }, { 1, 1 }))->
 			  addNode(new DetailsPanel())->
 			  addNode(new Velocity())->
 			  addNode(new UserController(id))->
@@ -37,14 +49,14 @@ private:
 			  addNode(new Health(100));
 
 		Joint* a = new Joint("ENGINE");
-		a->addNode(new Transform2D({ 0.5, -0.71 }, { 0.5, 0.5 }, { .3, .3 }))->
+		a->addNode(new Transform2D({ 0.5, 0.71 }, { 0.5, 0.5 }, { .3, .3 }))->
 		   addNode(new Render(Polygon2D(4)))->
 		   addNode(new UIState())->
 		   addNode(new Accelerate(0.0001));
 		Root->addNode(a);
 
 		Joint* b = new Joint("ENGINE");
-		b->addNode(new Transform2D({ -0.5, -0.71 }, { .5, .5 }, { .3, .3 }))->
+		b->addNode(new Transform2D({ -0.5, 0.71 }, { .5, .5 }, { .3, .3 }))->
 		   addNode(new Render(Polygon2D(4)))->
 		   addNode(new UIState())->
 		   addNode(new Accelerate(0.0001));
@@ -70,11 +82,19 @@ public:
 		GameState::start(pData, pSystems, pGUI);
 		pTest = createEntity(0);
 		pData->add(pTest);
-		pData->add(createEntity(1));
+		BaseNode* pEnemy = createEntity(1);
+		pData->add(pEnemy);
+		addAI(pEnemy, pData);
 
 	}
 
-	void update(BaseNode* pData, float fDeltaTime) {}
+	float theta = 0;
+
+	void update(BaseNode* pData, float fDeltaTime) 
+	{
+		//theta += .000001;
+		//pTest->getChild<Transform2D>()->rotate(theta);
+	}
 
 	void render(OutputBuffer* pEngineBuffer) 
 	{
@@ -82,6 +102,5 @@ public:
 		r.DrawNum<int>(pGameData->getTotal(), 5, 4);
 		if (Velocity *pVelocity = pTest->getChild<Velocity>())
 			r.DrawString(thingToString<float>(pVelocity->getVelocity().magnitude()), 5, 5);
-
 	}
 };

@@ -60,14 +60,6 @@ public:
 				Vector2 vPosition = pTransform->getPosition();
 				vVelocity = vVelocity * fDeltaTime;
 
-				if (vVelocity.X == 0 && vVelocity.Y == 0)
-				{
-					// dont update rotation
-				}else
-				{				
-				//	ws	pTransform->setRotation(Vector2(-vVelocity.X, vVelocity.Y));
-				}
-
 				pTransform->setPosition(vPosition + vVelocity);
 			}
 		}

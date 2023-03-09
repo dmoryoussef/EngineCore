@@ -264,70 +264,7 @@ public:
 	}
 };
 
-class RepeatDecorator : public DecoratorNode
-{
-private:
-	bool m_bRepeat;
 
-public:
-	RepeatDecorator(string n = "Decorator", BehaviorTreeBlackboard* blackboard = NULL) :
-		m_bRepeat(true),
-		DecoratorNode(n, blackboard) {};
-
-	virtual bool repeat()
-	{
-		return m_bRepeat;
-	}
-
-	string description()
-	{
-		switch (m_nState)
-		{
-			case SUCCESS : return "Repeat condition met.";
-				break;
-			case FAILURE: return "Repeat condition not met.";
-				break;
-			case RUNNING: return "Repeating until  defined condition met.";
-				break;
-			default : return "Waiting to run.";
-				break;
-		}
-	}
-
-	int update(float fDeltaTime)
-	{
-		if (m_nState == RUNNING)
-		{
-			if (repeat())
-			{
-				if (!child)
-				{
-					if (m_vChildren.size() > 0)
-						child = m_vChildren[0];
-				}
-
-				switch (child->getState())
-				{
-					case IDLE:
-						child->setState(RUNNING);
-						break;
-					case RUNNING:
-						child->update(fDeltaTime);
-						break;
-					case FAILURE:
-						child->setState(IDLE);
-						break;
-					case SUCCESS:
-						child->setState(IDLE);
-				}
-			}
-			else
-				m_nState = SUCCESS;
-		}
-
-		return m_nState;
-	}
-};
 
 class BehaviorTreeDemo : public GameState
 {

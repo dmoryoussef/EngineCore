@@ -19,7 +19,7 @@ private:
 					Vector2 rotation = transform->getRotation();
 					Vector2 forward = transform->getForward().normalize();
 					Vector2 position = transform->getPosition() + (forward * 1.5);
-					Polygon2D shape(2, 0.1);
+					Polygon2D shape(2, 0.8);
 					//	spawn entity event
 					BaseNode* pEntity = new BaseNode("Projectile");
 					pEntity->addChild(new Render(shape));
