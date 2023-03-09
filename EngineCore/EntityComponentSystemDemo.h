@@ -28,10 +28,11 @@ private:
 	{
 		RepeatDecorator* baseNode = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard(pEntity, pData));
 		baseNode->setState(RUNNING);
+
 		BehaviorNode* sequenceA = new SequenceNode();
 		baseNode->addChild(sequenceA);
-		sequenceA->addChild(new GetTarget());
-		sequenceA->addChild(new FleeBehavior());
+		sequenceA->addChild(new GetTarget())->
+				   addChild(new FleeBehavior());
 		pEntity->addChild(new Behavior(baseNode));
 		pEntity->remove<UserController>();
 		Tree = baseNode;
@@ -93,7 +94,7 @@ public:
 
 	void render(OutputBuffer* pEngineBuffer) 
 	{
-		Render2D r(pEngineBuffer, cameraPos->getPosition());
-		Tree->render(&r, 2, 2);
+		Render2D r(pEngineBuffer);
+		Tree->render(&r, 10, 2, 10);
 	}
 };

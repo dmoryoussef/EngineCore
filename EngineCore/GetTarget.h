@@ -6,6 +6,37 @@ public:
 	GetTarget() :
 		LeafNode("Target") {}; 
 
+	string description()
+	{
+		switch (m_nState)
+		{
+			case RUNNING:
+				if (Blackboard->m_pTarget)
+					return Blackboard->m_pTarget->getName();
+				else
+					return "No Target";
+				break;
+			case SUCCESS:
+				if (Blackboard->m_pTarget)
+					return Blackboard->m_pTarget->getName();
+				else
+					return "No Target";
+				break;
+			case IDLE:
+				if (Blackboard->m_pTarget)
+					return Blackboard->m_pTarget->getName();
+				else
+					return "No Target";
+				break;
+			case FAILURE:
+				if (Blackboard->m_pTarget)
+					return Blackboard->m_pTarget->getName();
+				else
+					return "No Target";
+				break;
+		}
+	}
+
 	int execute(float fDeltaTime)
 	{
 		if (m_nState == RUNNING)
@@ -40,5 +71,10 @@ public:
 		}
 		//	if no valid target
 		return FAILURE;
+	}
+
+	void renderNodeData(Render2D* r, Vector2 vMin)
+	{
+		
 	}
 };

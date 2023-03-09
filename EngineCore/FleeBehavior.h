@@ -21,6 +21,22 @@ private:
 public:
 	FleeBehavior() :
 		LeafNode("Flee") {};
+
+	string description()
+	{
+		switch (m_nState)
+		{
+			case RUNNING: return "Fleeing Target";
+				break;
+			case SUCCESS: return "Target out of range";
+				break;
+			case IDLE:    return "Idle";
+				break;
+			case FAILURE: return "Failure";
+				break;
+		}
+	}
+
 	int execute(float fDeltaTime)
 	{
 		Vector2 vTarget;

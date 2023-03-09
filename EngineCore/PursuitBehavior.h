@@ -1,4 +1,4 @@
-class PursuitBehavior : public LeafNode
+ class PursuitBehavior : public LeafNode
 {
 private:
 	Vector2 vTargetPrev;

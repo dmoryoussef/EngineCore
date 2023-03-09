@@ -60,10 +60,11 @@ public:
 		Blackboard(blackboard),
 		m_nState(IDLE) {};
 
-	void addChild(BehaviorNode* node)
+	BehaviorNode* addChild(BehaviorNode* node)
 	{
 		node->Blackboard = Blackboard;
 		m_vChildren.push_back(node);
+		return this;
 	}
 
 	string getType()
@@ -108,25 +109,25 @@ public:
 	}*/
 	virtual int update(float fDeltaTime) { return m_nState; }
 	virtual int execute(float fDeltaTime) { return m_nState; }
-	virtual string description() { return "Error: description function not implemented."; }
+	virtual string description() { return "Error: not implemented."; }
 
-	virtual void renderNodeData(Render2D* renderer) {}
-	virtual void renderNode(Render2D* renderer, Vector2 vMin, Vector2 vMax, Vector2 vSize)
+	virtual void renderNodeData(Render2D* renderer, Vector2 vMin) {}
+	virtual void renderNode(Render2D* renderer, Vector2 vMin, Vector2 vMax, Vector2 vSize, float scale)
 	{
 		//	special implementation of renderNode that changes color based on node state
-
+		float yOffset = 0;
 		int color = FG_WHITE;
 		switch (m_nState)
 		{
-			case RUNNING: color = FG_YELLOW;
-				break;
-			case SUCCESS: color = FG_LIGHTGREEN;
-				break;
-			case FAILURE: color = FG_LIGHTRED;
-				break;
+		case RUNNING: color = FG_YELLOW;
+			break;
+		case SUCCESS: color = FG_LIGHTGREEN;
+			break;
+		case FAILURE: color = FG_LIGHTRED;
+			break;
 		}
 		renderer->DrawQuad(vMin.X, vMin.Y, vMax.X, vMax.Y, { PIXEL_SOLID, color });
-		if (renderer->vCameraTransform.Z > 7)
+		if (scale > 7)
 		{
 			vector<string> nodeData;
 			nodeData.push_back(type);
@@ -135,14 +136,16 @@ public:
 			nodeData.push_back(description());
 			renderer->DrawString(nodeData, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y);
 			//	renderer->DrawWrappedString(nodeData, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y, vSize.X * 0.8);
+			yOffset = +nodeData.size();
 		}
-	    else
+		else
 		{
-			renderer->DrawString(type, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 2)).Y - (1.0 / renderer->vCameraTransform.Z));
+			renderer->DrawString(behavior, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 2)).Y - (1.0 / renderer->vCameraTransform.Z));
+			yOffset++;
 		}
 
 		//	also add this overridable function to render more specific node info
-		renderNodeData(renderer);
+		renderNodeData(renderer, Vector2( vMin.X + 2, vMin.Y + yOffset + 2));
 	}
 	
 	virtual void reset()

@@ -55,7 +55,7 @@ public:
 		c->setParent(this);
 	}
 
-	virtual void renderNode(Render2D* renderer, Vector2 vMin, Vector2 vMax, Vector2 vSize)
+	virtual void renderNode(Render2D* renderer, Vector2 vMin, Vector2 vMax, Vector2 vSize, float scale)
 	{
 
 		renderer->DrawQuad(vMin.X, vMin.Y, vMax.X, vMax.Y, { PIXEL_SOLID, FG_WHITE });
@@ -63,17 +63,17 @@ public:
 		renderer->DrawString(thingToString<int>(m_vChildren.size()), (vMin + (vSize / 2)).X, (vMin + (vSize / 2)).Y);
 	}
 
-	void render(Render2D* renderer, float x, float y)
+	void render(Render2D* renderer, float x, float y, float scale = 1)
 	{
-		float buffer = 0.1;
-		Vector2 vSize(2.0, 1.0);
+		float buffer = 0.1 * scale;
+		Vector2 vSize(2.0 * scale, 1.0 * scale);
 		Vector2 vMin(x, y);
 		Vector2 vMax = vMin + vSize;
 
 		float lineStartX = vMax.X - ((vMax - vMin).X / 2);
 		float lineStartY = vMax.Y;
 		
-		renderNode(renderer, vMin, vMax, vSize);
+		renderNode(renderer, vMin, vMax, vSize, scale);
 
 		//	calc x pos for children
 		float childX = x; 
@@ -94,7 +94,7 @@ public:
 			float lineEndY = childY;
 			renderer->DrawLine({ lineStartX, lineStartY }, { lineEndX, lineEndY }, { PIXEL_SOLID, FG_LIGHTBLUE });
 			
-			c->render(renderer, childX, childY);
+			c->render(renderer, childX, childY, scale);
 
 			childX = childX + vSize.X + (c->getChildren().size() * vSize.X);
 		}

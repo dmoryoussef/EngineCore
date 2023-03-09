@@ -84,7 +84,7 @@ public:
 		return FAILURE;	//	no transform component
 	}
 
-	void renderNodeData(Render2D* renderer)
+	void renderNodeData(Render2D* renderer, Vector2 vMin)
 	{
 		if (m_nState == RUNNING)
 		{
