@@ -1,10 +1,26 @@
 class FleeBehavior : public LeafNode
 {
 private:
+	void setForce(BaseNode* pParent, Vector2 v)
+	{
+		if (pParent)
+		{
+			for (BaseNode* pCurrent = pParent->getStart(); pCurrent != NULL; pCurrent = pCurrent->getNext())
+			{
+				if (typeid(Accelerate) == typeid(*pCurrent))
+				{
+					Accelerate* pAccel = static_cast<Accelerate*>(pCurrent);
+					float scaler = pAccel->getMax();
+					pAccel->setForce(v * scaler);
+				}
+				setForce(pCurrent, v);
+			}
+		}
+	}
 
 public:
-	FleeBehavior(){};
-
+	FleeBehavior() :
+		LeafNode("Flee") {};
 	int execute(float fDeltaTime)
 	{
 		Vector2 vTarget;
@@ -21,37 +37,33 @@ public:
 
 		if (Transform2D* pTransform = Blackboard->m_pSelf->getChild<Transform2D>())
 		{
-			if (Accelerate* accel = Blackboard->m_pSelf->getChild<Accelerate>())
+			if (Velocity* pVelocity = Blackboard->m_pSelf->getChild<Velocity>())
 			{
-				if (Velocity* pVelocity = Blackboard->m_pSelf->getChild<Velocity>())
+				if (Transform2D* pTargetTransform = Blackboard->m_pTarget->getChild<Transform2D>())
 				{
-					if (Transform2D* pTargetTransform = Blackboard->m_pTarget->getChild<Transform2D>())
+					vTarget = pTargetTransform->getPosition();
+					vPosition = pTransform->getPosition();
+					float fDistance = distance(vTarget, vPosition);
+					if (fDistance < 25.0)
 					{
-						vTarget = pTargetTransform->getPosition();
-						vPosition = pTransform->getPosition();
-						float fDistance = distance(vTarget, vPosition);
-						if (fDistance < 25.0)
-						{
-							vDesiredDirection = -(vTarget - vPosition).normalize();
-							//	needs a randomizing agent for "juking"?
+						vDesiredDirection = -(vTarget - vPosition).normalize();
+						//	needs a randomizing agent for "juking"?
 
-							vVelocity = pVelocity->getVelocity();
-							vSteer = (vDesiredDirection - vVelocity).normalize();
+						vVelocity = pVelocity->getVelocity();
+						vSteer = (vDesiredDirection - vVelocity).normalize();
 
-							float fThrust = accel->getMax();
-							vAccel = vSteer * fThrust;
+						vAccel = vSteer;
 
-							accel->setForce(vAccel);
-
-							return RUNNING;	//	not at target yet
-						}
-						return SUCCESS;	//	arrived at target
+						setForce(Blackboard->m_pSelf, vAccel);
+						pTransform->setRotation(-vSteer);
+						return RUNNING;	//	not at target yet
 					}
-					return FAILURE; //	target has no transform component
+					setForce(Blackboard->m_pSelf, { 0, 0 });
+					return SUCCESS;	//	arrived at target
 				}
-				return FAILURE; //	no velocity component
+				return FAILURE; //	target has no transform component
 			}
-			return FAILURE; //	no accel component
+			return FAILURE; //	no velocity component
 		}
 		return FAILURE;	//	no transform component
 	}

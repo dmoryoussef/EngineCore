@@ -3,7 +3,8 @@ class SeekBehaviorNode : public LeafNode
 private:
 
 public:
-	SeekBehaviorNode() {};
+	SeekBehaviorNode() :
+		LeafNode("Seek") {};
 
 	string description()
 	{

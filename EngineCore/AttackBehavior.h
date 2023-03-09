@@ -5,7 +5,8 @@ private:
 
 public:
 	AttackBehavior(BaseNode *pSelf) : 
-		m_pSelf(pSelf) {};
+		m_pSelf(pSelf),
+		LeafNode("Attack") {};
 
 	void reset()
 	{

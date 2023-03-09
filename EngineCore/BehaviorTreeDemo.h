@@ -177,7 +177,8 @@ public:
 	MoveBehaviorNode(BaseNode* entity) :
 		bMouseUp(false),
 		bMouseDown(false),
-		pEntity(entity) 
+		pEntity(entity),
+		LeafNode("Move")
 	{
 		registerListener(MOUSEWORLD_EVENT);
 		registerListener(KEYBOARD_EVENT);
@@ -328,7 +329,7 @@ public:
 		BehaviorNode* sequenceA = new SequenceNode();
 		baseA->addChild(sequenceA);
 		sequenceA->addChild(new GetTarget());
-		sequenceA->addChild(new PursuitBehaviorNode());
+		sequenceA->addChild(new PursuitBehavior());
 		pEntityA->addChild(new Behavior(baseA));
 
 		RepeatDecorator* baseB = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard(pEntityB, pData));

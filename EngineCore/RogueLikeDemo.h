@@ -19,7 +19,7 @@ public:
 		Player->addChild(new Render(3));
 		Player->addChild(new Transform2D({ float(random(1, 10)), float(random(1, 10)) }, { 0, 0 }, { 0.5, 0.5 }));
 		Player->addChild(new Velocity());
-		Player->addChild(new UserController(0));
+		Player->addChild(new UserController(0, DIRECT));
 
 		pData->add(Player);
 		pData->add(new DefaultTileMap(100, 100));

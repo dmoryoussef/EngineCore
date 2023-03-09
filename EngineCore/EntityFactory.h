@@ -90,7 +90,7 @@ public:
 		pEntity->addChild(new Render(shape));
 		pEntity->addChild(new Transform2D({ float(random(1, 10)), float(random(1, 10))}, {1, 0}, {1, 1}));
 		pEntity->addChild(new Velocity());
-		pEntity->addChild(new UserController(playerId));
+		pEntity->addChild(new UserController(playerId, DIRECT));
 		pEntity->addChild(new ShootAction(100000, 200.0));
 		pEntity->addChild(new Collider2D(shape));
 		pEntity->addChild(new UIState()); 

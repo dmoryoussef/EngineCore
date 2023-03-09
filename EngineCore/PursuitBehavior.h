@@ -1,12 +1,13 @@
-class PursuitBehaviorNode : public LeafNode
+class PursuitBehavior : public LeafNode
 {
 private:
 	Vector2 vTargetPrev;
 	Vector2 vPursueVelocity;
 
 public:
-	PursuitBehaviorNode() :
-		vTargetPrev() {}
+	PursuitBehavior() :
+		vTargetPrev(),
+		LeafNode("Persuit") {}; 
 
 	int execute(float fDeltaTime)
 	{

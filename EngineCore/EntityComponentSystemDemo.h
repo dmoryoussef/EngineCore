@@ -22,17 +22,19 @@ class EntityComponentSystemDemo : public GameState
 private:
 	BaseNode* pTest;
 	BaseNode* pGameData;
+	BehaviorNode* Tree;
 
 	void addAI(BaseNode* pEntity, BaseNode* pData)
 	{
-		RepeatDecorator* baseA = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard(pEntity, pData));
-		baseA->setState(RUNNING);
+		RepeatDecorator* baseNode = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard(pEntity, pData));
+		baseNode->setState(RUNNING);
 		BehaviorNode* sequenceA = new SequenceNode();
-		baseA->addChild(sequenceA);
+		baseNode->addChild(sequenceA);
 		sequenceA->addChild(new GetTarget());
-		sequenceA->addChild(new PursuitBehaviorNode());
-		pEntity->addChild(new Behavior(baseA));
+		sequenceA->addChild(new FleeBehavior());
+		pEntity->addChild(new Behavior(baseNode));
 		pEntity->remove<UserController>();
+		Tree = baseNode;
 	}
 
 	BaseNode *createEntity(int id)
@@ -42,7 +44,7 @@ private:
 			  addNode(new Transform2D({ float(random(1, 10)), float(random(1, 10)) }, { 1, 0 }, { 1, 1 }))->
 			  addNode(new DetailsPanel())->
 			  addNode(new Velocity())->
-			  addNode(new UserController(id))->
+			  addNode(new UserController(id, DIRECT))->
 			  addNode(new ShootAction(100000, 200.0))->
 			  addNode(new Collider2D(Polygon2D(3, 1.2)))->
 			  addNode(new UIState())->
@@ -78,29 +80,20 @@ public:
 
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI) 
 	{
-		pGameData = pData;
 		GameState::start(pData, pSystems, pGUI);
+		pGameData = pData;
 		pTest = createEntity(0);
 		pData->add(pTest);
 		BaseNode* pEnemy = createEntity(1);
 		pData->add(pEnemy);
 		addAI(pEnemy, pData);
-
 	}
 
-	float theta = 0;
-
-	void update(BaseNode* pData, float fDeltaTime) 
-	{
-		//theta += .000001;
-		//pTest->getChild<Transform2D>()->rotate(theta);
-	}
+	void update(BaseNode* pData, float fDeltaTime) {}
 
 	void render(OutputBuffer* pEngineBuffer) 
 	{
-		Render2D r(pEngineBuffer);
-		r.DrawNum<int>(pGameData->getTotal(), 5, 4);
-		if (Velocity *pVelocity = pTest->getChild<Velocity>())
-			r.DrawString(thingToString<float>(pVelocity->getVelocity().magnitude()), 5, 5);
+		Render2D r(pEngineBuffer, cameraPos->getPosition());
+		Tree->render(&r, 2, 2);
 	}
 };

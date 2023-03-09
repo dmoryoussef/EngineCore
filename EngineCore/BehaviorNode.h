@@ -47,14 +47,16 @@ public:
 class BehaviorNode : public DataTreeNode<BehaviorNode>
 {
 protected:
-	string name;
+	string type;
+	string behavior;
 	int m_nState;
 
 	BehaviorTreeBlackboard* Blackboard;
 
 public:
-	BehaviorNode(string n = "name", BehaviorTreeBlackboard* blackboard = NULL) :
-		name(n),
+	BehaviorNode(string t = "Node Type", string b = "behavior", BehaviorTreeBlackboard * blackboard = NULL) :
+		type(t),
+		behavior(b),
 		Blackboard(blackboard),
 		m_nState(IDLE) {};
 
@@ -64,9 +66,9 @@ public:
 		m_vChildren.push_back(node);
 	}
 
-	string getName()
+	string getType()
 	{
-		return name;
+		return type;
 	}
 
 	int getState()
@@ -97,7 +99,7 @@ public:
 	}
 	string toString()
 	{
-		return name + ": " + stateToString() + description();
+		return type + ": " + behavior + ": " + stateToString() + description();
 	}
 
 	/*virtual void render(Render2D* renderer, int x, int y)
@@ -127,7 +129,8 @@ public:
 		if (renderer->vCameraTransform.Z > 7)
 		{
 			vector<string> nodeData;
-			nodeData.push_back(name);
+			nodeData.push_back(type);
+			nodeData.push_back(behavior);
 			nodeData.push_back(stateToString());
 			nodeData.push_back(description());
 			renderer->DrawString(nodeData, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 5)).Y);
@@ -135,7 +138,7 @@ public:
 		}
 	    else
 		{
-			renderer->DrawString(name, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 2)).Y - (1.0 / renderer->vCameraTransform.Z));
+			renderer->DrawString(type, (vMin + (vSize * 0.1)).X, (vMin + (vSize / 2)).Y - (1.0 / renderer->vCameraTransform.Z));
 		}
 
 		//	also add this overridable function to render more specific node info
@@ -177,8 +180,8 @@ protected:
 	//
 
 public:
-	DecoratorNode(string n = "Decorator", BehaviorTreeBlackboard* blackboard = NULL) :
-		BehaviorNode(n, blackboard) {};
+	DecoratorNode(string b, BehaviorTreeBlackboard* blackboard = NULL) :
+		BehaviorNode("Decorator", b, blackboard) {};
 
 };
 
@@ -189,10 +192,10 @@ protected:
 	BehaviorNode* current;
 	int m_nCurrentIt;
 public:
-	CompositeNode(string n, BehaviorTreeBlackboard* blackboard = NULL) :
+	CompositeNode(string b, BehaviorTreeBlackboard* blackboard = NULL) :
 		m_nCurrentIt(0),
 		current(NULL),
-		BehaviorNode(n, blackboard) {};
+		BehaviorNode("Composite", b, blackboard) {};
 };
 
 class SequenceNode : public CompositeNode
@@ -337,8 +340,8 @@ class ParallelNode : public BehaviorNode
 private:
 
 public:
-	ParallelNode(string n = "Parallel", BehaviorTreeBlackboard* blackboard = NULL) :
-		BehaviorNode(n, blackboard) {};
+	ParallelNode(string b, BehaviorTreeBlackboard* blackboard = NULL) :
+		BehaviorNode("Parallel", b, blackboard) {};
 
 	int update(float fDeltaTime)
 	{
@@ -371,8 +374,8 @@ public:
 class LeafNode : public BehaviorNode
 {
 public:
-	LeafNode(string n = "Leaf", BehaviorTreeBlackboard* blackboard = NULL) :
-		BehaviorNode(n, blackboard) {};
+	LeafNode(string b, BehaviorTreeBlackboard* blackboard = NULL) :
+		BehaviorNode("Leaf", b, blackboard) {};
 
 	int update(float fDeltaTime)
 	{

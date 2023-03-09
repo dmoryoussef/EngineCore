@@ -127,6 +127,13 @@
 //	}
 //};
 
+enum CONTROL_TYPE
+{
+	DIRECT,
+	MOUSE,
+	FPS
+};
+
 class UserController : public _EntityComponent
 {
 private:
@@ -144,20 +151,21 @@ private:
 	bool bForward;
 	bool bBack;
 
-	bool bDirectScheme;
-	bool bLookAtMouse;
+	int m_nControlType;
 
 	Vector2 MousePosition;
 
 	void onMouseWorldEvent(MouseWorldEvent* pEvent)
 	{
-		if (pEvent->getState().bRightButtonDown)
+		if (m_nControllerID == 0)
 		{
-			Vector2 vTarget = pEvent->getWorldPosition();
-			addEvent(new CommandEvent(getParent(), new ActionCommand(vTarget)));
-			MousePosition = pEvent->getWorldPosition();
+			if (pEvent->getState().bRightButtonDown)
+			{
+				Vector2 vTarget = pEvent->getWorldPosition();
+				addEvent(new CommandEvent(getParent(), new ActionCommand(vTarget)));
+				MousePosition = pEvent->getWorldPosition();
+			}
 		}
-
 		/*Vector2 vRotate(pEvent->getWorldPosition());
 		addEvent(new CommandEvent(getParent(), new RotateCommand(vRotate)));*/
 
@@ -166,7 +174,7 @@ private:
 	{
 		if (m_nControllerID == 0)
 		{
-			if (bDirectScheme)
+			if (m_nControlType == DIRECT)
 			{
 				//	Control scheme with direct movement mapped to keys
 				if (pEvent->getKey() == 'W' || pEvent->getKey() == 'w')	bUp = pEvent->isKeyDown();
@@ -175,7 +183,7 @@ private:
 				if (pEvent->isKeyDown('a'))	bLeft = true;
 				if (pEvent->isKeyUp('a')) bLeft = false;
 			}
-			else
+			if (m_nControlType == FPS)
 			{
 				//	Alternate scheme with left/right mapped to rotate, and up/down for forward/reverse
 				if (pEvent->getKey() == 'W' || pEvent->getKey() == 'w')	bForward = pEvent->isKeyDown();
@@ -262,10 +270,9 @@ private:
 
 
 public:
-	UserController(int id) :
+	UserController(int id, int type) :
 		m_nControllerID(id),
-		bDirectScheme(false),
-		bLookAtMouse(true),
+		m_nControlType(type),
 		bUp(false),
 		bDown(false),
 		bLeft(false),
@@ -306,7 +313,7 @@ public:
 			if (bRotateRight)	pTransform->addAngle(-.01);
 		}
 
-		if (bLookAtMouse) 
+		if (m_nControlType == MOUSE) 
 		{
 			if (Transform2D* pTransform = getParent()->getChild<Transform2D>())
 			{
@@ -324,7 +331,7 @@ public:
 		{
 			if (Velocity *pVelocity = getParent()->getChild<Velocity>())
 				if (Transform2D* pTransform = getParent()->getChild<Transform2D>())
-					if (bDirectScheme) pTransform->setRotation({ -pVelocity->getVelocity().X, -pVelocity->getVelocity().Y });
+					if (m_nControlType == DIRECT) pTransform->setRotation({ -pVelocity->getVelocity().X, -pVelocity->getVelocity().Y });
 		}
 	}
 

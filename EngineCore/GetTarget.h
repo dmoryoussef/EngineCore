@@ -3,7 +3,8 @@ class GetTarget : public LeafNode
 private:
 
 public:
-	GetTarget() {};
+	GetTarget() :
+		LeafNode("Target") {}; 
 
 	int execute(float fDeltaTime)
 	{
@@ -21,8 +22,11 @@ public:
 				{
 					if (current != Blackboard->m_pSelf)
 					{
-						Blackboard->m_pTarget = current;
-						return SUCCESS;
+						if (current->getChild<UserController>())
+						{
+							Blackboard->m_pTarget = current;
+							return SUCCESS;
+						}
 					}
 				}
 				//	no valid target, try again next tick
