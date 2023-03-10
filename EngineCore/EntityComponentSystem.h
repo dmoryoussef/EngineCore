@@ -13,15 +13,10 @@
 #include "UIState.h"
 #include "Joint.h"
 #include "DetailsPanel.h"
-
 #include "Damage.h"
 #include "Health.h"
 
 #include "UserController.h"
-
-//	behavior tree?
-#include "Behavior.h"
-//	#include "AIController.h"
 
 #include "EntityRenderSystem.h"
 #include "EntityPhysicsSystem.h"
@@ -30,3 +25,4 @@
 #include "CollisionDetectionSystem.h"
 
 #include "BehaviorTree.h"
+#include "Behavior.h"

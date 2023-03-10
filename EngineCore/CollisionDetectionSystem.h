@@ -3,7 +3,6 @@ class CollisionDetectionSystem : public BaseNode, EventListener
 private:
 	BaseNode* m_pEntityList;
 
-
 	float seperatingAxisCollisionVectorsOverlap(vector<Vector2> polyA, vector<Vector2> polyB)
 	{
 		float overlap = INFINITY;
@@ -130,10 +129,7 @@ private:
 					BaseNode* pEntity = m_pEntityList->getCurrent();
 					updateState(pEntity, mWorld, mousePosition, mouseState);
 				}
-							
-				
-				break;
-			}
+			}break;
 		}
 	}
 

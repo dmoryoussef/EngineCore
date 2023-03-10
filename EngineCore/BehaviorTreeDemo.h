@@ -327,17 +327,17 @@ public:
 		RepeatDecorator* baseA = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard(pEntityA, pData));
 		baseA->setState(RUNNING);
 		BehaviorNode* sequenceA = new SequenceNode();
-		baseA->addChild(sequenceA);
-		sequenceA->addChild(new GetTarget());
-		sequenceA->addChild(new PursuitBehavior());
+		baseA->addNode(sequenceA);
+		sequenceA->addNode(new GetTarget());
+		sequenceA->addNode(new PursuitBehavior());
 		pEntityA->addChild(new Behavior(baseA));
 
 		RepeatDecorator* baseB = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard(pEntityB, pData));
 		baseB->setState(RUNNING);
 		BehaviorNode* sequenceB = new SequenceNode();
-		baseB->addChild(sequenceB);
-		sequenceB->addChild(new GetTarget());
-		sequenceB->addChild(new FleeBehavior());
+		baseB->addNode(sequenceB);
+		sequenceB->addNode(new GetTarget());
+		sequenceB->addNode(new FleeBehavior());
 		pEntityB->addChild(new Behavior(baseB));
 
 		pEntityA->getChild<Transform2D>()->setPosition({ 40, 20 });

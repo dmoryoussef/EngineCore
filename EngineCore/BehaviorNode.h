@@ -60,7 +60,7 @@ public:
 		Blackboard(blackboard),
 		m_nState(IDLE) {};
 
-	BehaviorNode* addChild(BehaviorNode* node)
+	BehaviorNode* addNode(BehaviorNode* node)
 	{
 		node->Blackboard = Blackboard;
 		m_vChildren.push_back(node);
@@ -163,8 +163,6 @@ public:
 		}
 	}
 };
-
-//BehaviorTreeBlackboard BehaviorNode::Blackboard;
 
 class DecoratorNode : public BehaviorNode
 {
@@ -374,36 +372,6 @@ public:
 	}
 };
 
-class LeafNode : public BehaviorNode
-{
-public:
-	LeafNode(string b, BehaviorTreeBlackboard* blackboard = NULL) :
-		BehaviorNode("Leaf", b, blackboard) {};
-
-	int update(float fDeltaTime)
-	{
-		switch (m_nState)
-		{
-			case IDLE:
-				m_nState = RUNNING;
-				break;
-			case RUNNING:
-				//	do specific thing
-				m_nState = execute(fDeltaTime);
-				break;
-			case FAILURE:
-				//	notify parent of failure
-				break;
-			case SUCCESS:
-				//	notify parent of success
-				break;
-		}
-
-		return m_nState;
-	}
-
-};
-
 class RepeatDecorator : public DecoratorNode
 {
 private:
@@ -467,4 +435,51 @@ public:
 
 		return m_nState;
 	}
+};
+
+class LeafNode : public BehaviorNode
+{
+protected:
+	void setForce(BaseNode* pParent, Vector2 v)
+	{
+		if (pParent)
+		{
+			for (BaseNode* pCurrent = pParent->getStart(); pCurrent != NULL; pCurrent = pCurrent->getNext())
+			{
+				if (typeid(Accelerate) == typeid(*pCurrent))
+				{
+					Accelerate* pAccel = static_cast<Accelerate*>(pCurrent);
+					float scaler = pAccel->getMax();
+					pAccel->setForce(v * scaler);
+				}
+				setForce(pCurrent, v);
+			}
+		}
+	}
+public:
+	LeafNode(string b, BehaviorTreeBlackboard* blackboard = NULL) :
+		BehaviorNode("Leaf", b, blackboard) {};
+
+	int update(float fDeltaTime)
+	{
+		switch (m_nState)
+		{
+			case IDLE:
+				m_nState = RUNNING;
+				break;
+			case RUNNING:
+				//	do specific thing
+				m_nState = execute(fDeltaTime);
+				break;
+			case FAILURE:
+				//	notify parent of failure
+				break;
+			case SUCCESS:
+				//	notify parent of success
+				break;
+		}
+
+		return m_nState;
+	}
+
 };

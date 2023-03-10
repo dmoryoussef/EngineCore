@@ -85,7 +85,6 @@ float clamp(float value, float min, float max)
 #include "Rect2D.h"	//	not correct - poly edit class uses this - restructure this later
 #include "LiveEditPoly2D.h"
 #include "ConnectingLine.h"
-#include "BehaviorNode.h"
 
 //	Systems
 #include "EntityComponentSystem.h"

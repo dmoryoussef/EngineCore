@@ -1,9 +1,9 @@
-class SeekBehaviorNode : public LeafNode
+class SeekBehavior : public LeafNode
 {
 private:
 
 public:
-	SeekBehaviorNode() :
+	SeekBehavior() :
 		LeafNode("Seek") {};
 
 	string description()
@@ -34,52 +34,43 @@ public:
 
 	int execute(float fDeltaTime)
 	{
-		if (Blackboard->m_pSelf == NULL)
-		{
-			return FAILURE;
-		}
+		if (Blackboard->m_pSelf == NULL) return FAILURE;
+		if (Blackboard->m_pTarget == NULL) return FAILURE;
 
 		if (Transform2D* pTransform = Blackboard->m_pSelf->getChild<Transform2D>())
 		{
-			if (Accelerate* accel = Blackboard->m_pSelf->getChild<Accelerate>())
+			if (Velocity* pVelocity = Blackboard->m_pSelf->getChild<Velocity>())
 			{
-				if (Velocity* pVelocity = Blackboard->m_pSelf->getChild<Velocity>())
+				vTarget = Blackboard->m_pTarget->getChild<Transform2D>()->getPosition();
+				vPosition = pTransform->getPosition();
+				float fDistance = distance(vTarget, vPosition);
+				if (fDistance > 35.0)
 				{
-					vTarget = Blackboard->vTarget;
-					vPosition = pTransform->getPosition();
-					float fDistance = distance(vTarget, vPosition);
-					if (fDistance > 1.0)
-					{
-						//	vector with length total distance to target, normalized
-						vDesiredDirection = (vTarget - vPosition).normalize();	
+					//	vector with length total distance to target, normalized
+					vDesiredDirection = (vTarget - vPosition).normalize();	
 						
-						//	scaled up to maximum speed
-						float maxSpeed = 1.0f;
-						vDesiredDirection.mult(maxSpeed);
+					//	scaled up to maximum speed
+					/*float maxSpeed = 1.0f;
+					vDesiredDirection.mult(maxSpeed);*/
 
-						//	steering force vector, normalized
-						vVelocity = pVelocity->getVelocity();
-						vSteer = (vDesiredDirection - vVelocity).normalize();
+					//	steering force vector, normalized
+					vVelocity = pVelocity->getVelocity();
+					vSteer = (vDesiredDirection - vVelocity).normalize();
 
-						//	accel force scaled to entity thrust
-						float fThrust = accel->getMax();
-						vAccel = vSteer * fThrust;
+					//	accel force scaled to entity thrust
+					setForce(Blackboard->m_pSelf, vSteer);
+					pTransform->setRotation(-vSteer);
 
-						accel->setForce(vAccel);
-					
-						//	TO DO:
-						//	convert to steering only affects rotation
-						//	when rotated to correct vector, accel at max
-						//	in proper direction
+					//	TO DO:
+					//	convert to steering only affects rotation
+					//	when rotated to correct vector, accel at max
+					//	in proper direction
 
-
-						return RUNNING;	//	not at target yet
-					}
-					return SUCCESS;	//	arrived at target
+					return RUNNING;	//	not at target yet
 				}
-				return FAILURE; //	no velocity component
+				return SUCCESS;	//	arrived at target
 			}
-			return FAILURE; //	no accel component
+			return FAILURE; //	no velocity component
 		}
 		return FAILURE;	//	no transform component
 	}

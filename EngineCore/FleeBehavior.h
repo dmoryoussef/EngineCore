@@ -1,22 +1,6 @@
 class FleeBehavior : public LeafNode
 {
 private:
-	void setForce(BaseNode* pParent, Vector2 v)
-	{
-		if (pParent)
-		{
-			for (BaseNode* pCurrent = pParent->getStart(); pCurrent != NULL; pCurrent = pCurrent->getNext())
-			{
-				if (typeid(Accelerate) == typeid(*pCurrent))
-				{
-					Accelerate* pAccel = static_cast<Accelerate*>(pCurrent);
-					float scaler = pAccel->getMax();
-					pAccel->setForce(v * scaler);
-				}
-				setForce(pCurrent, v);
-			}
-		}
-	}
 
 public:
 	FleeBehavior() :
@@ -60,7 +44,7 @@ public:
 					vTarget = pTargetTransform->getPosition();
 					vPosition = pTransform->getPosition();
 					float fDistance = distance(vTarget, vPosition);
-					if (fDistance < 25.0)
+					if (fDistance < 10.0)
 					{
 						vDesiredDirection = -(vTarget - vPosition).normalize();
 						//	needs a randomizing agent for "juking"?

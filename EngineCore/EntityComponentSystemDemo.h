@@ -1,22 +1,3 @@
-class EntityNode : public DataTreeNode<EntityNode>
-{
-private:
-	BaseNode* pBaseNode;
-	
-
-public:
-	EntityNode(BaseNode* pnode) :
-		pBaseNode(pnode)
-	{
-
-	};
-
-	void render()
-	{
-
-	}
-};
-
 class EntityComponentSystemDemo : public GameState
 {
 private:
@@ -26,23 +7,27 @@ private:
 
 	void addAI(BaseNode* pEntity, BaseNode* pData)
 	{
-		RepeatDecorator* baseNode = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard(pEntity, pData));
-		baseNode->setState(RUNNING);
+		RepeatDecorator* TreeBase = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard(pEntity, pData));
+		TreeBase->setState(RUNNING);
 
 		BehaviorNode* sequenceA = new SequenceNode();
-		baseNode->addChild(sequenceA);
-		sequenceA->addChild(new GetTarget())->
-				   addChild(new FleeBehavior());
-		pEntity->addChild(new Behavior(baseNode));
+		TreeBase->addNode(sequenceA);
+		sequenceA->addNode(new GetTarget())->
+				   addNode(new FleeBehavior())->
+				   addNode(new SeekBehavior())->
+				   addNode(new AttackBehavior());
+
+
+		pEntity->addNode(new Behavior(TreeBase));
 		pEntity->remove<UserController>();
-		Tree = baseNode;
+		Tree = TreeBase;
 	}
 
 	BaseNode *createEntity(int id)
 	{
 		BaseNode *Root = new BaseNode("PLAYER " + thingToString<int>(id + 1));
 		Root->addNode(new Render(Polygon2D(3)))->
-			  addNode(new Transform2D({ float(random(1, 10)), float(random(1, 10)) }, { 1, 0 }, { 1, 1 }))->
+			  addNode(new Transform2D({ float(random(1, 15)), float(random(1, 15)) }, { 1, 0 }, { 1, 1 }))->
 			  addNode(new DetailsPanel())->
 			  addNode(new Velocity())->
 			  addNode(new UserController(id, DIRECT))->
@@ -95,6 +80,6 @@ public:
 	void render(OutputBuffer* pEngineBuffer) 
 	{
 		Render2D r(pEngineBuffer);
-		Tree->render(&r, 10, 2, 10);
+		Tree->render(&r, 25, 2, 8);
 	}
 };
