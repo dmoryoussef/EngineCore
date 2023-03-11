@@ -169,9 +169,10 @@ private:
 	{
 		Vector3 vCurrentCameraPosition = m_pCamera->getChild<Transform3D>()->getPosition();
 		Render2D renderer(pBuffer, vCurrentCameraPosition);
-		Vector2 vWorldMin = WorldPosition({ 0, 0 }, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
-		Vector2 vWorldMax = WorldPosition(Vector2(m_nWidth, m_nHeight) + Position, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
-		
+
+		Vector2 vWorldMin =		WorldPosition(Position,									vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
+		Vector2 vWorldMax =		WorldPosition(Vector2(m_nWidth, m_nHeight) + Position,	vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
+
 		//	if a component is implementing render, call it here
 		//	good for debugging
 		//	tile map rendering happens here
@@ -191,6 +192,10 @@ private:
 		pBuffer->set("   Zoom: " + thingToString<float>(vCurrentCameraPosition.Z), getWidth() - 25, 4, FG_WHITE);
 		pBuffer->set("    FPS: " + thingToString<float>((1 / m_fDeltaTime ) * 1000.0), getWidth() - 25, 5, FG_WHITE);
 		pBuffer->set("Runtime: " + thingToString<float>(m_fTotalTime), getWidth() - 25, 6, FG_WHITE);
+		pBuffer->set("   WMin: " + vWorldMin.toString(), getWidth() - 25, 7, FG_WHITE);
+		pBuffer->set("   WMaX: " + vWorldMax.toString(), getWidth() - 25, 8, FG_WHITE);
+
+
 	}
 
 public:
@@ -207,7 +212,8 @@ public:
 	{
 		m_fScreenScale = 5;
 		m_pCamera = new BaseNode("Camera");
-		m_pCamera->add(new Transform3D({ 0, 0, m_fScreenScale }, { 0, 0, 0 }, { 0, 0, 0 }));
+		m_pCamera->addNode(new Transform3D({ 0, 0, m_fScreenScale }, { 0, 0, 0 }, { 0, 0, 0 }))->
+				   addNode(new Camera());
 
 		registerListener(MOUSEWORLD_EVENT);
 		registerListener(KEYBOARD_EVENT);
@@ -218,6 +224,11 @@ public:
 		m_fDeltaTime = fDeltaTime;
 		if (fDeltaTime < 10000)	// dt jumps high on load time
 			m_fTotalTime = m_fTotalTime + fDeltaTime / 1000;
+
+		Vector3 vCurrentCameraPosition = m_pCamera->getChild<Transform3D>()->getPosition();
+		Vector2 vWorldMin = WorldPosition({ 0, 0 }, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
+		Vector2 vWorldMax = WorldPosition(Vector2(m_nWidth, m_nHeight) + Position, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
+		m_pCamera->getChild<Camera>()->setWorldMinMax(vWorldMin, vWorldMax);
 	}
 
 	BaseNode *getCamera()

@@ -2,6 +2,7 @@ class Render : public _EntityComponent
 {
 private:
 	Polygon2D polygon;
+	Pixel color;
 
 public:
 	Render(int sides) :
@@ -10,11 +11,17 @@ public:
 		setPoly(sides);
 	};
 
-	Render(Polygon2D shape) :
+	Render(Polygon2D shape, Pixel p = {PIXEL_SOLID, FG_WHITE}) :
 		polygon(shape),
+		color(p),
 		_EntityComponent("Render") {};
 
 	Polygon2D getPolygon() { return polygon; }
+
+	Pixel getColor()
+	{
+		return color;
+	}
 
 	void setPoly(int sides)
 	{

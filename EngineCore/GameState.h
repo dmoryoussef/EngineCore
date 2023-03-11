@@ -1,7 +1,7 @@
 class GameState : public EventListener
 {
 protected:
-	Transform3D* cameraPos;
+	BaseNode* camera;
 
 public:
 	GameState()	{};
@@ -11,9 +11,8 @@ public:
 		int height = pGUI->cast<_UIComponent>()->getHeight();
 		int width = pGUI->cast<_UIComponent>()->getWidth();
 		CameraViewWindow* pCameraWindow = new CameraViewWindow(width, height, 0, 0);
-		BaseNode* cam = pCameraWindow->getCamera();
-		cameraPos = cam->getChild<Transform3D>();
-		pData->add(cam);
+		camera = pCameraWindow->getCamera();
+		pData->add(camera);
 		pGUI->addChild(pCameraWindow);
 	}
 

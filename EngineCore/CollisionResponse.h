@@ -42,9 +42,27 @@ public:
 class OutOfBoundsCollision : public CollisionResponse
 {
 private:
+	Vector2 vBoundsMin;
+	Vector2 vBoundsMax;
 
 public:
-	OutOfBoundsCollision() {};
+	OutOfBoundsCollision(Vector2 min, Vector2 max) :
+		vBoundsMin(min),
+		vBoundsMax(max) {};
+
+	bool isOutOfBounds(Vector2 pos)
+	{
+		return isPointvQuad(pos, vBoundsMin, vBoundsMax);
+	}
+
+	Vector2 Min()
+	{
+		return vBoundsMin;
+	};
+	Vector2 Max()
+	{
+		return vBoundsMax;
+	}
 
 	void onCollision()
 	{

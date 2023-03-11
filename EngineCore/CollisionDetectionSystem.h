@@ -152,6 +152,44 @@ public:
 		}
 	}
 
+	void applyDamage(Health* pHealth, Damage *pDamage)
+	{
+		int nCurrentHealth = pHealth->getHealth();
+		int nDamage = pDamage->getDamage();
+		nCurrentHealth = nCurrentHealth - nDamage;
+		if (nCurrentHealth < 0)
+		{
+			nCurrentHealth = 0;
+			addEvent(new DeleteBaseNodeEvent(pHealth->getParent()));
+		}
+		else
+			pHealth->setHealth(nCurrentHealth);
+	}
+
+	void handleCollision(BaseNode* pEntityA, BaseNode* pEntityB)
+	{
+		//	doesnt work correctly probably cant use inheritance for this
+		//if (CollisionResponse* pResponseA = pEntityA->getChild<OutOfBoundsCollision>())
+		//{
+		//	pResponseA->onCollision();
+		//}
+		//if (CollisionResponse* pResponseB = pEntityB->getChild<OutOfBoundsCollision>())
+		//{
+		//	pResponseB->onCollision();
+		//}
+
+		Health* pHealthA = pEntityA->getChild<Health>();
+		Damage* pDamageA = pEntityA->getChild<Damage>();
+
+		Health* pHealthB = pEntityB->getChild<Health>();
+		Damage* pDamageB = pEntityB->getChild<Damage>();
+
+		if (pHealthA && pDamageB) applyDamage(pHealthA, pDamageB);
+
+		if (pHealthB && pDamageA) applyDamage(pHealthB, pDamageA);
+
+	}
+
 	void handleCollisions()
 	{
 		//	pass list of only entities with a velocity, only test those that moved
@@ -164,18 +202,15 @@ public:
 			if (Collider2D *pColliderA = pEntityA->getChild<Collider2D>())
 				if (Transform2D* pTransformA = pEntityA->getChild<Transform2D>())
 				{
-					//	check against world min/max
-					Vector2 vPosition = pTransformA->getPosition();
-					Vector2 vWorldMax(75, 75);
-					Vector2 vWorldMin(-75, -75);
-					if (vPosition.X > vWorldMax.X || vPosition.X < vWorldMin.X ||
-						vPosition.Y > vWorldMax.Y || vPosition.Y < vWorldMin.Y)
+					if (OutOfBoundsCollision* pResponse = pEntityA->getChild<OutOfBoundsCollision>())
 					{
-						pColliderA->setColliding(true);
-						if (CollisionResponse* pResponse = pEntityA->getChild<OutOfBoundsCollision>())
+						Vector2 vPosition = pTransformA->getPosition();
+						if (!isPointvQuad(vPosition, pResponse->Min(), pResponse->Max()))
 						{
+							pColliderA->setColliding(true);
 							pResponse->onCollision();
 						}
+							
 					}
 
 					//	check entity collisions
@@ -202,51 +237,7 @@ public:
 									//	move to CollisionResponseSystem?????
 									//	collision response:
 
-									//	doesnt work correctly probably cant use inheritance for this
-									if (CollisionResponse* pResponseA = pEntityA->getChild<OutOfBoundsCollision>())
-									{
-										pResponseA->onCollision();
-									}
-									if (CollisionResponse* pResponseB = pEntityB->getChild<OutOfBoundsCollision>())
-									{
-										pResponseB->onCollision();
-									}
-
-									Health* pHealthA = pEntityA->getChild<Health>();
-									Damage* pDamageA = pEntityA->getChild<Damage>();
-
-									Health* pHealthB = pEntityB->getChild<Health>();
-									Damage* pDamageB = pEntityB->getChild<Damage>();
-
-									if (pHealthA && pDamageB)
-									{
-										int nCurrentHealth = pHealthA->getHealth();
-										int nDamage = pDamageB->getDamage();
-										nCurrentHealth = nCurrentHealth - nDamage;
-										if (nCurrentHealth < 0)
-										{
-											nCurrentHealth = 0;
-											addEvent(new DeleteBaseNodeEvent(pHealthA->getParent()));
-										}
-										else
-											pHealthA->setHealth(nCurrentHealth);
-
-									}
-
-									if (pHealthB && pDamageA)
-									{
-										int nCurrentHealth = pHealthB->getHealth();
-										int nDamage = pDamageA->getDamage();
-										nCurrentHealth = nCurrentHealth - nDamage;
-										if (nCurrentHealth < 0)
-										{
-											nCurrentHealth = 0;
-											addEvent(new DeleteBaseNodeEvent(pHealthB->getParent()));
-										}
-										else
-											pHealthB->setHealth(nCurrentHealth);
-									}
-
+									handleCollision(pEntityA, pEntityB);
 								}
 							}
 

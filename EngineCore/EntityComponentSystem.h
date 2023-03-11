@@ -1,4 +1,5 @@
 #include "_EntityComponent.h"
+#include "Camera.h"
 #include "Transform2D.h"
 #include "Transform3D.h"
 #include "Velocity.h"

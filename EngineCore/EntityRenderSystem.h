@@ -22,7 +22,7 @@ public:
 			
 			if (isPolyvQuad(transVerts, vWorldMin, vWorldMax)) // only render if at least part of the poly is on screen
 			{
-				Pixel color = { PIXEL_SOLID, FG_WHITE };
+				Pixel color = pRender->getColor();
 
 				if (UIState* pUIState = pEntity->getChild<UIState>())
 				{

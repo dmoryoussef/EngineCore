@@ -18,9 +18,9 @@ public:
 		m_bApplyFriction(friction),
 		_EntityComponent("Physics")	{};
 
-	Velocity(bool friction = true) :
+	Velocity(float max, bool friction = true) :
 		vVelocity(0, 0),
-		fMaxVelocity(0.5),
+		fMaxVelocity(max),
 		fMass(1.0),
 		m_bApplyFriction(friction),
 		_EntityComponent("Physics")	{};
