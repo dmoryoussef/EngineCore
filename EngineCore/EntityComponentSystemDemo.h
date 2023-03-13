@@ -6,7 +6,8 @@ private:
 	BaseNode* pGameData;
 	BehaviorNode* Tree;
 
-	BaseNode stars[500];
+	BaseNode* stars;
+	int totalStars;
 
 	void addAI(BaseNode* pEntity, BaseNode* pData)
 	{
@@ -32,7 +33,7 @@ private:
 		Root->addNode(new Render(Polygon2D(3), {PIXEL_SOLID, FG_LIGHTGREY }))->
 			  addNode(new Transform2D({ float(random(1, 15)), float(random(1, 15)) }, { 1, 0 }, { 1, 1 }))->
 			  addNode(new DetailsPanel())->
-			  addNode(new Velocity(0.1))->
+			  addNode(new Velocity(0.5))->
 			  addNode(new UserController(id, DIRECT))->
 			  addNode(new ShootAction(10000, 500.0))->
 			  addNode(new Collider2D(Polygon2D(3, 1.2)))->
@@ -63,6 +64,35 @@ private:
 		return Root;
 	}
 
+	void createStarfield(int n)
+	{
+		stars = new BaseNode[n];
+		totalStars = n;
+		for (int i = 0; i < totalStars; i++)
+		{
+			int rP = random(0, 3);
+			int p = 0;
+			switch (rP)
+			{
+				case 0: p = { PIXEL_QUARTER }; break;
+				case 1: p = { PIXEL_HALF }; break;
+				case 2: p = { PIXEL_THREEQUARTER }; break;
+				case 3: p = { PIXEL_SOLID }; break;
+			}
+			int rC = random(0, 2);
+			int c = 0;
+			switch (rC)
+			{
+				case 0: c = { FG_YELLOW }; break;
+				case 1: c = { FG_WHITE }; break;
+				case 2: c = { FG_LIGHTGREY }; break;
+			}
+			Pixel color = { p , c };
+			stars[i].addNode(new Transform2D({ float(random(1, 500)), float(random(1, 500)) }, { 0, 0 }, { 1, 1 }));
+			stars[i].addNode(new Render(Polygon2D(1), color));
+		}
+	}
+
 public:
 	EntityComponentSystemDemo() :
 		GameState() {};
@@ -77,11 +107,7 @@ public:
 		pData->add(AI);
 		addAI(AI, pData);
 
-		for (int i = 0; i < 500; i++)
-		{
-			stars[i].addNode(new Transform2D({ float(random(1, 500)), float(random(1, 500)) }, { 0, 0 }, { 1, 1 }));
-			stars[i].addNode(new Render(Polygon2D(1)));
-		}
+		createStarfield(250);
 	}
 
 	void update(BaseNode* pData, float fDeltaTime)
@@ -102,14 +128,33 @@ public:
 	{
 		Render2D r(pEngineBuffer, camera->getChild<Transform3D>()->getPosition());
 		//	Tree->render(&r, 25, 2, 8);
-		for (int i = 0; i < 500; i++)
+		for (int i = 0; i < totalStars; i++)
 		{
 			mat3x3 mat = stars[i].getChild<Transform2D>()->getTransformMatrix();
 			mat3x3 matOffset = matOffset.Translate(Vector2(-250, -250));
 			mat = matOffset * mat;
-			vector<Vector2> trans = stars[i].getChild<Render>()->getPolygon().transformedVerts(mat);
-
-			r.DrawPoly(trans, {PIXEL_HALF, FG_WHITE});
+			Render* render = stars[i].getChild<Render>();
+			vector<Vector2> trans = render->getPolygon().transformedVerts(mat);
+			Pixel c = render->getColor();
+			r.DrawPoly(trans, c);
 		}
+
+		
+		
+		Render2D r2(pEngineBuffer);
+		vector<string> PlayerData;
+		PlayerData.push_back(Player->getName());
+		if (Health* pHealth = Player->getChild<Health>())
+			PlayerData.push_back(thingToString(pHealth->getHealth()));
+
+		r2.DrawString(PlayerData, 5, 5);
+
+		vector<string> AiData;
+		AiData.push_back(AI->getName());
+		if (Health* pHealth = AI->getChild<Health>())
+			AiData.push_back(thingToString(pHealth->getHealth()));
+
+		r2.DrawString(AiData, 5, r2.getSize().Y - 8);
+		
 	}
 };

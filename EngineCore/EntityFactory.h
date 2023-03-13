@@ -19,9 +19,9 @@ private:
 		BaseNode* pEntity = new BaseNode("Projectile");
 		pEntity->addNode(new Render(Polygon2D(2, 0.8), { PIXEL_HALF, FG_LIGHTRED }))->
 				 addNode(new Transform2D(position, rotation, { 1, 1 }))->
-				 addNode(new Velocity(forward * 0.09, false))->
+				 addNode(new Velocity(forward * 0.2, false))->
 				 addNode(new OutOfBoundsCollision(Vector2(-250, -250), Vector2(250, 250)))->
-				 addChild(new Collider2D(Polygon2D(2, 0.8)));
+				 addNode(new Collider2D(Polygon2D(2, 0.8)));
 		//pEntity->addChild(new CollisionDamage(25));
 		return pEntity;
 	}
