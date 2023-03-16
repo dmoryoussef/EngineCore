@@ -187,13 +187,14 @@ private:
 			pSelectionSquare->render(&renderer);
 		}
 
-		pBuffer->set(" Screen: " + vCurrentMousePosition.toString(), getWidth() - 25, 2, FG_WHITE);
-		pBuffer->set("  World: " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 25, 3, FG_WHITE);
-		pBuffer->set("   Zoom: " + thingToString<float>(vCurrentCameraPosition.Z), getWidth() - 25, 4, FG_WHITE);
-		pBuffer->set("    FPS: " + thingToString<float>((1 / m_fDeltaTime ) * 1000.0), getWidth() - 25, 5, FG_WHITE);
-		pBuffer->set("Runtime: " + thingToString<float>(m_fTotalTime), getWidth() - 25, 6, FG_WHITE);
-		pBuffer->set("   WMin: " + vWorldMin.toString(), getWidth() - 25, 7, FG_WHITE);
-		pBuffer->set("   WMaX: " + vWorldMax.toString(), getWidth() - 25, 8, FG_WHITE);
+		pBuffer->set(" Screen: " + vCurrentMousePosition.toString(), getWidth() - 30, 2, FG_WHITE);
+		pBuffer->set("  World: " + WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z).toString(), getWidth() - 30, 3, FG_WHITE);
+		pBuffer->set(" Camera: " + vCurrentCameraPosition.toVec2().toString(), getWidth() - 30, 4, FG_WHITE);
+		pBuffer->set("   Zoom: " + thingToString<float>(vCurrentCameraPosition.Z), getWidth() - 30, 5, FG_WHITE);
+		pBuffer->set("    FPS: " + thingToString<float>((1 / m_fDeltaTime ) * 1000.0), getWidth() - 30, 6, FG_WHITE);
+		pBuffer->set("Runtime: " + thingToString<float>(m_fTotalTime), getWidth() - 30, 7, FG_WHITE);
+		pBuffer->set("   WMin: " + vWorldMin.toString(), getWidth() - 30, 8, FG_WHITE);
+		pBuffer->set("   WMaX: " + vWorldMax.toString(), getWidth() - 30, 9, FG_WHITE);
 
 
 	}

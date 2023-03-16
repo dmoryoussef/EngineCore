@@ -88,7 +88,7 @@ private:
 				case 2: c = { FG_LIGHTGREY }; break;
 			}
 			Pixel color = { p , c };
-			stars[i].addNode(new Transform2D({ float(random(1, 500)), float(random(1, 500)) }, { 0, 0 }, { 1, 1 }));
+			stars[i].addNode(new Transform2D({ float(random(1, 500) - 250), float(random(1, 500) -250) }, { 0, 0 }, { 1, 1 }));
 			stars[i].addNode(new Render(Polygon2D(1), color));
 		}
 	}
@@ -112,16 +112,15 @@ public:
 
 	void update(BaseNode* pData, float fDeltaTime)
 	{
-		//Vector2 positionA = Player->getChild<Transform2D>()->getPosition();
-		//Vector2 positionB = AI->getChild<Transform2D>()->getPosition();
-		//Vector3 camPos = camera->getChild<Transform3D>()->getPosition();
-		//
-		//float x = positionA.X;
-		//float y = positionA.Y;
-		//float z = camPos.Z;// *0.9;
-		//camPos = { x, y, z };
-		//camera->getChild<Transform3D>()->setPosition(camPos);
+		Vector2 positionA = Player->getChild<Transform2D>()->getPosition();
+		Vector2 positionB = AI->getChild<Transform2D>()->getPosition();
+		Vector3 camPos = camera->getChild<Transform3D>()->getPosition();
 		
+		float x = positionA.X * camPos.Z;
+		float y = positionA.Y * camPos.Z;
+		float z = camPos.Z;
+		camPos = { x, y, z };
+		camera->getChild<Transform3D>()->setPosition(camPos);
 	}
 
 	void render(OutputBuffer* pEngineBuffer) 
@@ -131,16 +130,12 @@ public:
 		for (int i = 0; i < totalStars; i++)
 		{
 			mat3x3 mat = stars[i].getChild<Transform2D>()->getTransformMatrix();
-			mat3x3 matOffset = matOffset.Translate(Vector2(-250, -250));
-			mat = matOffset * mat;
 			Render* render = stars[i].getChild<Render>();
 			vector<Vector2> trans = render->getPolygon().transformedVerts(mat);
 			Pixel c = render->getColor();
 			r.DrawPoly(trans, c);
 		}
 
-		
-		
 		Render2D r2(pEngineBuffer);
 		vector<string> PlayerData;
 		PlayerData.push_back(Player->getName());
