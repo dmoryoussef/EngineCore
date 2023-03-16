@@ -9,6 +9,8 @@ private:
 	BaseNode* stars;
 	int totalStars;
 
+	Vector2 screenCenter;
+
 	void addAI(BaseNode* pEntity, BaseNode* pData)
 	{
 		RepeatDecorator* TreeBase = new RepeatDecorator("Root Node", new BehaviorTreeBlackboard(pEntity, pData));
@@ -116,10 +118,13 @@ public:
 		Vector2 positionB = AI->getChild<Transform2D>()->getPosition();
 		Vector3 camPos = camera->getChild<Transform3D>()->getPosition();
 		
-		float x = positionA.X * camPos.Z;
-		float y = positionA.Y * camPos.Z;
+		screenCenter = Vector2(ScreenWidth/2, ScreenHeight/2);
+		screenCenter.div(camPos.Z);
+
 		float z = camPos.Z;
-		camPos = { x, y, z };
+		float x = positionA.X * z;
+		float y = positionA.Y * z;
+		camPos = { -x + screenCenter.X, -y + screenCenter.Y, z };
 		camera->getChild<Transform3D>()->setPosition(camPos);
 	}
 
@@ -136,7 +141,12 @@ public:
 			r.DrawPoly(trans, c);
 		}
 
+
+
 		Render2D r2(pEngineBuffer);
+
+		r2.DrawString(screenCenter.toString(), 50, 5);
+
 		vector<string> PlayerData;
 		PlayerData.push_back(Player->getName());
 		if (Health* pHealth = Player->getChild<Health>())
@@ -151,5 +161,7 @@ public:
 
 		r2.DrawString(AiData, 5, r2.getSize().Y - 8);
 		
+
+
 	}
 };

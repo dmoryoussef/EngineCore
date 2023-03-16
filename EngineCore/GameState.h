@@ -2,15 +2,17 @@ class GameState : public EventListener
 {
 protected:
 	BaseNode* camera;
+	int ScreenHeight;
+	int ScreenWidth;
 
 public:
 	GameState()	{};
 
 	virtual void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI) 
 	{
-		int height = pGUI->cast<_UIComponent>()->getHeight();
-		int width = pGUI->cast<_UIComponent>()->getWidth();
-		CameraViewWindow* pCameraWindow = new CameraViewWindow(width, height, 0, 0);
+		ScreenHeight = pGUI->cast<_UIComponent>()->getHeight();
+		ScreenWidth = pGUI->cast<_UIComponent>()->getWidth();
+		CameraViewWindow* pCameraWindow = new CameraViewWindow(ScreenWidth, ScreenHeight, 0, 0);
 		camera = pCameraWindow->getCamera();
 		pData->add(camera);
 		pGUI->addChild(pCameraWindow);
