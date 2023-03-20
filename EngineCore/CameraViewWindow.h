@@ -26,36 +26,22 @@ private:
 		// handle scaling
 		if (m_bCameraZoomable)
 		{
+			float z = vCurrentCameraPosition.Z;
 			if (mouseState.bWheeledDown)	//	zoom out
 			{
-				if (vCurrentCameraPosition.Z > fMinZoom)
-				{
-					Vector2 vBeforeScaleWorldPosition = WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
-					vCurrentCameraPosition.Z = vCurrentCameraPosition.Z * 0.95;
-					if (vCurrentCameraPosition.Z < fMinZoom)
-						vCurrentCameraPosition.Z = fMinZoom;	// clamp to min
-
-					Vector2 vAfterScaleScaleWorldPosition = WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
-					Vector2 Diff = (vBeforeScaleWorldPosition - vAfterScaleScaleWorldPosition) * vCurrentCameraPosition.Z;
-
-					m_pCamera->getChild<Transform3D>()->setPosition({ vCurrentCameraPosition.X - Diff.X, vCurrentCameraPosition.Y - Diff.Y, vCurrentCameraPosition.Z });
-				}
+				z = z * 0.95;
+				if (z < fMinZoom)
+					z = fMinZoom;
+				m_pCamera->getChild<Transform3D>()->setPosition(m_pCamera->getChild<Camera>()->zoom(z, vCurrentMousePosition, vCurrentCameraPosition, Position));
 			}
 
 			if (mouseState.bWheeledUp)
 			{
-				if (vCurrentCameraPosition.Z < fMaxZoom)	//	zoom in
-				{
-					Vector2 BeforeScaleWorldPosition = WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
-					vCurrentCameraPosition.Z = vCurrentCameraPosition.Z * 1.15;
-					if (vCurrentCameraPosition.Z > fMaxZoom)
-						vCurrentCameraPosition.Z = fMaxZoom;	// clamp to max
+				z = z * 1.15;
+				if (z > fMaxZoom)
+					z = fMaxZoom;
 
-					Vector2 AfterScaleScaleWorldPosition = WorldPosition(vCurrentMousePosition, vCurrentCameraPosition.toVec2(), Position, vCurrentCameraPosition.Z);
-					Vector2 Diff = (BeforeScaleWorldPosition - AfterScaleScaleWorldPosition) * vCurrentCameraPosition.Z;
-
-					m_pCamera->getChild<Transform3D>()->setPosition({ vCurrentCameraPosition.X - Diff.X, vCurrentCameraPosition.Y - Diff.Y, vCurrentCameraPosition.Z });
-				}
+				m_pCamera->getChild<Transform3D>()->setPosition(m_pCamera->getChild<Camera>()->zoom(z, vCurrentMousePosition, vCurrentCameraPosition, Position));
 			}
 		}
 

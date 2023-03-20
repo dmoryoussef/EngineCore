@@ -110,22 +110,16 @@ public:
 		addAI(AI, pData);
 
 		createStarfield(250);
+		screenCenter = Vector2(ScreenWidth / 2, ScreenHeight / 2);
 	}
-
+	  
 	void update(BaseNode* pData, float fDeltaTime)
 	{
-		Vector2 positionA = Player->getChild<Transform2D>()->getPosition();
-		Vector2 positionB = AI->getChild<Transform2D>()->getPosition();
+		Vector2 PositionA = Player->getChild<Transform2D>()->getPosition();
 		Vector3 camPos = camera->getChild<Transform3D>()->getPosition();
-		
-		screenCenter = Vector2(ScreenWidth/2, ScreenHeight/2);
-		screenCenter.div(camPos.Z);
-
-		float z = camPos.Z;
-		float x = positionA.X * z;
-		float y = positionA.Y * z;
-		camPos = { -x + screenCenter.X, -y + screenCenter.Y, z };
-		camera->getChild<Transform3D>()->setPosition(camPos);
+		Vector2 screen(ScreenWidth, ScreenHeight);
+		Vector3 newPos = camera->getChild<Camera>()->focus(PositionA, screen, camPos.Z);
+		camera->getChild<Transform3D>()->setPosition(newPos);
 	}
 
 	void render(OutputBuffer* pEngineBuffer) 
@@ -144,9 +138,7 @@ public:
 
 
 		Render2D r2(pEngineBuffer);
-
-		r2.DrawString(screenCenter.toString(), 50, 5);
-
+		
 		vector<string> PlayerData;
 		PlayerData.push_back(Player->getName());
 		if (Health* pHealth = Player->getChild<Health>())
