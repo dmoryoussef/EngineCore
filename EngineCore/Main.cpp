@@ -30,7 +30,7 @@ void main()
 	engine.start(new ConsoleWindow(200, 150, 1, 1),
 				 new ConsoleOutputBuffer(),
 				 new ConsoleInputHandler(),
-				 new PerlinDemo());
+				 new InfiniteTileMapDemo());
 	engine.run();
 }
 

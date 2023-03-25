@@ -191,19 +191,12 @@ protected:
 		if (m_bMouseOver)
 		{
 			pRenderer->DrawQuad(Position.X, Position.Y, (Position + Size).X, (Position + Size).Y, {PIXEL_SOLID, FG_LIGHTBLUE});
-			//pRenderer->DrawLine(Position, { Position.X + Size.X, Position.Y }, { PIXEL_SOLID, FG_LIGHTBLUE });
-			//pRenderer->DrawLine(Position, { Position.X, Position.Y + Size.Y }, { PIXEL_SOLID, FG_LIGHTBLUE });
-			//pRenderer->DrawLine({ Position.X, Position.Y + Size.Y }, Position + Size, { PIXEL_SOLID, FG_LIGHTBLUE });
-			//pRenderer->DrawLine({ Position.X + Size.X, Position.Y }, Position + Size, { PIXEL_SOLID, FG_LIGHTBLUE });
 		}
 
 		//	move to bottom of render, to put on top
 		if (getMouseOverTile())
 		{
-			int nX = getMouseOverTile()->getPosition().X + Position.X;
-			int nY = getMouseOverTile()->getPosition().Y + Position.X;
-			
-			Vector2 Min(nX, nY);
+			Vector2 Min = getMouseOverTile()->getPosition() + Position;
 			Vector2 Max = Min + Vector2(fTileSize, fTileSize);
 			
 			pRenderer->DrawQuad(Min.X,
@@ -213,9 +206,8 @@ protected:
 								Pixel(PIXEL_SOLID, FG_LIGHTGREEN));
 		}
 
-		pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 3, FG_WHITE);
-
-
+		//	debug - verify clipping
+		//	pRenderer->DrawNum<int>(TilesRendered, 2, pRenderer->getSize().Y - 3, FG_WHITE);
 	}
 
 public:
@@ -368,53 +360,22 @@ class DefaultTileMap :
 	public _TileMap<DefaultTile>
 {
 private:
-	int CheckerMap[20][20] = {
-								{	0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1	},
-								{	1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0	},
-								{	0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1	},
-								{	1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0	},
-								{	0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1	},
-								{	1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0	},
-								{	0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1	},
-								{	1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0	},
-								{	0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1	},
-								{	1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0	},
-								{	0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1	},
-								{	1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0	},
-								{	0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1	},
-								{	1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0	},
-								{	0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1	},
-								{	1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0	},
-								{	0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1	},
-								{	1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0	},
-								{	0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1	},
-								{	1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0	}
-	};
-
-	int BoarderMap[20][20] = {
-								{	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1	},
-								{	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1	}
-	};
+	
 
 public:
+	DefaultTileMap(int x, int y, int width, int height):
+		_TileMap({ (float)width, (float)height }, "DEFAULT")
+	{
+		Position = Vector2(x, y);
+		createCheckerMap();
+	}
+	
+	DefaultTileMap(int nWidth, int nHeight) :
+		_TileMap({ (float)nWidth, (float)nHeight }, "DEFAULT")
+	{
+		//	createCheckerMap();
+		createCheckerMap();
+	}
 	DefaultTileMap() :
 		_TileMap({ 20, 20 }, "DEFAULT")
 	{
@@ -426,12 +387,7 @@ public:
 
 	};
 
-	DefaultTileMap(int nWidth, int nHeight) :
-		_TileMap({ (float)nWidth, (float)nHeight }, "DEFAULT")
-	{
-		//	createCheckerMap();
-		createCheckerMap();
-	}
+	
 
 	void initialize(float* fMap, int w, int h, float scale = 1)
 	{
@@ -446,6 +402,10 @@ public:
 		}
 	}
 
+	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
+	{
+		_TileMap::render(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
+	}
 
 };
 

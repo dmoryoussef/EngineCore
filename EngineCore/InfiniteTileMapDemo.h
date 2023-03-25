@@ -1,103 +1,55 @@
-
-class InfiniteTileMapTile : public _Tile2D<InfiniteTileMapTile>
+class TileMapChunkController : public BaseNode
 {
 private:
-	BaseNode* tesselatedTileMap; 
+	vector<DefaultTileMap*> Chunks;
 
 public:
-	InfiniteTileMapTile() :
-		tesselatedTileMap(NULL),
-		_Tile2D("") {};
-
-	BaseNode* getMap()
+	TileMapChunkController()
 	{
-		return tesselatedTileMap;
-	}
-
-	void setMap(BaseNode *pMap)
-	{
-		tesselatedTileMap = pMap;
-	}
-};
-
-class InfiniteTileMap : public _TileMap<InfiniteTileMapTile>
-{
-private:
-	float fTileSize;
-	float fZoomLevel;
-
-public:
-	InfiniteTileMap(float tileSize, Vector2 position, float zoom) :
-		fTileSize(tileSize),
-		fZoomLevel(zoom),
-		_TileMap({ 10, 10 }, "")
-	{
-		setPosition(position.X, position.Y);
-		createCheckerMap();
+		Chunks.push_back(new DefaultTileMap(10, 10, 10, 10));
+		Chunks.push_back(new DefaultTileMap(0, 0, 10, 10));
+		Chunks.push_back(new DefaultTileMap(0, 10, 10, 10));
+		Chunks.push_back(new DefaultTileMap(10, 0, 10, 10));
+		Chunks.push_back(new DefaultTileMap(20, 0, 10, 10));
 	};
+
+	DefaultTile* tile(int worldX, int worldY)
+	{
+		for (auto c : Chunks)
+		{
+			//if (c->getPosition())
+		}
+		return NULL;
+	}
 
 	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
 	{
-		// normal
-		if (vCameraPosition.Z < fZoomLevel)
-			_TileMap::render(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
-		else
+		//	make new list of only chunks currently in the worldview camera quad
+		for (auto c : Chunks)
 		{
-			//	render based on scale either current tile or submap
-			Vector2 vTileMin = clipMin(vWorldMin);
-			Vector2 vTileMax = clipMax(vWorldMax);
-			float fTileSize = 1.0f;
-
-			//	draw any blocking tiles
-			for (int y = vTileMin.Y; y < vTileMax.Y; y++)
-				for (int x = vTileMin.X; x < vTileMax.X; x++)
-				{
-
-					Vector2 Min = Vector2(x, y) + Position;
-					Vector2 Max = Min + Vector2(fTileSize, fTileSize);
-
-					InfiniteTileMapTile* pTile = getTile(x, y);
-					if (pTile->getMap() == NULL)
-					{
-						//	create map
-					//	pTile->setMap(new InfiniteTileMap((1/vCameraPosition.Z), pTile->getPosition()));
-					}
-					
-					InfiniteTileMap* map = dynamic_cast<InfiniteTileMap*>(pTile->getMap());
-					map->render(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
-
-				}
+			c->render(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
 		}
 	}
-
-
 };
 
 class InfiniteTileMapDemo : public GameState
 {
 private:
-	Transform3D *camera;
 
 public:
 	InfiniteTileMapDemo() {};
 
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI)
 	{
-		int height = pGUI->cast<_UIComponent>()->getHeight();
-		int width = pGUI->cast<_UIComponent>()->getWidth();
-		CameraViewWindow* pCameraWindow = new CameraViewWindow(width, height, 0, 0);
-		BaseNode* pCamera = pCameraWindow->getCamera();
-		camera = pCamera->getChild<Transform3D>();
-		pGUI->addAtEnd(pCameraWindow);
+		GameState::start(pData, pSystems, pGUI);
 
-
-		pData->add(new InfiniteTileMap(1, {0, 0}, 30));
+		pData->add(new TileMapChunkController());
 	}
 
 	void update(BaseNode* pData, float fDeltaTime) {}
 
 	void render(OutputBuffer* pEngineBuffer)
 	{
-		Render2D r(pEngineBuffer, camera->getPosition());
+		Render2D r(pEngineBuffer, camera->getChild<Transform3D>()->getPosition());
 	}
 };

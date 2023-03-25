@@ -629,30 +629,10 @@ public:
 		if (fMaxY > nHeight)
 			fMaxY = nHeight;
 
-		//	render inside the quad
-		fMaxX--;
-		fMaxY--;
+		//	inside edge
+		fMinY++;
+		fMinX++;
 
-		//	or outer?
-		//fMinX--;
-		//fMinY--;
-		//fMaxX++;
-		//fMaxY++;
-
-		//if (outside)
-		//{
-		//	fMinX--;
-		//	fMinY--;
-
-		//}
-		//else
-		//{
-		//	fMaxX--;
-		//	fMaxY--;
-		//}
-
-		//fMinX++;
-		//fMinY++;
 
 		// render
 		for (int nY = fMinY; nY <= (int)fMaxY; nY++)
@@ -684,6 +664,9 @@ public:
 		if (fMaxY > nHeight)
 			fMaxY = nHeight;
 
+		// inside edge
+		fMinY++;
+		fMinX++;
 
 		for (int nY = fMinY; nY < fMaxY; nY++)
 		{

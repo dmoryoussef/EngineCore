@@ -81,6 +81,42 @@ private:
 			}
 	}
 
+	void PerlinNoise2D(int worldX, int worldY, int width, int height, float* seed, int octaves, float bias, float* output)
+	{
+		for (int x = worldX; x < width; x++)
+			for (int y = worldY; y < height; y++)
+			{
+				float fNoise = 0.0f;
+				float fScaleAcc = 0.0f;
+				float fScale = 1.0f;
+
+				for (int o = 0; o < octaves; o++)
+				{
+					int nPitch = width >> o;
+					if (nPitch == 0) nPitch = 1;
+
+					int nSampleX1 = (x / nPitch) * nPitch;
+					int nSampleY1 = (y / nPitch) * nPitch;
+
+					int nSampleX2 = (nSampleX1 + nPitch) % width;
+					int nSampleY2 = (nSampleY1 + nPitch) % width;
+
+					float fBlendX = (float)(x - nSampleX1) / (float)nPitch;
+					float fBlendY = (float)(y - nSampleY1) / (float)nPitch;
+
+					float fSampleT = (1.0f - fBlendX) * seed[nSampleY1 * width + nSampleX1] + fBlendX * seed[nSampleY1 * width + nSampleX2];
+					float fSampleB = (1.0f - fBlendX) * seed[nSampleY2 * width + nSampleX1] + fBlendX * seed[nSampleY2 * width + nSampleX2];
+
+					fScaleAcc += fScale;
+					fNoise += (fBlendY * (fSampleB - fSampleT) + fSampleT) * fScale;
+					fScale = fScale / bias;
+				}
+
+				// Scale to seed range
+				output[y * width + x] = fNoise / fScaleAcc;
+			}
+	}
+
 	void onKeyboardEvent(KeyboardEvent* pEvent)
 	{
 		if (!pEvent->isKeyDown())
