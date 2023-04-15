@@ -42,6 +42,8 @@ protected:
 
 	virtual void onEvent(_Event* pEvent) {}
 
+	static int totalEvents;
+
 public:
 	EventListener() {};
 	~EventListener()
@@ -113,6 +115,7 @@ public:
 
 	void addEvent(_Event* Event)
 	{
+		totalEvents++;
 		Events.push(Event);
 	}
 
@@ -205,3 +208,4 @@ map<int, map<EventListener*, CallBack*>> EventListener::CallBackListeners;
 
 map<int, vector<EventListener*>> EventListener::Listeners;
 queue<_Event*> EventListener::Events;
+int EventListener::totalEvents;

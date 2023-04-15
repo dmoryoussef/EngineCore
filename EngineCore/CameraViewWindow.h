@@ -181,6 +181,7 @@ private:
 		pBuffer->set("Runtime: " + thingToString<float>(m_fTotalTime), getWidth() - 30, 7, FG_WHITE);
 		pBuffer->set("   WMin: " + vWorldMin.toString(), getWidth() - 30, 8, FG_WHITE);
 		pBuffer->set("   WMaX: " + vWorldMax.toString(), getWidth() - 30, 9, FG_WHITE);
+		pBuffer->set(" Events: " + thingToString<float>(totalEvents), getWidth() - 30, 10, FG_WHITE);
 
 
 	}
