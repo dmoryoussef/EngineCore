@@ -3,6 +3,8 @@
 class TileMapChunkController : public BaseNode, EventListener
 {
 private:
+	int chunkSize;
+	Vector2 worldMouse;
 	DefaultTileMap* current;
 	vector<DefaultTileMap*> Chunks;
 
@@ -36,20 +38,33 @@ private:
 			case MOUSEWORLD_EVENT:
 			{
 				MouseWorldEvent* pMouseEvent = pEvent->get<MouseWorldEvent>();
-				current = getChunk(pMouseEvent->getWorldPosition().X, pMouseEvent->getWorldPosition().Y);
+				worldMouse = pMouseEvent->getWorldPosition();
+				current = getChunk(worldMouse.X, worldMouse.Y);
+				if (current == NULL)
+				{
+					if (pMouseEvent->getState().bLeftButtonDown)
+					{
+						Vector2 worldChunk = worldMouse / chunkSize;
+						Vector2 worldChunkInt((int)worldChunk.X, (int)worldChunk.Y);
+						worldChunkInt.mult(chunkSize);
+						current = new DefaultTileMap(worldChunkInt.X, worldChunkInt.Y, chunkSize, chunkSize);
+						Chunks.push_back(current);
+					}
+				}
 
 			} break;
 		}
 	}
 
 public:
-	TileMapChunkController()
+	TileMapChunkController() :
+		chunkSize(10)
 	{
-		Chunks.push_back(new DefaultTileMap(10, 10, 10, 10));
-		Chunks.push_back(new DefaultTileMap(0, 0, 10, 10));
-		Chunks.push_back(new DefaultTileMap(0, 10, 10, 10));
-		Chunks.push_back(new DefaultTileMap(10, 0, 10, 10));
-		Chunks.push_back(new DefaultTileMap(20, 0, 10, 10));
+		Chunks.push_back(new DefaultTileMap(10, 10, chunkSize, chunkSize));
+		Chunks.push_back(new DefaultTileMap(0, 0, chunkSize, chunkSize));
+		Chunks.push_back(new DefaultTileMap(0, 10, chunkSize, chunkSize));
+		Chunks.push_back(new DefaultTileMap(10, 0, chunkSize, chunkSize));
+		Chunks.push_back(new DefaultTileMap(20, 0, chunkSize, chunkSize));
 
 		registerListener(MOUSEWORLD_EVENT);
 	};
@@ -76,6 +91,15 @@ public:
 		{
 			c->render(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
 		}*/
+
+		for (auto c : Chunks)
+		{
+			if (isQuadvQuad(c->getPosition(), c->getPosition() + c->getSize(), vWorldMin, vWorldMax))
+			{
+				c->render(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
+			}
+		}
+
 		renderChunkUnderMouse(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
 	}
 };
@@ -99,5 +123,6 @@ public:
 	void render(OutputBuffer* pEngineBuffer)
 	{
 		Render2D r(pEngineBuffer, camera->getChild<Transform3D>()->getPosition());
+		
 	}
 };
