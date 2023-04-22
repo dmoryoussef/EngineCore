@@ -323,7 +323,7 @@ public:
 	{
 		return m_pMouseOverTile;
 	}
-	b  
+
 	template <typename T>
 	T* getTile(int nX, int nY)
 	{

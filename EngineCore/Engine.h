@@ -52,6 +52,7 @@ float clamp(float value, float min, float max)
 
 #include "2DMatrix.h"
 #include "Polygon.h"
+#include "Perlin.h"
 
 //	CORE STUFF
 #include "EventListener.h"

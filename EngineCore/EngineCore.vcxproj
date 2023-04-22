@@ -201,6 +201,7 @@
     <ClInclude Include="OutputWindow.h" />
     <ClInclude Include="PathfindingMap.h" />
     <ClInclude Include="PathfindingTile.h" />
+    <ClInclude Include="Perlin.h" />
     <ClInclude Include="PerlinDemo.h" />
     <ClInclude Include="Velocity.h" />
     <ClInclude Include="Polygon.h" />

@@ -381,6 +381,9 @@
     <ClInclude Include="Camera.h">
       <Filter>Source Files\EntityComponentSystem\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Perlin.h">
+      <Filter>Source Files\Geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
