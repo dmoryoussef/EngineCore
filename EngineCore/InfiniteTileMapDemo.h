@@ -68,6 +68,14 @@ public:
 		registerListener(MOUSEWORLD_EVENT);
 	};
 
+	~TileMapChunkController()
+	{
+		for (auto c : Chunks)
+		{
+			delete c;
+		}
+	}
+
 	DefaultTile* tile(int worldX, int worldY)
 	{
 		for (auto c : Chunks)
