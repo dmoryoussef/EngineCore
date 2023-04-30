@@ -99,7 +99,7 @@ private:
 		//	door
 		BuildingTile* pDoorTile = pRoomMap->getTile(0, size.Y / 2);
 		pDoorTile->setValue(0.3);
-		Doors.push_back(new Door(pDoorTile->getPosition().X, pDoorTile->getPosition().Y));
+		Doors.push_back(new Door(pDoorTile->getLocalPosition().X, pDoorTile->getLocalPosition().Y));
 	}
 
 public:
@@ -983,8 +983,8 @@ public:
 
 		if (getMouseOverTile())
 		{
-			int nX = getMouseOverTile()->getPosition().X + Position.X;
-			int nY = getMouseOverTile()->getPosition().Y + Position.X;
+			int nX = getMouseOverTile()->getLocalPosition().X + Position.X;
+			int nY = getMouseOverTile()->getLocalPosition().Y + Position.X;
 
 			Vector2 Min(nX, nY);
 			Vector2 Max = Min + Vector2(fTileSize, fTileSize);
@@ -999,8 +999,8 @@ public:
 		//	render valid tile list
 		for (auto t : ValidTiles)
 		{
-			int nX = t->getPosition().X;
-			int nY = t->getPosition().Y;
+			int nX = t->getLocalPosition().X;
+			int nY = t->getLocalPosition().Y;
 			Vector2 vTileMin = Vector2(nX, nY) + Position;
 			Vector2 vTileMax = vTileMin + Vector2(fTileSize, fTileSize);
 

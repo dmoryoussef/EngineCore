@@ -30,8 +30,15 @@ protected:
 			for (int nX = 0; nX < Size.X; nX++)
 			{
 				TileType* pCurrent = getTile(nX, nY);
+				Vector2 local(nX, nY);
+				Vector2 world = local + Position;
+				pCurrent->initTile(local,
+								   world,
+								   getTile(nX - 1, nY), 
+								   getTile(nX + 1, nY), 
+								   getTile(nX, nY + 1), 
+								   getTile(nX, nY - 1));
 
-				pCurrent->initTile(Vector2(nX, nY), getTile(nX - 1, nY), getTile(nX + 1, nY), getTile(nX, nY + 1), getTile(nX, nY - 1));
 				pCurrent->setValue(fInitialValue);
 				
 			}
@@ -196,14 +203,17 @@ protected:
 		//	move to bottom of render, to put on top
 		if (getMouseOverTile())
 		{
-			Vector2 Min = getMouseOverTile()->getPosition() + Position;
+			Vector2 Min = getMouseOverTile()->getWorldPosition();
 			Vector2 Max = Min + Vector2(fTileSize, fTileSize);
 			
-			pRenderer->DrawQuad(Min.X,
+			pRenderer->FillQuad(Min.X,
 								Min.Y,
 								Max.X,
 								Max.Y,
-								Pixel(PIXEL_SOLID, FG_LIGHTGREEN));
+								Pixel(PIXEL_SOLID, FG_LIGHTGREY));
+
+			if (vCameraPosition.Z > 10)
+				pRenderer->DrawString(getMouseOverTile()->getWorldPosition().toString(), Min.X + (Min.X * 0.01), Min.Y + (Min.Y * 0.01), BG_BLACK);
 		}
 
 		//	debug - verify clipping
@@ -211,11 +221,11 @@ protected:
 	}
 
 public:
-	_TileMap(Vector2 size, string strName) :
+	_TileMap(Vector2 size, string strName, Vector2 pos = {0, 0}) :
 		m_pTileMap(NULL),
 		m_pMouseOverTile(NULL),
 		Size(size),
-		Position({ 0, 0 }),
+		Position(pos),
 		m_nTotalGroups(0),
 		m_bMouseOver(false),
 		fTileSize(1.0),
@@ -223,11 +233,12 @@ public:
 	{
 		registerListener(MOUSEWORLD_EVENT);
 		initialize(0.0);
-	};
+	}; 
 
 	~_TileMap()
 	{
-		delete m_pTileMap;
+		m_pMouseOverTile = NULL;
+		delete[] m_pTileMap;
 	}
 
 	Vector2 doRayCast(Vector2 start, Vector2 end)
@@ -364,27 +375,21 @@ private:
 
 public:
 	DefaultTileMap(int x, int y, int width, int height):
-		_TileMap({ (float)width, (float)height }, "DEFAULT")
+		_TileMap({ (float)width, (float)height }, "DEFAULT", Vector2(x, y))
 	{
-		Position = Vector2(x, y);
-		createCheckerMap();
+		//createCheckerMap();
 	}
 	
 	DefaultTileMap(int nWidth, int nHeight) :
 		_TileMap({ (float)nWidth, (float)nHeight }, "DEFAULT")
 	{
 		//	createCheckerMap();
-		createCheckerMap();
 	}
 	DefaultTileMap() :
 		_TileMap({ 20, 20 }, "DEFAULT")
 	{
 		// base.initialize comes before this
 		// set tiles to manual mapping
-
-
-		createBoarderMap();
-
 	};
 
 	

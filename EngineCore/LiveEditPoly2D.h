@@ -22,6 +22,7 @@ bool isLinevLine()
 
 bool isQuadvQuad(Vector2 minA, Vector2 maxA, Vector2 minB, Vector2 maxB)
 {
+	//	note:  must be run both ways to check each quad v the other! (AvB and BvA)
 	return (isPointvQuad(minA, minB, maxB) || 
 			isPointvQuad(maxA, minB, maxB) || 
 			isPointvQuad({ maxA.X, minA.Y }, minB, maxB) || 

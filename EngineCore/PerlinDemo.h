@@ -12,7 +12,7 @@ private:
 	
 	void onKeyboardEvent(KeyboardEvent* pEvent)
 	{
-		if (!pEvent->isKeyDown())
+		/*if (!pEvent->isKeyDown())
 		switch (pEvent->getKey())
 		{
 			case 32:
@@ -48,7 +48,7 @@ private:
 				pMap->initialize(fPerlinNoise2D, nOutputWidth, nOutputHeight);
 			} break;
 			
-		}
+		}*/
 	}
 
 	void onMouseEvent(MouseEvent* pEvent)
@@ -90,14 +90,14 @@ public:
 		fNoiseSeed1D = new float[nOutputSize];
 		fPerlinNoise1D = new float[nOutputSize];
 
-		fNoiseSeed2D = new float[nOutputHeight * nOutputWidth];
-		fPerlinNoise2D = new float[nOutputHeight * nOutputWidth];
+		float* fNoiseSeed2D = new float[nOutputHeight * nOutputWidth];
+		float* fPerlinNoise2D = new float[nOutputHeight * nOutputWidth];
 
 		//	newSeed1D();
 		//	PerlinNoise1D(nOutputSize, fNoiseSeed1D, nOctaveCount, fScaleBias, fPerlinNoise1D);
 
 		newSeed2D(nOutputWidth, nOutputHeight, nOutputSize);
-		PerlinNoise2D(nOutputWidth, nOutputHeight, fNoiseSeed2D, nOctaveCount, fScaleBias, fPerlinNoise2D);
+		PerlinNoise2D(nOutputWidth, nOutputHeight, fNoiseSeed2D, nOctaveCount, fScaleBias);
 
 		pMap = new DefaultTileMap(nOutputWidth, nOutputHeight);
 		pMap->initialize(fPerlinNoise2D, nOutputWidth, nOutputHeight);

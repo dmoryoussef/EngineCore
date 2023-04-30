@@ -2,7 +2,8 @@ class BaseTile :
 	public BaseNode
 {
 protected:
-	Vector2 m_Position;
+	Vector2 vLocalPosition;
+	Vector2 vWorldPosition;
 	string m_sType;
 	bool m_bMouseOver;
 
@@ -12,7 +13,8 @@ public:
 		m_bMouseOver(false),
 		BaseNode() {};
 
-	Vector2 getPosition() { return m_Position; }
+	Vector2 getWorldPosition() { return vWorldPosition; }
+	Vector2 getLocalPosition() { return vLocalPosition; }
 	string getType() { return m_sType; }
 
 	bool isMouseOver() { return m_bMouseOver; }
@@ -87,9 +89,10 @@ public:
 
 
 
-	void initTile(Vector2 Position, _Tile2D* pNorth, _Tile2D* pSouth, _Tile2D* pEast, _Tile2D* pWest)
+	void initTile(Vector2 local, Vector2 world, _Tile2D* pNorth, _Tile2D* pSouth, _Tile2D* pEast, _Tile2D* pWest)
 	{
-		m_Position = Position;
+		vLocalPosition = local;
+		vWorldPosition = world;
 		m_pNorth = pNorth;
 		m_pSouth = pSouth;
 		m_pEast = pEast;

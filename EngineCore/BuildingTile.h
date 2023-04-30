@@ -26,7 +26,7 @@ public:
 	vector<string> toStringStack()
 	{
 		vector<string> stack;
-		stack.push_back(m_Position.toString());
+		stack.push_back(vLocalPosition.toString());
 		stack.push_back(thingToString<int>(m_nType));
 		return stack;
 	}

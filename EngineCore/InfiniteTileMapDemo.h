@@ -7,6 +7,24 @@ private:
 	DefaultTileMap* current;
 	vector<DefaultTileMap*> Chunks;
 
+	void createChunk(Vector2 worldPos)
+	{
+		Vector2 worldChunk = worldPos / chunkSize;
+		Vector2 worldChunkInt((int)worldChunk.X, (int)worldChunk.Y);
+		worldChunkInt.mult(chunkSize);
+		int minX = worldChunkInt.X;
+		int minY = worldChunkInt.Y;
+		int maxX = minX + chunkSize;
+		int maxY = minY + chunkSize;
+		current = new DefaultTileMap(minX, minY, chunkSize, chunkSize);
+
+		Perlin p;
+		float* fNoiseSeed2D = p.newSeed2D(chunkSize, chunkSize, 128);
+		float* fPerlinNoise2D = p.PerlinNoise2D(chunkSize, chunkSize, fNoiseSeed2D, 2, 1.0);
+		current->initialize(fPerlinNoise2D, chunkSize, chunkSize);
+		Chunks.push_back(current);
+	}
+
 	DefaultTileMap* getChunk(Vector2 min, Vector2 max)
 	{
 		for (auto c : Chunks)
@@ -43,11 +61,7 @@ private:
 				{
 					if (pMouseEvent->getState().bLeftButtonDown)
 					{
-						Vector2 worldChunk = worldMouse / chunkSize;
-						Vector2 worldChunkInt((int)worldChunk.X, (int)worldChunk.Y);
-						worldChunkInt.mult(chunkSize);
-						current = new DefaultTileMap(worldChunkInt.X, worldChunkInt.Y, chunkSize, chunkSize);
-						Chunks.push_back(current);
+						createChunk(worldMouse);
 					}
 				}
 
@@ -56,15 +70,10 @@ private:
 	}
 
 public:
-	TileMapChunkController() :
-		chunkSize(10)
+	TileMapChunkController(int dim = 16) :
+		chunkSize(dim)
 	{
-		Chunks.push_back(new DefaultTileMap(10, 10, chunkSize, chunkSize));
-		Chunks.push_back(new DefaultTileMap(0, 0, chunkSize, chunkSize));
-		Chunks.push_back(new DefaultTileMap(0, 10, chunkSize, chunkSize));
-		Chunks.push_back(new DefaultTileMap(10, 0, chunkSize, chunkSize));
-		Chunks.push_back(new DefaultTileMap(20, 0, chunkSize, chunkSize));
-
+		createChunk({ 0, 0 });
 		registerListener(MOUSEWORLD_EVENT);
 	};
 
@@ -73,7 +82,9 @@ public:
 		for (auto c : Chunks)
 		{
 			delete c;
+			c = NULL;
 		}
+		Chunks.clear();
 	}
 
 	DefaultTile* tile(int worldX, int worldY)
@@ -94,20 +105,22 @@ public:
 	void render(Render2D* pRenderer, Vector3 vCameraPosition, Vector2 vWorldMin, Vector2 vWorldMax)
 	{
 		//	make new list of only chunks currently in the worldview camera quad
-	/*	for (auto c : Chunks)
+		/*	for (auto c : Chunks)
 		{
 			c->render(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
 		}*/
-
+		int chunksRendered = 0;
 		for (auto c : Chunks)
 		{
-			if (isQuadvQuad(c->getPosition(), c->getPosition() + c->getSize(), vWorldMin, vWorldMax))
+			if (isQuadvQuad(c->getPosition(), c->getPosition() + c->getSize(), vWorldMin, vWorldMax) ||
+				isQuadvQuad(vWorldMin, vWorldMax, c->getPosition(), c->getPosition() + c->getSize()))
 			{
 				c->render(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
+				chunksRendered++;
 			}
 		}
-
-		renderChunkUnderMouse(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
+		pRenderer->DrawNum<int>(chunksRendered, 4, 4);
+//		renderChunkUnderMouse(pRenderer, vCameraPosition, vWorldMin, vWorldMax);
 	}
 };
 

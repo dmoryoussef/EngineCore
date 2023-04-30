@@ -57,7 +57,7 @@ public:
 
 				if (LightTile* pTile = getWorldTile(x, y))
 				{
-					Vector2 tilePos = pTile->getPosition();
+					Vector2 tilePos = pTile->getLocalPosition();
 					if (isLineOfSight(lightPos, tilePos))
 					{
 						float lightDistance = distance(tilePos, lightPos);
