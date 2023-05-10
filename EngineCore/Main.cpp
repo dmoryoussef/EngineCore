@@ -15,6 +15,7 @@
 #include "PerlinDemo.h"
 #include "InfiniteTileMapDemo.h"
 #include "EntityComponentSystemDemo.h"
+#include "MultiThreadingDemo.h"
 
 void main()
 {
@@ -30,7 +31,7 @@ void main()
 	engine.start(new ConsoleWindow(200, 150, 1, 1),
 				 new ConsoleOutputBuffer(),
 				 new ConsoleInputHandler(),
-				 new InfiniteTileMapDemo());
+				 new MultiThreadingDemo());
 	engine.run();
 }
 

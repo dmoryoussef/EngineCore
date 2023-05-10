@@ -187,6 +187,7 @@
     <ClInclude Include="LiveEditPoly2D.h" />
     <ClInclude Include="LivePolyEditor.h" />
     <ClInclude Include="MouseInteraction.h" />
+    <ClInclude Include="MultiThreadingDemo.h" />
     <ClInclude Include="OutputBuffer.h" />
     <ClInclude Include="CameraViewWindow.h" />
     <ClInclude Include="Color.h" />

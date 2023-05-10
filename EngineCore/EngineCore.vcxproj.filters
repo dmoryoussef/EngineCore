@@ -384,6 +384,9 @@
     <ClInclude Include="Perlin.h">
       <Filter>Source Files\Geometry</Filter>
     </ClInclude>
+    <ClInclude Include="MultiThreadingDemo.h">
+      <Filter>Source Files\StateManager\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
