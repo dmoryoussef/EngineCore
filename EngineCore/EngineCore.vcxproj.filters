@@ -82,6 +82,9 @@
     <Filter Include="Source Files\TileMapSystem\Objects">
       <UniqueIdentifier>{2e526079-cb5f-4bb9-93ae-2f3042bdf068}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\TileMapSystem\Maps\BuildingMap">
+      <UniqueIdentifier>{f363f1bb-ac74-4c6b-859c-fa906b342c9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -252,9 +255,6 @@
     <ClInclude Include="TestState.h">
       <Filter>Source Files\StateManager\States</Filter>
     </ClInclude>
-    <ClInclude Include="BuildingMap.h">
-      <Filter>Source Files\TileMapSystem\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="BuildingTile.h">
       <Filter>Source Files\TileMapSystem\Tiles</Filter>
     </ClInclude>
@@ -354,9 +354,6 @@
     <ClInclude Include="ConnectingLine.h">
       <Filter>Source Files\GUI\UIObjects</Filter>
     </ClInclude>
-    <ClInclude Include="EditableRoom2D.h">
-      <Filter>Source Files\TileMapSystem\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="Joint.h">
       <Filter>Source Files\EntityComponentSystem\Components</Filter>
     </ClInclude>
@@ -386,6 +383,18 @@
     </ClInclude>
     <ClInclude Include="MultiThreadingDemo.h">
       <Filter>Source Files\StateManager\States</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildingMap.h">
+      <Filter>Source Files\TileMapSystem\Maps\BuildingMap</Filter>
+    </ClInclude>
+    <ClInclude Include="EditableRoom2D.h">
+      <Filter>Source Files\TileMapSystem\Maps\BuildingMap</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildingEntity.h">
+      <Filter>Source Files\TileMapSystem\Maps\BuildingMap</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryCollision.h">
+      <Filter>Source Files\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

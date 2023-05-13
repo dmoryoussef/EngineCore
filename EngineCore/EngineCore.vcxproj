@@ -148,6 +148,7 @@
     <ClInclude Include="BehaviorTreeDemo.h" />
     <ClInclude Include="Bezier.h" />
     <ClInclude Include="BezierDemo.h" />
+    <ClInclude Include="BuildingEntity.h" />
     <ClInclude Include="BuildingMap.h" />
     <ClInclude Include="BuildingTest.h" />
     <ClInclude Include="BuildingTile.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="EntityRenderSystem.h" />
     <ClInclude Include="2DMatrix.h" />
     <ClInclude Include="ControllerInput.h" />
+    <ClInclude Include="GeometryCollision.h" />
     <ClInclude Include="GetTarget.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="BehaviorNode.h" />

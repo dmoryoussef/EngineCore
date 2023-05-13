@@ -113,7 +113,7 @@ public:
 		}
 		
 		//	fill work queue
-		for (int i = 0; i < 200000; i++)
+		for (int i = 0; i < 20000; i++)
 		{
 			string n = thingToString<int>(i);
 			addString("Work " + n, SemaphoreHandle);

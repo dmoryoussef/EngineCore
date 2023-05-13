@@ -47,7 +47,7 @@ float clamp(float value, float min, float max)
 //	Geometry
 #include "Vector2.h"
 #include "Vector3.h"
-
+#include "GeometryCollision.h"
 #include "Triangle.h"
 
 #include "2DMatrix.h"

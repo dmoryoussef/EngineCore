@@ -62,22 +62,7 @@ public:
 
 	void start(BaseNode* pData, BaseNode* pSystems, BaseNode* pGUI)
 	{
-		int height = pGUI->cast<_UIComponent>()->getHeight();
-		int width = pGUI->cast<_UIComponent>()->getWidth();
-		CameraViewWindow* pCameraWindow = new CameraViewWindow(width, height, 0, 0);
-		BaseNode *cam = pCameraWindow->getCamera();
-		cameraPos = cam->getChild<Transform3D>();
-		pData->add(cam);
-		pGUI->addChild(pCameraWindow);
-
-		//SingleSelectButtonComponent* pComponent = new SingleSelectButtonComponent();
-		//pComponent->addComponent(new UIButton("POINT"));
-		//pComponent->addComponent(new UIButton("QUAD"));
-		//pComponent->addComponent(new UIButton("CURVE"));
-		//pComponent->refresh();
-		//pCameraWindow->addComponent(pComponent);
-		//pComponent->setAlignment(ALIGN_RIGHT);
-
+		GameState::start(pData, pSystems, pGUI);
 		map = new BuildingMap();
 		pData->add(map);
 	}
@@ -85,10 +70,11 @@ public:
 	void render(OutputBuffer* pEngineBuffer)
 	{
 		Render2D r(pEngineBuffer);
-		if (map->getMouseOverTile())
+
+		/*if (map->getMouseOverTile())
 		{
 			r.DrawString(map->getMouseOverTile()->toStringStack(), 5, 5);
-		}
+		}*/
 	}
 
 };
